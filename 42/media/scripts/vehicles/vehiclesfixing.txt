@@ -812,6 +812,8 @@ module Vehicle Repairs
 	   Fixer : RabbitLeather_Fur_Tan;Tailoring=1;Mechanics=1,
        Fixer : RabbitLeather_Grey_Fur;Tailoring=1;Mechanics=1,
 	   Fixer : RabbitLeather_Grey_Fur_Tan;Tailoring=1;Mechanics=1,
+       Fixer : RaccoonLeather_Grey_Fur;Tailoring=1;Mechanics=1,
+       Fixer : RaccoonLeather_Grey_Fur_Tan;Tailoring=1;Mechanics=1,
     }
 
     fixing Fix Car seat 2
@@ -1627,6 +1629,7 @@ module Vehicle Repairs
 	    Fixer : Leather_Crude_Small_Tan;Tailoring=2;Mechanics=1,
 	    Fixer : RabbitLeather_Fur_Tan;Tailoring=2;Mechanics=1,
 	    Fixer : RabbitLeather_Grey_Fur_Tan;Tailoring=2;Mechanics=1,
+        Fixer : RaccoonLeather_Grey_Fur_Tan;Tailoring=2;Mechanics=1,
     }
 
     fixing Fix SoftTops 1
