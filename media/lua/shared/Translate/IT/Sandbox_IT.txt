@@ -1,0 +1,4 @@
+Sandbox_IT = {
+    Sandbox_VehicleRepairOverhaul = "Vehicle Repair Overhaul Mod",
+
+}
