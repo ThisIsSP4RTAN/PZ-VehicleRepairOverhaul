@@ -110,7 +110,6 @@ module Vehicle Repairs
     	Fixer : Plank=2;Woodwork=3;Mechanics=3,
     	Fixer : MetalParts=6;Mechanics=3,
         Fixer : ScrapMetal=6;Mechanics=3,
-
     }
 	
 /************************ Hood ************************/
@@ -1000,6 +999,17 @@ module Vehicle Repairs
 	    Fixer : MetalParts=12;MetalWelding=4;Mechanics=4,
         Fixer : ScrapMetal=12;MetalWelding=4;Mechanics=4,
 	}
+	
+	fixing Fix KI5 Wood Armor
+    {
+       Require : 85gmBbodyWindshieldArmorW;85gmBbodyFrontWindowArmorW;85gmBbodyRearWindowArmorW;85gmBbodyWindshieldRearArmorW,
+       GlobalItem : Plank=3,
+       ConditionModifier : 0.7,
+
+        Fixer : Glue=4;Mechanics=4,
+        Fixer : Woodglue=2;Mechanics=4,
+        Fixer : DuctTape=4;Mechanics=4,
+	}	
 
 /************************ Misc Smaller Items ************************/
 
