@@ -1,0 +1,10 @@
+VERSION = 1,
+
+option VehicleRepairOverhaul.DisableVehicleSalvage
+{
+	type = boolean,
+	 default = false,
+    page = VehicleRepairOverhaul,
+	translation = DisableVehicleSalvage,
+}
+
