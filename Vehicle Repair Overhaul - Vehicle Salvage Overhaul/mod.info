@@ -3,3 +3,5 @@ description=Vehicle Salvage Mod for Project Zomboid
 poster=poster.png
 id=VehicleSalvageOverhaul
 icon=icon.png
+pzversion=42
+versionMin=42.0.0

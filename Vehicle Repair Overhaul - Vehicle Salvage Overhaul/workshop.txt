@@ -1,9 +1,0 @@
-version=
-id=
-title=Vehicle Salvage Overhaul
-description=Vehicle Salvage Overhaul
-description=
-description=Salvage Vehicles for items and parts,
-description=this mod will bring more focus and choices for the Mechanics and Metal Workers amongst us
-tags=Build 41;Build 42;Items;Misc;Multiplayer;Realistic;Vehicles
-visibility=public
