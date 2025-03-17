@@ -60,7 +60,7 @@ function ISVehicleSalvage:perform()
     for i=1,math.max(6,self.character:getPerkLevel(Perks.MetalWelding)) do
         if self:checkAddItem("MetalBar", 15) then totalXp = totalXp + 2 end;
         if self:checkAddItem("MetalBar", 20) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("Radio.ElectricWire", 15) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("ElectricWire", 15) then totalXp = totalXp + 2 end;
         if self:checkAddItem("Wire", 20) then totalXp = totalXp + 2 end;
         if self:checkAddItem("MetalPipe", 15) then totalXp = totalXp + 2 end;
         if self:checkAddItem("MetalPipe", 20) then totalXp = totalXp + 2 end;
@@ -83,6 +83,16 @@ function ISVehicleSalvage:perform()
         if self:checkAddItem("Amplifier", 20) then totalXp = totalXp + 2 end;
         if self:checkAddItem("EngineParts", 28) then totalXp = totalXp + 3 end;
         if self:checkAddItem("UnusableMetal", 12) then totalXp = totalXp + 2 end;
+        --Build 42 items
+        if self:checkAddItem("CopperScrap", 6) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("AluminumScrap", 12) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("SteelScrap", 25) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("IronScrap", 15) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("IronBand", 20) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("IronBandSmall", 15) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("SteelBar", 18 then totalXp = totalXp + 2 end;
+        if self:checkAddItem("SteelBarHalf", 15) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("SteelBarQuarter", 12) then totalXp = totalXp + 2 end;
     end
     for i=1,10 do   --Propane uses--
         self.item:Use();

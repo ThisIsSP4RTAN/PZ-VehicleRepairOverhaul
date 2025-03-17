@@ -1,12 +1,8 @@
-module FixAFlat
+module Base
 
 /*******VRO Fix a Flat Addition*******/
 
 {
-	imports
-	{
-		Base
-	}
 	
 	item FixAFlat
     {
@@ -18,7 +14,7 @@ module FixAFlat
         DisplayName = FixAFlat,
         Icon = FixAFlat,
         Tooltip = Tooltip_FixAFlat,
-	MechanicsItem = TRUE,
+		MechanicsItem = TRUE,
 	    ConsolidateOption = ContextMenu_Merge,
         WorldStaticModel = FixAFlat,
         ReplaceOnDeplete = TinCanEmpty,
