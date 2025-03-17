@@ -1,7 +1,24 @@
 table.insert(ProceduralDistributions.list["CrateMechanics"].items, "FixAFlat.FixAFlat");
-table.insert(ProceduralDistributions.list["CrateMechanics"].items, 1);
+table.insert(ProceduralDistributions.list["CrateMechanics"].items, 2);
 table.insert(ProceduralDistributions.list["GarageMechanics"].items, "FixAFlat.FixAFlat");
 table.insert(ProceduralDistributions.list["GarageMechanics"].items, 1);
 table.insert(ProceduralDistributions.list["MechanicShelfMisc"].items, "FixAFlat.FixAFlat");
 table.insert(ProceduralDistributions.list["MechanicShelfMisc"].items, 1);
-
+table.insert(ProceduralDistributions.list["CarSupplyTools"].items, "FixAFlat.FixAFlat");
+table.insert(ProceduralDistributions.list["CarSupplyTools"].items, 4);
+table.insert(ProceduralDistributions.list["GarageTools"].items, "FixAFlat.FixAFlat");
+table.insert(ProceduralDistributions.list["GarageTools"].items, 3);
+table.insert(ProceduralDistributions.list["GasStorageMechanics"].items, "FixAFlat.FixAFlat");
+table.insert(ProceduralDistributions.list["GasStorageMechanics"].items, 2);
+table.insert(ProceduralDistributions.list["GasStoreEmergency"].items, "FixAFlat.FixAFlat");
+table.insert(ProceduralDistributions.list["GasStoreEmergency"].items, 4);
+table.insert(ProceduralDistributions.list["GigamartTools"].items, "FixAFlat.FixAFlat");
+table.insert(ProceduralDistributions.list["GigamartTools"].items, 1);
+table.insert(ProceduralDistributions.list["MechanicTools"].items, "FixAFlat.FixAFlat");
+table.insert(ProceduralDistributions.list["MechanicTools"].items, 3);
+table.insert(ProceduralDistributions.list["MechanicShelfTools"].items, "FixAFlat.FixAFlat");
+table.insert(ProceduralDistributions.list["MechanicShelfTools"].items, 1);
+table.insert(ProceduralDistributions.list["MechanicSpecial"].items, "FixAFlat.FixAFlat");
+table.insert(ProceduralDistributions.list["MechanicSpecial"].items, 1);
+table.insert(ProceduralDistributions.list["ToolStoreTools"].items, "FixAFlat.FixAFlat");
+table.insert(ProceduralDistributions.list["ToolStoreTools"].items, 0.5);
