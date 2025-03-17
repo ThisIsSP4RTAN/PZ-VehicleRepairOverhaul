@@ -1,6 +1,7 @@
-name=Vehicle Salvage [build 42]
-description=Vehicle Salvage for Project Zomboid Build 42
+name=Vehicle Salvage Overhaul [build 42]
+description=Vehicle Salvage Overhaul for Project Zomboid Build 42
 poster=poster.png
 icon=icon.png
-id=Vehicle Salvage
+versionMin=42.0.0
+id=Vehicle Salvage Overhaul
 author=hehehemann

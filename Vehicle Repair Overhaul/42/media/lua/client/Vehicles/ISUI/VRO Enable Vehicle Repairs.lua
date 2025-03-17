@@ -25,7 +25,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
     -- Custom repair mechanic logic
     if (part:getId() == ("GloveBox") or ("Heater") or ("Battery") or ("Brake") or ("Door") or ("EngineDoor") or
             ("GasTank") or ("Tire") or ("Trunk") or ("TrunkDoor") or ("Headlight") or ("Seat") or ("Window)") or
-            ("Muffler") or ("Radio") or ("Suspension") or ("Windshield") or ("TowBar") or ("lightbar"))then
+            ("Muffler") or ("Radio") or ("Suspension") or ("Windshield") or ("TowBar") or ("Lightbar"))then
 	if part:getCondition() < 100 then
         part:getScriptPart():setRepairMechanic(true)
     elseif part:getCondition() == 100 and part:getScriptPart():isRepairMechanic() then

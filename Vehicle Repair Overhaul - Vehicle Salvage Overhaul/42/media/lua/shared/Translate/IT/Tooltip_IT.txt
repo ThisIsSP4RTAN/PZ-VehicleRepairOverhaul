@@ -1,4 +1,4 @@
 Tooltip_IT = {
-	Tooltip_FixAFlat = "Bomboletta spray per riparare gli pneumatici.",
-	Tooltip_SalvageVehicle = "Il recupero di veicoli con una maschera da saldatore e una torcia a propano li rimuoverà dal vostro percorso. Il recupero di veicoli richiede più tempo e più propano rispetto allo smantellamento di un rottame, ma fornisce oggetti extra e XP più alti. <LINE> Un'abilità più elevata nella lavorazione dei metalli permette di recuperare un numero maggiore di oggetti di recupero utilizzabili. <LINE> *Suggerimento: rimuovere prima le parti del veicolo e svuotare il bagagliaio.",
+	Tooltip_FixAFlat = "La bomboletta spray per riparare il pneumatico.",
+	Tooltip_SalvageVehicle = " Il recupero dei veicoli con una maschera di saldatura e una torcia a propano li rimuoverà dal tuo percorso. Il recupero del veicolo richiede più tempo per essere completato e utilizza più propano rispetto a Dismantle Car Wreck, ma offre oggetti extra e XP più alti. <LINE> Maggiori abilità di lavorazione dei metalli recupereranno un recupero più utilizzabile. <LINE> *Suggerimento rimuovere prima le parti del veicolo e svuotare il bagagliaio.",
 }
