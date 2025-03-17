@@ -90,7 +90,7 @@ function ISVehicleSalvage:perform()
         if self:checkAddItem("IronScrap", 15) then totalXp = totalXp + 2 end;
         if self:checkAddItem("IronBand", 20) then totalXp = totalXp + 2 end;
         if self:checkAddItem("IronBandSmall", 15) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("SteelBar", 18 then totalXp = totalXp + 2 end;
+        if self:checkAddItem("SteelBar", 18) then totalXp = totalXp + 2 end;
         if self:checkAddItem("SteelBarHalf", 15) then totalXp = totalXp + 2 end;
         if self:checkAddItem("SteelBarQuarter", 12) then totalXp = totalXp + 2 end;
     end

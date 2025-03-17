@@ -237,7 +237,7 @@ function Recipe.OnCreate.SalvageModuleReturnsSoftTops(items, result, player)
     local inventory = player:getInventory()
 
     for i=1,3 do
-        local r = ZombRand(6);
+        local r = ZombRand(5);
         local chance = ZombRand(1,100);
 
         if r==1 and chance<success then
@@ -248,8 +248,6 @@ function Recipe.OnCreate.SalvageModuleReturnsSoftTops(items, result, player)
             inventory:AddItem("Base.Thread") end;
         if r==4 and chance<success then
             inventory:AddItem("Base.Tarp") end;
-        if r==5 and chance<success then
-            inventory:AddItem("Base.ScrapMetal") end;
     end
 end
 
