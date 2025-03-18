@@ -1,0 +1,1422 @@
+module Base
+{
+	item M911Bullbar0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M911Bullbar1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ECTO1Bullbar1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M998Bullbar1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M998Bullbar2_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M998TrunkBarrier1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M998TrunkBarrier2_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item SemiTruckBullbar_Item2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ATA_Bus_Kengur_3_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ATA_Bus_Kengur_2_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ATA_Bus_Kengur_1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M151A2Bumper1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item IFAVFrontBumper2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item IFAVWindshieldFrame2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M35A2Bumper1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M35A2Grille1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item W460Bumper1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item W460Bullbar2_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item W460Bullbar3_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item W460BumperRear1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M923Bumper1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M923Bumper2_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item FJ75Bullbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item Int4700Bullbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item U1550LBull2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ATAMustangBullbar1Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ATAMustangBullbar2Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ATAMustangBullbar3Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item McLarenF1Bull3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M35Bumper2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item DG70FrontBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item DG70RearBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item DG70FrontBumperA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item DG70FrontBumperB
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item DG70FrontBumperC
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item DG70RearBumperA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item DG70RearBumperB
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item DG70RearBumperC
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 80sPickupBullbarFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 80sPickupBullbarRear
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 80sPickupRollbarA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 80sPickupRollbarB
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89BroncoBumperFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89BroncoBullbarFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89BroncoBumperRear
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89BroncoBarrier
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 88ChevyS10BumperFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 88ChevyS10BumperRear
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 88ChevyS10BullbarFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82JeepJ10BumperFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82JeepJ10BumperRear
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82JeepJ10BullbarFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item K5Bullbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item FordF700BullbarSC2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item JeepCherokeeBullbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 49powerWagonBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 49powerWagonBullbar1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 49powerWagonBullbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ChevyC70FabricatedBullbarSC2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ChevyC70FabricatedBrushGuardSC2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ChevyC70BullbarSC2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item FordMustangBullbarSC3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item CUDAFrontBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item CUDAFrontBumper1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item CUDAFrontBumper2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item CUDARearBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item CUDAFrontBumperA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item CUDARearBumperA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ZNL50storageFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89trooperBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89trooperBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89trooperBullbarFrontB
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89trooperBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93townCarBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93townCarBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93townCarBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93townCarBullbarFrontB
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93townCarBullbarFrontC
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93townCarBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69miniBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69miniBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69miniBumperFront2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69miniBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69miniBumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item BumperFrontCivic1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item BumperRearCivic1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90pierceArrowBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90pierceArrowReinforcedBumper1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90pierceArrowLadders
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item CytAstra89Bull1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90fordF350BumperFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90fordF350BullbarFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90fordF350BumperRear
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 92fordCVPIBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 92fordCVPIBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 92fordCVPIBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordCF8000Bumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item CytMercEvoBull3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 99fordCVPIBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 99fordCVPIBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 99fordCVPIBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91rangeBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91rangeBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91rangeBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91rangeBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91rangeBullbarRearA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69camaroFrontBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69camaroFrontBumper1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69camaroRearBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69camaroFrontBumperA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69camaroFrontBumperB
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69camaroRearBumperA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69camaroRearBumperB
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93mustangSSPBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93mustangSSPBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93mustangSSPBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63beetleBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63beetleBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63beetleBumperFront2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63beetleBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63beetleBumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91geoMetroBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91geoMetroReinforcedBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91geoMetroBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 67gt500FrontBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 67gt500FrontBumperA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 67gt500eFrontBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 67gt500eFrontBumperA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 67gt500RearBumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 67gt500RearBumperA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 67gt500FrontBullbar
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 67gt500RearBullbar
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89dodgeCaravanBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89dodgeCaravanBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89dodgeCaravanBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89dodgeCaravanBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63Type2VanBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63Type2VanBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63Type2VanBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63Type2VanBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63Type2VanBumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63Type2VanCageRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87toyotaMR2BumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87toyotaMR2BumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87toyotaMR2BullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87toyotaMR2BumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordF350BumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordF350BullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordF350BumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90bmwE30BumperFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90bmwE30BumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90bmwE30BumperFrontM
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90bmwE30BumperFrontMA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90bmwE30BumperRear
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90bmwE30BumperRearM
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90bmwE30Bullbar
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87fordB700BumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87fordB700BumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87fordB700BullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87fordB700BumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusWagonBumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusSHOBumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusSedanBumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusSHOBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusSHOBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item E150FrontBumper2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item E150RearBumper2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item E150FrontBumperWithBullbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item E150FrontBullbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item R32Bumper0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item R32Bumper1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item R32Bumper2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item R32Bumper3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item R32BumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item R32BumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item R32BumperRear2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item R32BumperRear3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93chevySilverdoRollbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93chevySuburbanBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93chevySuburbanBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93chevySuburbanBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93chevySuburbanBullbarFrontB
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93chevySuburbanBullbarFrontC
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93chevySuburbanBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 88toyotaHiluxBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 88toyotaHiluxBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 88toyotaHiluxBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 88toyotaHiluxBullbarRearA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 88toyotaHiluxRollbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 86chevyCUCVBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 86chevyCUCVBullbarFrontB
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 86chevyCUCVBullbarFrontC
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 86chevyCUCVBumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 86chevyCUCVBumperRear2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 84jeepXJBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 84jeepXJBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 84jeepXJBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 84jeepXJBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 76chevyKseriesRollbar2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 76chevyKseriesBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 76chevyKseriesBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 76chevyKseriesBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 76chevyKseriesBumperRearA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82porsche911turboBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82porsche911RWBBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82porsche911turboBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82porsche911RWBBumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82porsche911turboBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82porsche911RWBBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 82porsche911BullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85chevyCapriceBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85chevyCapriceBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85chevyCapriceBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85pontiacParisienneBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85pontiacParisienneBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85pontiacParisienneBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85buickLeSabreBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85buickLeSabreBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85buickLeSabreBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85oldsmobileDelta88BumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85oldsmobileDelta88BumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85oldsmobileDelta88BumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85gmBbodyBullbarFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 80chevyCKBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 80chevyCKBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 80chevyCKBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91fordLTDBumperFront0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91fordLTDBumperFront1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91fordLTDBumperRear0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91fordLTDWagonBumperRear1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87buickRegalBumperFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87buickRegalBumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87buickRegalBullbar
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87buickRegalBumperRear
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 81deloreanDMC12BumperFront
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 81deloreanDMC12BumperFrontA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 81deloreanDMC12Bullbar
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 81deloreanDMC12BumperRear
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+	
+	item PotomacRoofRack
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ShubertSedanRoofRack
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item mercroofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item mercroofrack2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item mercroofrack3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item cruiserRoofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item cruiserRoofrack2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item cruiserRoofrack3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ECTO1Roofrack1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item M998Roofrack1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ATA_Bus_Roof_Rack
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ATA_Bus_Roof_Box_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item W460Roofrack1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item P19ARoofrack1_Item
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 80sPickupRoofrackA
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ATAMustangRoofRackItem
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 97BushRoofStorage0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89trooperRoofrack2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 69miniRoofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item CytAstraRoofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91rangeRoofrack2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item E150MysteryMachineRoofrack2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63beetleRoofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91geoMetroRoofrack0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91geoMetroRoofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 67gt500Roofrack3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63Type2VanRoofrackSmall1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 63Type2VanRoofrackLarge1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 89dodgeCaravanRoofrack0
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87toyotaMR2Roofrack3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 90bmwE30Roofrack3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87fordB700Roofrack2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusRoofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93fordTaurusWagonRoofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 93chevySuburbanRoofrack2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 84jeepXJRoofrack2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 76chevyKseriesRoofrack2
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 85gmBbodyRoofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item OldSmallRoofrack3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ModernSmallRoofrack3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item ModernLargeRoofrack3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 91fordLTDRoofrack1
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+
+    item 87buickRegalRoofrack3
+    {
+        Tags = VRO.SalvageBullbarRoofrack,
+    }
+}
