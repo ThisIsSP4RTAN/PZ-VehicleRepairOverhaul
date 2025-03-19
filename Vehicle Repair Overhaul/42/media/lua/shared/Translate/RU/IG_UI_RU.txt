@@ -1,3 +1,3 @@
 IGUI_RU = {
-	IGUI_CraftCategory_Salvage = "Утилизация автозапчастей",
+	IGUI_CraftCategory_Salvage = "РЈС‚РёР»РёР·Р°С†РёСЏ Р°РІС‚РѕР·Р°РїС‡Р°СЃС‚РµР№",
 }

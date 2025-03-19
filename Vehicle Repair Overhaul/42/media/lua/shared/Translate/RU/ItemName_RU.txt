@@ -1,5 +1,5 @@
 ItemName_RU = {
-	ItemName_FixAFlat.FixAFlat = "Герметик для автомобильных шин",
-	ItemName_TW.MetalParts = "Металлические запчасти",
-	ItemName_TW.Spring = "Пружина",
+	ItemName_FixAFlat.FixAFlat = "Р“РµСЂРјРµС‚РёРє РґР»СЏ Р°РІС‚РѕРјРѕР±РёР»СЊРЅС‹С… С€РёРЅ",
+	ItemName_TW.MetalParts = "РњРµС‚Р°Р»Р»РёС‡РµСЃРєРёРµ Р·Р°РїС‡Р°СЃС‚Рё",
+	ItemName_TW.Spring = "РџСЂСѓР¶РёРЅР°",
 }
