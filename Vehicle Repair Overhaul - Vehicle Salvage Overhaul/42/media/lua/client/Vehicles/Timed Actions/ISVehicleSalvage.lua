@@ -93,6 +93,7 @@ function ISVehicleSalvage:perform()
         if self:checkAddItem("SteelBar", 18) then totalXp = totalXp + 2 end;
         if self:checkAddItem("SteelBarHalf", 15) then totalXp = totalXp + 2 end;
         if self:checkAddItem("SteelBarQuarter", 12) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("NutsBolts", 30) then totalXp = totalXp + 2 end;
     end
     for i=1,10 do   --Propane uses--
         self.item:Use();
