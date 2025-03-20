@@ -84,21 +84,21 @@ function ISVehicleSalvage:perform()
         if self:checkAddItem("EngineParts", 28) then totalXp = totalXp + 3 end;
         if self:checkAddItem("UnusableMetal", 12) then totalXp = totalXp + 2 end;
         --Build 42 items
-        if self:checkAddItem("CopperScrap", 6) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("CopperScrap", 12) then totalXp = totalXp + 2 end;
         if self:checkAddItem("AluminumScrap", 15) then totalXp = totalXp + 2 end;
         if self:checkAddItem("AluminumScrap", 10) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("SteelScrap", 25) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("SteelScrap", 20) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("SteelScrap", 12) then totalXp = totalXp + 2 end;
         if self:checkAddItem("SteelScrap", 15) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("IronScrap", 15) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("IronBand", 20) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("IronBandSmall", 15) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("SteelBar", 18) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("SteelBarHalf", 15) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("SteelScrap", 20) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("IronScrap", 12) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("IronBand", 15) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("IronBandSmall", 12) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("SteelBar", 15) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("SteelBarHalf", 12) then totalXp = totalXp + 2 end;
         if self:checkAddItem("SteelBarQuarter", 12) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("NutsBolts", 35) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("NutsBolts", 30) then totalXp = totalXp + 2 end;
-        if self:checkAddItem("NutsBolts", 25) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("NutsBolts", 12) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("NutsBolts", 12) then totalXp = totalXp + 2 end;
+        if self:checkAddItem("NutsBolts", 12) then totalXp = totalXp + 2 end;
     end
     for i=1,10 do   --Propane uses--
         self.item:Use();
