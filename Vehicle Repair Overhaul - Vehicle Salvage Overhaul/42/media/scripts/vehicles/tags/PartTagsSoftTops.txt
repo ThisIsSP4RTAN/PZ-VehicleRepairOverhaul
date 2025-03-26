@@ -1,0 +1,142 @@
+module Base
+{
+	item M151A2Tarp1_Item
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item M101A3Tarp1_Item
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item IFAVFrontTop2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item IFAVRearTop2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item M35A2Tarp1_Item
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item M35A2Tarp2_Item
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item M35A2Tarp3_Item
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item M35A2SoftCover2_Item
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item SL500SoftTop3
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item M923SoftCover2_Item
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item CJ7softtop2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item U1550LTarp2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item M1008Tarp2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item M35Tarp2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item M35FrontSoftTop2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 63beetleHPRoof0
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 63Type2VanTarpCover0
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 93fordF350BedCover2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 90bmwE30CabrioRoofLid3
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 90bmwE30CabrioRoof3
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 86chevyCUCVBedTarp2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 85gmBbodyVinylRoofBlack
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 85gmBbodyVinylRoofMaroon
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 85gmBbodyVinylRoofWhite
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 85gmBbodyVinylRoofBrown
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 85gmBbodyVinylRoofBlue
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item KI5trailersTarp2
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+
+	item 66pontiacLeMansRoof0
+	{
+		Tags = VRO.SalvageSoftTops,
+	}
+}

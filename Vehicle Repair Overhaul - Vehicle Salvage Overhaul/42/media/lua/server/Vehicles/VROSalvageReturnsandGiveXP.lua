@@ -27,10 +27,11 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsSmall(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.MetalWelding));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
     --print(skill) --Calculates by adding Mechanic skill + Metal Welding Skill--
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-    local inventory = player:getInventory()
+    local inventory = isoPlayer:getInventory()
 
     --Creates 3 sets of chances for items from the salvage, each chance of getting an extra item--
     --from the salvage is dependent on player skill. First random roll chooses item, second random roll --
@@ -54,9 +55,10 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsFabrics(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.Tailoring));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-    local inventory = player:getInventory()
+    local inventory = isoPlayer:getInventory()
 
     for i=1,3 do
         local r = ZombRand(6);
@@ -78,9 +80,10 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsSmallElectrics(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.MetalWelding));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-    local inventory = player:getInventory()
+    local inventory = isoPlayer:getInventory()
 
     for i=1,3 do
         local r = ZombRand(6);
@@ -102,11 +105,12 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsLargeMetals(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.MetalWelding));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
     --print(skill) --Calculates by adding Mechanic skill + Metal Welding Skill--
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
     --print(success) --Used to give a variable based on skill from above with a static number(30)--
-    local inventory = player:getInventory()
+    local inventory = isoPlayer:getInventory()
 
     --Creates 3 sets of chances for items from the salvage, each chance of getting an extra item--
     --from the salvage is dependent on player skill. First random roll chooses item, second random roll --
@@ -136,9 +140,10 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsArmourLargeMetals(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.MetalWelding));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-    local inventory = player:getInventory()
+    local inventory = isoPlayer:getInventory()
 
     for i=1,3 do
         local r = ZombRand(6);
@@ -160,9 +165,10 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsSuspension(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.MetalWelding));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-    local inventory = player:getInventory()
+    local inventory = isoPlayer:getInventory()
 
     for i=1,3 do
         local r = ZombRand(7);
@@ -186,9 +192,10 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsTires(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.Tailoring));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-    local inventory = player:getInventory()
+    local inventory = isoPlayer:getInventory()
 
     for i=1,3 do
         local r = ZombRand(6);
@@ -210,9 +217,10 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsLeathers(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.Tailoring));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-    local inventory = player:getInventory()
+    local inventory = isoPlayer:getInventory()
 
     for i=1,3 do
         local r = ZombRand(5);
@@ -232,9 +240,10 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsSoftTops(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.Tailoring));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-    local inventory = player:getInventory()
+    local inventory = isoPlayer:getInventory()
 
     for i=1,3 do
         local r = ZombRand(5);
@@ -254,9 +263,10 @@ end
 
  function Recipe.OnCreate.SalvageModuleReturnsMufflers(items, result, player)
 
-     local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.MetalWelding));
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
      local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-     local inventory = player:getInventory()
+     local inventory = isoPlayer:getInventory()
 
      for i=1,3 do
          local r = ZombRand(6);

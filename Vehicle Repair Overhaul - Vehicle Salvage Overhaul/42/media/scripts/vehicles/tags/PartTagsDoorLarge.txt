@@ -1,0 +1,252 @@
+module Base
+{
+	item FrontM113Door8
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item RearM113Door8
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item RearV100Door2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontLeftV100Door1
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontLeftV100Door2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontLeftV100Door3
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontRightV100Door1
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontRightV100Door2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontRightV100Door3
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontLeftV100Door8
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontRightV100Door8
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item ECTO1CarFrontDoorArmor1_Item
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item ECTO1CarRearDoorArmor1_Item
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M998CarFrontDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M998CarRearDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item P19ACarFrontDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item P19ARoofHatch2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M12LeftDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M12RightDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item SemiTruckArmorFront_Item2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item SemiTruckArmorRear_Item2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item SemiTruckArmorDoor_Item2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontM113Door1
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontM113Door2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FrontM113Door3
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item RearM113Door1
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item RearM113Door2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item RearM113Door3
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item XM93FrontDoor
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item XM93TopHatch
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M151A2LeftDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M151A2RightDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M998BackCover1_Item
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M998BackCover2_Item
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item IFAVSideCovers2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M35A2Extra2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M35A2Door2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M923Door2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item FireCoachFrontDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item Int4700FrontDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item Int4700RearDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item U1550LDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item 97BushDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item 97BushHatch2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M911CarFrontDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item 90pierceArrowFrontDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item 90pierceArrowRearDoor2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item HMMWVHardDoorSC2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M1025SlantDoorSC2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+
+	item M1025SlantBaseSC2
+	{
+		Tags = VRO.SalvageDoorLarge,
+	}
+}

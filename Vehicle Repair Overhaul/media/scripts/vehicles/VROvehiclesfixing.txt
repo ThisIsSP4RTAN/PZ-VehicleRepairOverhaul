@@ -457,7 +457,7 @@ module Vehicle Repairs
 
 	fixing Fix Military Tire
 	{
-	   Require :V100Tire1;V100Tire2;V100Tire3;V100Tires2;V100Axle2;V100AxleSmall2;V101Tire2;V102Tire2;V103Tire2;V103Axle2;M113Tire8;ECTO1tire1_Item;M12Tire2;BRDM2Tire;M923Axle2;DoubleOldTire2;DoubleNormalTire2;DoubleModernTire2;AxleOldTire2;AxleNormalTire2;AxleModernTire2;U1550LWheel2;M12CTire2;BushmasterTire;49powerWagonApocalypseTire;90pierceArrowTire2;90pierceArrowDoubleTires2,
+	   Require : V100Tire1;V100Tire2;V100Tire3;V100Tires2;V100Axle2;V100AxleSmall2;V101Tire2;V102Tire2;V103Tire2;V103Axle2;M113Tire8;ECTO1tire1_Item;M12Tire2;BRDM2Tire;M923Axle2;DoubleOldTire2;DoubleNormalTire2;DoubleModernTire2;AxleOldTire2;AxleNormalTire2;AxleModernTire2;U1550LWheel2;M12CTire2;BushmasterTire;49powerWagonApocalypseTire;90pierceArrowTire2;90pierceArrowDoubleTires2,
 	   ConditionModifier : 0.5,
 
 	   Fixer : Glue=5;Tailoring=1;Mechanics=3,

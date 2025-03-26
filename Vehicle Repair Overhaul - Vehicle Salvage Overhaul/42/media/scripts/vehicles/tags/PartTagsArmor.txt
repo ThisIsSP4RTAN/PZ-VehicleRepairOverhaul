@@ -1,0 +1,1422 @@
+module Base
+{
+	item EngineM113Door8
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item EngineV100Door1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item EngineV100Door2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item EngineV100Door3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item EngineV100Door8
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item V100EngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M998EngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M12EngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item EngineM113Door1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item EngineM113Door2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item EngineM113Door3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M151A2EngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M35A2EngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M923EngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M923HardCover1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item Int4700Hood2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item P19AEngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item U1550LHood2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 97BushEngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M911EngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90pierceArrowEngineDoor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item HMMWVHoodSC2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93chevySuburbanFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93chevySuburbanRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93chevySuburbanBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93chevySuburbanWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93chevySuburbanWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 88toyotaHiluxWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 88toyotaHiluxFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 88toyotaHiluxBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 88toyotaHiluxWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 86chevyCUCVFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 86chevyCUCVBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 86chevyCUCVWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 86chevyCUCVWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 86chevyM1010WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 84jeepXJFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 84jeepXJRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 84jeepXJBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 84jeepXJWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 84jeepXJWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 76chevyKseriesFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 76chevyKseriesWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 82porsche911FrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 82porsche911RearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 82porsche911WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 82porsche911WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 85gmBbodyWindshieldArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 85gmBbodyFrontWindowArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 85gmBbodyRearWindowArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 85gmBbodyWindshieldRearArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 91fordLTDWagonBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 91fordLTDWagonWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87buickRegalWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87buickRegalFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87buickRegalRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87buickRegalWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 81deloreanDMC12WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 81deloreanDMC12FrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 81deloreanDMC12RearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 81deloreanDMC12RearCover
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89volvo240WindshieldArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89volvo240FrontWindowArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89volvo240RearWindowArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89volvo245WagonBackWindowArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89volvo244SedanBackWindowArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89volvo240WindshieldRearArmorM
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89volvo240Louver1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 66pontiacLeMansWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 66pontiacLeMansFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 66pontiacLeMansWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87chevySuburbanFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87chevySuburbanRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87chevySuburbanBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87chevySuburbanWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87chevySuburbanWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item PotomacFrontArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item PotomacFrontLeftWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item PotomacFrontRightWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item PotomacRearLeftWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item PotomacRearRightWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item PotomacWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item PotomacWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item DeathMustangRearWindshield3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item DeathMustangWindshield3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item DeathMustangHood3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item DeathMustangFrontWindow3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item DeathMustangRearWindow3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item DeathMustangDoor3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M911CarFrontDoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M911WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M911WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ShubertSedanFrontArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ShubertSedanFrontLeftWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ShubertSedanFrontRightWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ShubertSedanRearLeftWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ShubertSedanRearRightWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ShubertSedanWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ShubertSedanWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item R32WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item R32WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item R32RearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ECTO1WindshieldArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ECTO1WindshieldRearArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATA_Bus_Protection_windows_left_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATA_Bus_Protection_windows_right_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATA_Bus_Protection_windows_front_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATA_Bus_Protection_door_rear_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATA_Bus_Protection_door_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M151A2WindshieldArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M151A2CabArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M151A2BarrierLeft1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M151A2BarrierRight1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M998CarFrontDoorArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M998CarRearDoorArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M998WindshieldArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M998WindshieldArmor2_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item TankGasTank1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item TankGasTank2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item TankGasTank3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M35A2WindshieldArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M35A2DoorArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item W460CarFrontDoorArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item W460CarRearDoorArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item W460WindshieldArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item W460WindshieldRearArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item W460WindowArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item SCInteriorArmory
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M923WindshieldArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M923DoorArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M923GuntruckArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item FJ75WindshieldArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item FJ75DoorArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item P19ACarFrontDoorArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item P19AWindshieldArmor1_Item
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item U1550LInteriorArmoring2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item U1550LWindshieldBars2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item U1550LWindowArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item R32BumperA
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item R32BumperRearA
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item R32SideskirtsA
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item R32DoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATAMustangProtectionWindowLeftItem
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATAMustangProtectionWindowRightItem
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATAMustangProtectionWindowLeftItem
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATAMustangProtectionWindowRightItem
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATAMustangProtectionWindowFrontItem
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATAMustangProtectionWindowRearItem
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ATAMustangProtectionWindowRearItem
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item McLarenF1WindowArmor3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item E150WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item E150WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item E150DoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item DG70WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item DG70WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item DG70DoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 80sPickupWindowFrontArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 80sPickupWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 80sPickupWindowRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item FireCoachWindshieldArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item FireCoachWindowArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item FireCoachDoorArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item FordMustangDoorArmorSC3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item FordMustangWindshieldArmorSC3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item FordMustangWindowArmorSC3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item BallisticGlassWindshieldSC2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item BallisticGlassWindowSC2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item JeepCherokeeDoorArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item JeepCherokeeWindshieldArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item JeepCherokeeWindowArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M35WindowArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M35DoorArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item M35WindshieldArmor2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 97BushWindshieldRear2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 97BushWindshield2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 49powerWagonFrontDoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 49powerWagonRearDoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 49powerWagonWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 49powerWagonWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CUDAWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CUDAWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CUDADoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item MH_MkII_railgun1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item MH_MkII_railgun2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item MH_MkII_railgun3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item MH_MkII_railgunshelf1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item MH_MkII_railgunshelf2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item MH_MkII_railgunshelf3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89trooperFrontDoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89trooperRearDoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89trooperWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89trooperWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89trooperBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93townCarFrontDoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93townCarRearDoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93townCarWindshieldArmorA
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93townCarWindshieldArmorB
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93townCarWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93townCarMiddleWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 69miniFrontDoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 69miniRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 69miniWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 69miniWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90pierceArrowSideWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90pierceArrowWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90pierceArrowWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CytAstra89WindowArmor1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CytAstra89WindshieldBars1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CytAstra89DoorArmor1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CytAstra89WindowBackArmor1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CytAstra89RearWindArmor1
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90fordF350ReinforcedBumperFront
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90fordF350WindowFrontArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90fordF350WindowRearRightArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90fordF350WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90fordF350WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item fordCVPIWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item fordCVPIFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item fordCVPIRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item fordCVPIWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CytMercEvoWindowArmor3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CytMercEvoWindowBackArmor3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CytMercEvoRearWindArmor3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item CytMercEvoWindshieldBars3
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item fordCVPIWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item fordCVPIFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item fordCVPIRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item fordCVPIWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 91rangeFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 91rangeRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 91rangeWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 91rangeWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item ShermanTurret2
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 69camaroWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 69camaroWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 69camaroWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93mustangSSPWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93mustangSSPFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93mustangSSPRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93mustangSSPWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 63beetleFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 63beetleRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 63beetleWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 63beetleWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 67gt500WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 67gt500WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 67gt500WindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89dodgeCaravanFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89dodgeCaravanRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89dodgeCaravanBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89dodgeCaravanWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 89dodgeCaravanWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 63Type2VanFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 63Type2VanRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 63Type2VanDoubleRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 63Type2VanWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 63Type2VanWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87toyotaMR2WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87toyotaMR2WindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87toyotaMR2WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordF350FrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordF350RearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordF350WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordF350utilityWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90bmwE30WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90bmwE30FrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90bmwE30CabrioWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90bmwE30SedanRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90bmwE30TouringRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90bmwE30TouringBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 90bmwE30WindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87fordB700SideArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87fordB700SideArmorPrison
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87fordB700DoubleDoorArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87fordB700WindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87fordB700LargeSideArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87fordB700LargeSideArmorPrison
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 87fordB700RearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordTaurusWindshieldArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordTaurusFrontWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordTaurusRearWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordTaurusWagonBackWindowArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordTaurusSedanWindshieldRearArmor
+	{
+		Tags = VRO.SalvageArmor,
+	}
+
+	item 93fordTaurusWagonWindshieldRearArmor,
+	{
+		Tags = VRO.SalvageArmor,
+	}
+}

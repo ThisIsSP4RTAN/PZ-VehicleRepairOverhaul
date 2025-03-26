@@ -1,0 +1,42 @@
+module Base
+{
+    item 82JeepJ10DorothyAnemometer
+    {
+        Tags = VRO.SalvageMiscElectrics,
+    }
+	
+    item MH_MkII_batterypack1
+    {
+        Tags = VRO.SalvageMiscElectrics,
+    }
+	
+    item MH_MkII_batterypack2
+    {
+        Tags = VRO.SalvageMiscElectrics,
+    }
+	
+    item MH_MkII_batterypack3
+    {
+        Tags = VRO.SalvageMiscElectrics,
+    }
+	
+    item BigBullHorns
+    {
+        Tags = VRO.SalvageMiscElectrics,
+    }
+	
+    item 93fordF350RoofLights2
+    {
+        Tags = VRO.SalvageMiscElectrics,
+    }
+	
+    item 87toyotaMR2PopupLights3
+    {
+        Tags = VRO.SalvageMiscElectrics,
+    }
+	
+    item 87chevySuburbanRoofLights2
+    {
+        Tags = VRO.SalvageMiscElectrics,
+    }
+}

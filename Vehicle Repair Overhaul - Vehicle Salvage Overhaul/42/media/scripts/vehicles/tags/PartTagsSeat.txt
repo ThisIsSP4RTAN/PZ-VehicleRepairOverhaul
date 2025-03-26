@@ -1,0 +1,1037 @@
+module Base
+{
+	item NormalCarSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item BigCarSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item SportCarSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item NormalCarSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item BigCarSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item SportCarSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item NormalCarSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item BigCarSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item SportCarSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item NormalCarSeat8
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item BigCarSeat8
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item SportCarSeat8
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CycleSeat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CycleSeatSidecar
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ECTO1CarSeatfl2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ECTO1CarSeatfr2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ECTO1CarSeatrl2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ECTO1CarSeatrr2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M998CarSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M12CarSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ATAMotoBMWSeat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ATAMotoBMWSeatCustom
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ATAMotoHarleySeat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ATAMotoQuadSeat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item XM93Seat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M151A2CarSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M151A2CarSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item TheTigerSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item TheTigerSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item TheTigerSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M35A2CarSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item W460CarSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item W460CarSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M923RearSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M923FrontSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FireCoachSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item KZ1Kseat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item Int4700Seat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item P19ACarSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item U1550LSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M12CCarSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item R32FrontSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item R32RearSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item MH_MkIISeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item MH_MkIISeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item MH_MkIISeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M35Seat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M35RearSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item E150CarSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item DodgeFrontSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item DodgeRearSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item VN125seat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item fhqFusFleaSupSeat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item NivaFrontSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 80sPickupSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 80sPickupSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CadillacFuneralCoachFrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CadillacFuneralCoachRearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CadillacFleetwoodFrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CadillacFleetwoodRearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyBlazerFrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyCamaroFrontSeatSC3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyCamaroRearSeatSC3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyCapriceFrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyCapriceRearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyG30FrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyP30FrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyCavalierFrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyCavalierRearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FireCoachSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordBroncoFrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordBroncoRearSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordCrownVictoriaFrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordCrownVictoriaRearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordExplorerFrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordExplorerRearSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordF150FrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordF700FrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordMustangFrontSeatSC3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordMustangRearSeatSC3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item HondaAccordFrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item HondaAccordRearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item JeepCherokeeFrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item JeepCherokeeRearSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item JeepCJ7FrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item JeepCJ7RearSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M35Seat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item M35RearSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item MazdaB2000FrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item Mercedes280FrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item Mercedes280RearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item PlymouthVoyagerFrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item PlymouthVoyagerRearSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ToyotaCamryFrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ToyotaCamryRearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item VWRabbitFrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item VWRabbitRearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item Shubert38FrontSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 97BushmasterSeat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 97BushmasterGunnerSeat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 49powerWagonSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 49powerWagonTruckBedSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item BuggyFrontSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyC70FrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordTaurusFrontSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FordTaurusRearSeatSC1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item GeoTrackerFrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item GeoTrackerRearSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item FuturaFrontSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CUDAFrontSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CUDARearSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item SS100seat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ZNL50seat
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item Seat0
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item Seat1front
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item Seat1rear
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item Seat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item DeathMustangSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 89trooperSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 89trooperSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93townCarSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93townCarSeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 69miniSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 69miniSeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 69miniMrBChair1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CivicFrontSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 90pierceArrowSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CytAstra89Seat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 90fordF350SeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 90fordF350SeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 90fordF350ambulanceStretcher2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item GrummanLLVFrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item GrummanLLVRearSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item MackDM800FrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item ChevyG30FrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 92fordCVPISeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 92fordCVPISeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93fordCF8000Seat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item CytMercEvoSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 99fordCVPISeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 99fordCVPISeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item HMMWVSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item DodgePowerWagonFrontSeatSC2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 91rangeSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 91rangeSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1992fiorinoSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1990spazio147SeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1990spazio147SeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 69camaroFrontSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 69camaroRearSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93mustangSSPSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93mustangSSPSeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 63beetleFrontSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 63beetleRearSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1990traficSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 91geoMetroSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 91geoMetroSeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 67gt500FrontSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 67gt500RearSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 89dodgeCaravanSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 63beetleFrontSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 63beetleRearSeat1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 87toyotaMR2Seat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93fordF350SeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93fordF350SeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1988fuegoSeatFront3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1988fuegoSeatRear3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1970fiat600SeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1970fiat600SeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 90bmwE30SeatFront3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 90bmwE30SeatRear3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 87fordB700Seat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 87fordB700RearSeat2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93fordTaurusSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93fordTaurusSeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1979rastrojeroSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1978renault12SeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 1978renault12SeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93chevySuburbanSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 93chevySuburbanSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 88toyotaHiluxSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 88toyotaHiluxSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 86chevyCUCVSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 86chevyCUCVSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 84jeepXJSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 84jeepXJSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 76chevyKseriesSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 82porsche911FrontSeat3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 85chevyCapriceSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 85chevyCapriceSeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 85pontiacParisienneSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 85pontiacParisienneSeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 85buickLeSabreSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 85buickLeSabreSeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 85oldsmobileDelta88SeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 85oldsmobileDelta88SeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 91fordLTDSeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 91fordLTDSeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 87buickRegalSeatFront3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 87buickRegalSeatRear3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 81deloreanDMC12SeatFront3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 89volvo240SeatFront1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 89volvo240SeatRear1
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 66pontiacLeMansSeatFront3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 66pontiacLeMansSeatRear3
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 87chevySuburbanSeatFront2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+
+	item 87chevySuburbanSeatRear2
+	{
+		Tags = VRO.SalvageSeat,
+	}
+}

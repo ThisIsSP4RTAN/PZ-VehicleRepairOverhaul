@@ -1,0 +1,202 @@
+module Base
+{
+	item OldScooterMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item NormalScooterMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ModernScooterMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item OldCycleMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item NormalCycleMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ModernCycleMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item OldCartMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item NormalCartMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ModernCartMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ATAMotoBMWCustomMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ATAMotoBMWClassicMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ATAMotoHarleyMuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item KZ1Kmuffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item VN125muffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item SS100muffler3
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ZNL50muffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item OldCarMuffler1
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item NormalCarMuffler1
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ModernCarMuffler1
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item OldCarMuffler2
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item NormalCarMuffler2
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ModernCarMuffler2
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item OldCarMuffler3
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item NormalCarMuffler3
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ModernCarMuffler3
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item OldCarMuffler8
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item NormalCarMuffler8
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item ModernCarMuffler8
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item M12Muffler2
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item M998Muffler1_Item
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item M998Muffler2_Item
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item M35A2Muffler1_Item
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item M923Muffler1_Item
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item U1550LMuffler2
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item R32Muffler0
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item R32Muffler1
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item M911Muffler
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item CytAstra89Muffler1
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item 93fordCF8000Muffler0
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+
+	item CytMercEvoMuffler3
+	{
+		Tags = VRO.SalvageMuffler,
+	}
+}

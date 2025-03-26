@@ -1,0 +1,82 @@
+module Base
+{
+    item NormalGasTank1
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item BigGasTank1
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item NormalGasTank2
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item BigGasTank2
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item NormalGasTank3
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item BigGasTank3
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item NormalGasTank8
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item BigGasTank8
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item U1550LGasTank2
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item MH_MkIIgastank1
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item MH_MkIIgastank2
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item MH_MkIIgastank3
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item M35FuelTank2
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item NivaGasTank1
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item 97BushGasTank2
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+	
+    item ShermanGasTank2
+    {
+        Tags = VRO.SalvageGasTank,
+    }
+}

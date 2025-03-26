@@ -1,0 +1,57 @@
+module Base
+{
+    item SmallGasTank1
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item SmallGasTank2
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item SmallGasTank3
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item SmallGasTank8
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item SmallCycleGasTank
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item CycleGasTank
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item ATAMotoBMWGasTank
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item ATAMotoHarleyGasTank
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item KZ1KgasTank
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item SS100gasTank3
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+	
+    item ZNL50gasTank
+    {
+        Tags = VRO.SalvageGasTankSmall,
+    }
+}

@@ -70,11 +70,6 @@ module Base
         Tags = VRO.SalvageDoor,
     }
 
-    item V100ToolboxLid2
-    {
-        Tags = VRO.SalvageDoor,
-    }
-
     item IFAVDoor2
     {
         Tags = VRO.SalvageDoor,
