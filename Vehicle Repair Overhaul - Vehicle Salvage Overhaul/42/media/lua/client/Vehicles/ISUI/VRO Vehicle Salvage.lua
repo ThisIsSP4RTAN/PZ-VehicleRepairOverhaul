@@ -82,14 +82,14 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
         toolTip.description = getText("Tooltip_SalvageVehicle") .. " <LINE> <LINE> ";
 
         if playerObj:getPerkLevel(Perks.MetalWelding) >= MWSkill then
-            toolTip.description = toolTip.description .. " <LINE> <RGB:1,1,1> " .. getText("IGUI_perks_MetalWelding") .. " " .. MWSkillDisplay .. "/" .. 4;
+            toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. getText("IGUI_perks_MetalWelding") .. " " .. MWSkillDisplay .. "/" .. 4;
         else
             toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. getText("IGUI_perks_MetalWelding") .. " " .. MWSkillDisplay .. "/" .. 4;
             option.notAvailable = true;
         end
 
         if playerObj:getPerkLevel(Perks.Mechanics) >= MecSkill then
-            toolTip.description = toolTip.description .. " <LINE> <RGB:1,1,1> " .. getText("IGUI_perks_Mechanics") .. " " .. MecSkillDisplay .. "/" .. 3;
+            toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. getText("IGUI_perks_Mechanics") .. " " .. MecSkillDisplay .. "/" .. 3;
         else
             toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. getText("IGUI_perks_Mechanics") .. " " .. MecSkillDisplay .. "/" .. 3;
             option.notAvailable = true;
@@ -101,9 +101,9 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
 		local displayName = weldingmaskItem and weldingmaskItem:getDisplayName() or "Welding Mask"
 
     if hasMask then
-            toolTip.description = toolTip.description .. " <LINE> <RGB:1,1,1> " .. displayName .. " ";
+            toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. displayName .. " 1/1";
         else
-            toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. displayName .. " ";
+            toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. displayName .. " 0/1";
             option.notAvailable = true;
         end
 
@@ -111,7 +111,7 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
         if blowTorch then
             local blowTorchUseLeft = blowTorch:getCurrentUses();
             if blowTorchUseLeft >= 10 then
-                toolTip.description = toolTip.description .. " <LINE> <RGB:1,1,1> " .. getItemNameFromFullType("Base.BlowTorch") .. " " .. getText("ContextMenu_Uses") .. " " .. blowTorchUseLeft .. "/" .. 10;
+                toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. getItemNameFromFullType("Base.BlowTorch") .. " " .. getText("ContextMenu_Uses") .. " " .. blowTorchUseLeft .. "/" .. 10;
             else
                 toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. getItemNameFromFullType("Base.BlowTorch") .. " " .. getText("ContextMenu_Uses") .. " " .. blowTorchUseLeft .. "/" .. 10;
                 option.notAvailable = true;

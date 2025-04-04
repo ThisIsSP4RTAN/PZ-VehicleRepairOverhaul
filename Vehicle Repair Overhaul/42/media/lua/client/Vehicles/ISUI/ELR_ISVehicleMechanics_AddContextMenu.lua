@@ -1,7 +1,11 @@
+-- Mod options table (replace this with actual settings loader if needed)
+local ELR = require("elr_options")
+
 require "Vehicles/ISUI/ISVehicleMechanics"
 
 -- Full override of ISVehicleMechanics:doPartContextMenu with vanilla Lightbar repair block removed
 local _Original_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
+local old_ISVehicleMechanics_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
 
 function ISVehicleMechanics:doPartContextMenu(part, x, y, context)
     if not self.context then
@@ -30,6 +34,11 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y, context)
 	-- If the game is paused we should skip creating our context menu
 	if UIManager.getSpeedControls():getCurrentGameSpeed() == 0 then return end
 
+	if ELR.Options.HideVanillaRepair then
+		if old_ISVehicleMechanics_doPartContextMenu then
+			old_ISVehicleMechanics_doPartContextMenu(self, part, x, y)
+		end
+	end
 	-- It's most likely that the old version of this function has already created an instance of the context menu, but for robustness 
 	--   we should check to ensure it exists, and if it doesn't we create a new one.
 	local playerObj = getSpecificPlayer(self.playerNum)
@@ -126,15 +135,15 @@ function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, 
 			rgb = " <RGB:1,0,0>"
 		end
 		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Electricity") .. " " .. self.chr:getPerkLevel(Perks.Electricity) .. "/" .. requiredSkillLevel .. " <LINE>"
-		rgb = " <RGB:1,1,1>"
+		rgb = " <RGB:0,1,0>"
 
         local scriptItem = ScriptManager.instance:getItem("Base.Screwdriver")
         local screwdriverItem = self.chr:getInventory():getFirstTagRecurse("Screwdriver")
         local displayName = screwdriverItem and screwdriverItem:getDisplayName() or "Screwdriver"
 		if not self.chr:getInventory():containsTag("Screwdriver") then
-			tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " <LINE>"
+			tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/1 <LINE>"
 		else
-			tooltip.description = tooltip.description .. " <RGB:1,1,1>" .. displayName .. " <LINE>"
+			tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " 1/1 <LINE>"
 		end
 
 		for neededPart,numberNeeded in pairs(requiredParts) do
@@ -146,7 +155,7 @@ function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, 
 				if numberOfPart < numberNeeded then
 					tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
 				else
-					tooltip.description = tooltip.description .. " <RGB:1,1,1>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
+					tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
 				end
 			end
 		end
@@ -154,7 +163,7 @@ function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, 
 		if option.notAvailable then
 			tooltip.description = tooltip.description .. " <LINE><RGB:1,0,0>" .. getText("Tooltip_ELR_NewCondition") .. ": " .. targetCondition .. "%"
 		else
-			tooltip.description = tooltip.description .. " <LINE><RGB:1,1,1>" .. getText("Tooltip_ELR_NewCondition") .. ": " .. targetCondition .. "%"
+			tooltip.description = tooltip.description .. " <LINE><RGB:0,1,0>" .. getText("Tooltip_ELR_NewCondition") .. ": " .. targetCondition .. "%"
 		end
 	end
 end

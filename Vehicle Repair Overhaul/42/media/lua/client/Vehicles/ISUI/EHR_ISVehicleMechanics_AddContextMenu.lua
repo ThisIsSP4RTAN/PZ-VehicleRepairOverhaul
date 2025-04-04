@@ -134,20 +134,20 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 
 	-- Repair heater tooltip
 	if lua == "EHR_repairheater" then
-		local rgb = " <RGB:1,1,1>"
+		local rgb = " <RGB:0,1,0>"
 		local addedTxt = ""
 		
 		if self.chr:getPerkLevel(Perks.Mechanics) < requiredMechanicsSkillLevel then
 			rgb = " <RGB:1,0,0>"
 		end
 		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Mechanics") .. " " .. self.chr:getPerkLevel(Perks.Mechanics) .. "/" .. requiredMechanicsSkillLevel .. " <LINE>"
-		rgb = " <RGB:1,1,1>"
+		rgb = " <RGB:0,1,0>"
 
 		if self.chr:getPerkLevel(Perks.MetalWelding) < requiredMetalworkingSkillLevel then
 			rgb = " <RGB:1,0,0>"
 		end
 		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_MetalWelding") .. " " .. self.chr:getPerkLevel(Perks.MetalWelding) .. "/" .. requiredMetalworkingSkillLevel .. " <LINE>"
-		rgb = " <RGB:1,1,1>"
+		rgb = " <RGB:0,1,0>"
 		
 		for neededPart,numberNeeded in pairs(requiredParts) do
 			local scriptItem = ScriptManager.instance:getItem(neededPart)
@@ -158,7 +158,7 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 				if numberOfPart < numberNeeded then
 					tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
 				else
-					tooltip.description = tooltip.description .. " <RGB:1,1,1>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
+					tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
 				end
 			end
 		end
@@ -168,16 +168,16 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 	local displayName = weldingmaskItem and weldingmaskItem:getDisplayName() or "Welding Mask"
 	
 	if not self.chr:getInventory():containsTag("WeldingMask") then
-		tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " <LINE>"
+		tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/0 <LINE>"
 	else
-		tooltip.description = tooltip.description .. " <RGB:1,1,1>" .. displayName .. " <LINE>"
+		tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " 1/1 <LINE>"
 	end
 	
 		local scriptItem = ScriptManager.instance:getItem("Base.BlowTorch")
         local displayName = scriptItem and getItemDisplayName("BlowTorch")
 		
 		if blowtorch == nil then
-			tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/10 <LINE>"
+			tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " 0/10 <LINE>"
 		else
 			local blowtorchUseLeft = blowtorch:getCurrentUses();
             if blowtorchUseLeft >= 10 then
@@ -185,14 +185,14 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 			if blowtorchUseLeft < 10 then
 				tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " " .. blowtorchUseLeft .. "/10 <LINE>"
 			else
-				tooltip.description = tooltip.description .. " <RGB:1,1,1>" .. displayName .. " " .. blowtorchUseLeft .. "/10 <LINE>"
+				tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " " .. blowtorchUseLeft .. "/10 <LINE>"
 			end
 		end
 		
 		if option.notAvailable then
 			tooltip.description = tooltip.description .. " <LINE><RGB:1,0,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
 		else
-			tooltip.description = tooltip.description .. " <LINE><RGB:1,1,1>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
+			tooltip.description = tooltip.description .. " <LINE><RGB:0,1,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
 		end
 	end
 end
