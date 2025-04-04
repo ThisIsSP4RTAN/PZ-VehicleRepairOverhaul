@@ -9,10 +9,6 @@ require "luautils"
 
 local enableSalvage = ISVehicleMenu.FillMenuOutsideVehicle
 
-local function predicateWeldingMask(item)
-    return item:hasTag("WeldingMask") or item:getType() == "WeldingMask"
-end
-
 local function predicateBlowTorch(item)
     return (item ~= nil) and
             (item:hasTag("BlowTorch") or item:getType() == "BlowTorch") and
@@ -48,7 +44,7 @@ end
 function ISVehicleMenu.onVehicleSalvage(player, vehicle)
     if luautils.walkAdj(player, vehicle:getSquare()) then
         ISWorldObjectContextMenu.equip(player, player:getPrimaryHandItem(), predicateBlowTorch, true);
-        local mask = player:getInventory():getFirstEvalRecurse(predicateWeldingMask);
+        local mask = player:getInventory():getFirstTagRecurse("WeldingMask");
         if mask then
             ISInventoryPaneContextMenu.wearItem(mask, player:getPlayerNum());
         end
@@ -99,10 +95,15 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
             option.notAvailable = true;
         end
 
-        if playerObj:getInventory():containsEvalRecurse(predicateWeldingMask) then
-            toolTip.description = toolTip.description .. " <LINE> <RGB:1,1,1> " .. getItemNameFromFullType("Base.WeldingMask") .. " 1/1";
+        local inventory = playerObj:getInventory()
+        local weldingmaskItem = inventory:getFirstTagRecurse("WeldingMask")
+        local hasMask = weldingmaskItem ~= nil
+		local displayName = weldingmaskItem and weldingmaskItem:getDisplayName() or "Welding Mask"
+
+    if hasMask then
+            toolTip.description = toolTip.description .. " <LINE> <RGB:1,1,1> " .. displayName .. " ";
         else
-            toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. getItemNameFromFullType("Base.WeldingMask") .. " 0/1";
+            toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. displayName .. " ";
             option.notAvailable = true;
         end
 
