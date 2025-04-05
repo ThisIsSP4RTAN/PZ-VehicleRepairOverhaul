@@ -80,7 +80,7 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
         toolTip:setVisible(false);
         option.toolTip = toolTip;
         toolTip:setName(getText("ContextMenu_SalvageVehicle"));
-        toolTip.description = getText("Tooltip_SalvageVehicle") .. " <LINE> <LINE> ";
+        toolTip.description = getText("Tooltip_SalvageVehicle") .. " <LINE> <LINE> " .. getText("Tooltip_craft_Needs") .. " : <LINE> ";
 
         if playerObj:getPerkLevel(Perks.MetalWelding) >= MWSkill then
             toolTip.description = toolTip.description .. " <LINE> <RGB:1,1,1> " .. getText("IGUI_perks_MetalWelding") .. " " .. MWSkillDisplay .. "/" .. 4;
