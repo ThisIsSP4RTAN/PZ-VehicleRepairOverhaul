@@ -1,3 +1,3 @@
 Tooltip_PTBR = {
-	Tooltip_SalvageVehicle = "Desmanchar veÌculos com uma M·scara de Solda e um MaÁarico ir· removÍ-los do seu caminho. O Desmanche de veÌculos leva mais tempo e usa mais g·s propano do que um VeÌculo Acidentado, mas retorna-r· mais items e mais XP. <LINE> NÌveis mais altos de Metalurgia retornam mais materiais. <LINE> *Dica: Remova as partes do veÌculo e esvazie sua mala antes.",
+	Tooltip_SalvageVehicle = "Desmanchar ve√≠culos com uma M√°scara de Solda e um Ma√ßarico ir√° remov√™-los do seu caminho. O Desmanche de ve√≠culos leva mais tempo e usa mais g√°s propano do que um Ve√≠culo Acidentado, mas retorna-r√° mais items e mais XP. <LINE> N√≠veis mais altos de Metalurgia retornam mais materiais. <LINE> *Dica: Remova as partes do ve√≠culo e esvazie sua mala antes.",
 }

@@ -1,5 +1,5 @@
 Tooltip_TR = {
-    Tooltip_FixAFlat = "Araç lastiklerini onarin.",
+    Tooltip_FixAFlat = "AraÃ§ lastiklerini onarin.",
 	Tooltip_EHR_NewCondition = "Yeni Durum",
 	Tooltip_ELR_NewCondition = "Yeni Durum",
 }

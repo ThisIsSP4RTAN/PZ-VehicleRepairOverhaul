@@ -1,5 +1,5 @@
 Tooltip_PTBR = {
-	Tooltip_FixAFlat = "Reparo de pneus de veículos.",
-	Tooltip_EHR_NewCondition = "Nova Condição",
-	Tooltip_ELR_NewCondition = "Nova Condição",
+	Tooltip_FixAFlat = "Reparo de pneus de veÃ­culos.",
+	Tooltip_EHR_NewCondition = "Nova CondiÃ§Ã£o",
+	Tooltip_ELR_NewCondition = "Nova CondiÃ§Ã£o",
 }

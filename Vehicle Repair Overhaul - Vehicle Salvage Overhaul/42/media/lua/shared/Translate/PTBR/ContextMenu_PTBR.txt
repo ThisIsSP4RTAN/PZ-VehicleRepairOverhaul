@@ -1,3 +1,3 @@
 ContextMenu_PTBR = {
-	ContextMenu_SalvageVehicle = "Desmanchar Veículo",
+	ContextMenu_SalvageVehicle = "Desmanchar VeÃ­culo",
 }

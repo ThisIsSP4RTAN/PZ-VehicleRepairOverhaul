@@ -1,3 +1,3 @@
 Tooltip_ES = {
-	Tooltip_SalvageVehicle = "El rescate de vehÌculos con una m·scara de soldadura y un soplete de propano los eliminar· de tu camino. El salvamento de vehÌculos tarda m·s en completarse y usa m·s propano que el desmantelamiento de vehÌculos, pero da objetos extra y m·s XP. <LINE> Las habilidades de metalisterÌa m·s altas recuperar·n m·s salvamento utilizable. <LINE> **Sugerencia quitar las partes del vehÌculo primero y vaciar el maletero.", 
+	Tooltip_SalvageVehicle = "El rescate de veh√≠culos con una m√°scara de soldadura y un soplete de propano los eliminar√° de tu camino. El salvamento de veh√≠culos tarda m√°s en completarse y usa m√°s propano que el desmantelamiento de veh√≠culos, pero da objetos extra y m√°s XP. <LINE> Las habilidades de metalister√≠a m√°s altas recuperar√°n m√°s salvamento utilizable. <LINE> **Sugerencia quitar las partes del veh√≠culo primero y vaciar el maletero.", 
 }
