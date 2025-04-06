@@ -129,7 +129,7 @@ function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, 
 
 	-- Repair lightbar tooltip
 	if lua == "ELR_repairlightbar" then
-		local rgb = " <RGB:1,1,1>"
+		local rgb = " <RGB:0,1,0>"
 
 		if self.chr:getPerkLevel(Perks.Electricity) < requiredSkillLevel then
 			rgb = " <RGB:1,0,0>"
