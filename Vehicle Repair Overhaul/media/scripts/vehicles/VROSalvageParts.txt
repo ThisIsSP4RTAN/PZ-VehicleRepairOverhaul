@@ -378,7 +378,7 @@ module Salvage Vehicle Parts
 
 /******************* Salvage SoftTops ************************/
 
-			recipe Salvage Vehicle SoftTops
+			recipe Salvage Vehicle Soft-tops
     {
 	   SkillRequired:MetalWelding=2,
 	   BlowTorch=3,
@@ -451,7 +451,7 @@ module Salvage Vehicle Parts
 
 /************************ Misc electrics ************************/
 
-	   recipe Salvage Vehicle Electrics
+	   recipe Salvage Vehicle Electronics
     {
        SkillRequired:MetalWelding=2,
 	   BlowTorch=2,

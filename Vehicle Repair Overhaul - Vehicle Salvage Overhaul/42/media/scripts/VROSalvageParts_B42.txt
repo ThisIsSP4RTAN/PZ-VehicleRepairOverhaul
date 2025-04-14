@@ -6,7 +6,7 @@ module Base
 /************************ Doors ************************/
 
 	craftRecipe Salvage Vehicle Doors
-    {
+	{
 		timedAction = Welding,
 		time = 1000,
 		Tags = InHandCraft;Welding,
@@ -24,11 +24,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
+
 /************************ Military or Large Doors ************************/
 
 	craftRecipe Salvage Military or Large Vehicle Doors
-    {
+	{
 		timedAction = Welding,
 		time = 1200,
 		Tags = InHandCraft;Welding,
@@ -46,12 +47,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Trunk Doors ************************/
 
 	craftRecipe Salvage Vehicle Trunk Doors
-    {
+	{
 		timedAction = Welding,
 		time = 1000,
 		Tags = InHandCraft;Welding,
@@ -69,12 +70,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Hoods ************************/
 
 	craftRecipe Salvage Vehicle Hoods
-    {
+	{
 		timedAction = Welding,
 		time = 1000,
 		Tags = InHandCraft;Welding,
@@ -92,12 +93,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Military or Large Hoods ************************/
 
-    craftRecipe Salvage Vehicle Armor
-    {
+	craftRecipe Salvage Military Hoods or Armor
+	{
 		timedAction = Welding,
 		time = 1200,
 		Tags = InHandCraft;Welding,
@@ -115,12 +116,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Gas Tank ************************/
 	
 	craftRecipe Salvage Vehicle Gas Tanks
-    {
+	{
 		timedAction = Welding,
 		time = 1000,
 		Tags = InHandCraft;Welding,
@@ -138,10 +139,10 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
-    craftRecipe Salvage Small Vehicle Gas Tanks
-    {
+	craftRecipe Salvage Small Vehicle Gas Tanks
+	{
 		timedAction = Welding,
 		time = 700,
 		Tags = InHandCraft;Welding,
@@ -159,12 +160,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Mufflers ************************/
 
 	craftRecipe Salvage Vehicle Mufflers
-    {
+	{
 		timedAction = Welding,
 		time = 1000,
 		Tags = InHandCraft;Welding,
@@ -182,12 +183,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 	
 /************************ Suspension ************************/
 
 	craftRecipe Salvage Vehicle Suspension
-    {
+	{
 		timedAction = Welding,
 		time = 1000,
 		Tags = InHandCraft;Welding,
@@ -205,12 +206,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 	
 /************************ Brakes ************************/
 
 	craftRecipe Salvage Vehicle Brakes
-    {
+	{
 		timedAction = Welding,
 		time = 600,
 		Tags = InHandCraft;Welding,
@@ -228,12 +229,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Seats ************************/
 
 	craftRecipe Salvage Vehicle Seats
-    {
+	{
 		timedAction = RipClothing,
 		time = 600,
 		Tags = InHandCraft,
@@ -250,12 +251,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Tires ************************/
 
-    craftRecipe Salvage Vehicle Tires
-    {
+	craftRecipe Salvage Vehicle Tires
+	{
 		timedAction = Welding,
 		time = 700,
 		Tags = InHandCraft;Welding,
@@ -273,12 +274,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Misc Salvage Small bar parts ************************/
 
 	craftRecipe Salvage Vehicle Bars
-    {
+	{
 		timedAction = Welding,
 		time = 700,
 		Tags = InHandCraft;Welding,
@@ -296,12 +297,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Salvage Fabrics/SaddleBags ************************/
 
-	craftRecipe Salvage Vehicle Saddlebags
-    {
+	craftRecipe Salvage Vehicle Saddlebags or Misc Fabrics
+	{
 		timedAction = RipClothing,
 		time = 600,
 		Tags = InHandCraft,
@@ -318,10 +319,10 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
-    craftRecipe Salvage Vehicle Saddlebags Hard
-    {
+	craftRecipe Salvage Hard Vehicle Saddlebags
+	{
 		timedAction = Welding,
 		time = 700,
 		Tags = InHandCraft;Welding,
@@ -339,12 +340,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /******************* Salvage SoftTops ************************/
 
-	craftRecipe Salvage Vehicle SoftTops
-    {
+	craftRecipe Salvage Vehicle Soft-tops
+	{
 		timedAction = RipClothing,
 		time = 800,
 		Tags = InHandCraft,
@@ -361,12 +362,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /******************* Salvage Vehicle Containers and Panels ************************/
 
-	craftRecipe Salvage Vehicle Panels
-    {
+	craftRecipe Salvage Misc Vehicle Panels
+	{
 		timedAction = Welding,
 		time = 800,
 		Tags = InHandCraft;Welding,
@@ -384,12 +385,12 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 /************************ Misc electrics ************************/
 
-	craftRecipe Salvage Vehicle Electrics
-    {
+	craftRecipe Salvage Vehicle Electronics
+	{
 		timedAction = Welding,
 		time = 500,
 		Tags = InHandCraft;Welding,
@@ -407,6 +408,6 @@ module Base
 		outputs
 		{
 		}
-    }
+	}
 
 }
