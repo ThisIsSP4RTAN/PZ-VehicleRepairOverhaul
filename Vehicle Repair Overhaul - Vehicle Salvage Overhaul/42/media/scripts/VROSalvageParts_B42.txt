@@ -246,7 +246,7 @@ module Base
 		inputs
 		{
 
-	       item 1 tags[Scissors;SharpKnife] mode:keep flags[IsNotDull;MayDegradeLight],
+	       item 1 tags[Scissors;SharpKnife] mode:keep flags[IsNotDull;Prop1;MayDegradeLight],
 		}
 		outputs
 		{
@@ -314,7 +314,7 @@ module Base
 		inputs
 		{
 
-	       item 1 tags[Scissors;SharpKnife] mode:keep flags[IsNotDull;MayDegradeLight],
+	       item 1 tags[Scissors;SharpKnife] mode:keep flags[IsNotDull;Prop1;MayDegradeLight],
 		}
 		outputs
 		{
@@ -357,7 +357,7 @@ module Base
 		inputs
 		{
 
-	       item 1 tags[Scissors;SharpKnife] mode:keep flags[IsNotDull;MayDegradeLight],
+	       item 1 tags[Scissors;SharpKnife] mode:keep flags[IsNotDull;Prop1;MayDegradeLight],
 		}
 		outputs
 		{
