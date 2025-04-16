@@ -1,19 +1,20 @@
 local function injectRecipeInputs(recipeName, itemList)
     local recipe = ScriptManager.instance:getCraftRecipe(recipeName)
     if not recipe then
-        print("[VRO] Recipe not found" .. recipeName)
+        print("[VRO] Recipe not found", recipeName)
         return
     end
 
     local validItems = {}
     local inputString
 
-    for _, itemType in ipairs(itemList) do
+    for i = 1, #itemList do
+        local itemType = itemList[i]
         if ScriptManager.instance:getItem(itemType) then
             table.insert(validItems, itemType)
             print("[VRO] Found item:", itemType)
         else
-            print("[VRO] Missing item (skipped): " .. itemType)
+            print("[VRO] Missing item (skipped):", itemType)
         end
     end
 
@@ -107,8 +108,6 @@ local function injectAllRecipeInputs()
     injectRecipeInputs("",
         {  }
     )
-
-    -- Need to add wood armor salvaging
 end
 
 Events.OnInitWorld.Add(injectAllRecipeInputs)
