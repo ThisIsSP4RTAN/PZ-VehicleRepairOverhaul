@@ -260,27 +260,48 @@ function Recipe.OnCreate.SalvageModuleReturnsSoftTops(items, result, player)
     end
 end
 
-
- function Recipe.OnCreate.SalvageModuleReturnsMufflers(items, result, player)
+function Recipe.OnCreate.SalvageModuleReturnsMufflers(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
-     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
-     local inventory = isoPlayer:getInventory()
+    local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
+    local inventory = isoPlayer:getInventory()
 
-     for i=1,3 do
-         local r = ZombRand(6);
-         local chance = ZombRand(1,100);
+    for i=1,3 do
+        local r = ZombRand(6);
+        local chance = ZombRand(1,100);
 
-         if r==1 and chance<success then
-             inventory:AddItem("Base.MetalPipe") end;
-         if r==2 and chance<success then
-             inventory:AddItem("Base.SmallSheetMetal") end;
-         if r==3 and chance<success then
-             inventory:AddItem("Base.Screws") end;
-         if r==4 and chance<success then
-             inventory:AddItem("Base.UnusableMetal") end;
-         if r==5 and chance<success then
-             inventory:AddItem("Base.ScrapMetal") end;
-     end
- end
+        if r==1 and chance<success then
+            inventory:AddItem("Base.MetalPipe") end;
+        if r==2 and chance<success then
+            inventory:AddItem("Base.SmallSheetMetal") end;
+        if r==3 and chance<success then
+            inventory:AddItem("Base.Screws") end;
+        if r==4 and chance<success then
+            inventory:AddItem("Base.UnusableMetal") end;
+        if r==5 and chance<success then
+            inventory:AddItem("Base.ScrapMetal") end;
+    end
+end
+
+function Recipe.OnCreate.SalvageModuleReturnsWooden(items, result, player)
+
+    local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
+    local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.Woodwork))
+    local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
+    local inventory = isoPlayer:getInventory()
+
+    for i=1,3 do
+        local r = ZombRand(5);
+        local chance = ZombRand(1,100);
+
+        if r==1 and chance<success then
+            inventory:AddItem("Base.Plank") end;
+        if r==2 and chance<success then
+            inventory:AddItem("Base.Nails") end;
+        if r==3 and chance<success then
+            inventory:AddItem("Base.Screws") end;
+        if r==4 and chance<success then
+            inventory:AddItem("Base.UnusableWood") end;
+    end
+end

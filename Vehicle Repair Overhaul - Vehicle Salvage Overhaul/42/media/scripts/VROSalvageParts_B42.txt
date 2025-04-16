@@ -95,9 +95,9 @@ module Base
 		}
 	}
 
-/************************ Military or Large Hoods ************************/
+/************************ Military or Large Hoods (Armor) ************************/
 
-	craftRecipe Salvage Military Hoods or Armor
+	craftRecipe Salvage Military Vehicle Hoods or Armor
 	{
 		timedAction = Welding,
 		time = 1200,
@@ -112,6 +112,25 @@ module Base
 
 	       item 5 [Base.BlowTorch],
 	       item 1 tags[WeldingMask] mode:keep,
+		}
+		outputs
+		{
+		}
+	}
+
+	craftRecipe Salvage Wooden Vehicle Parts
+	{
+		timedAction = SawLogs,
+		time = 700,
+		Tags = InHandCraft,
+		category = Salvage,
+		xpAward = Woodwork:5,
+		OnCreate = Recipe.OnCreate.SalvageModuleReturnsWooden,
+		
+		inputs
+		{
+
+			item 1 tags[Saw] mode:keep flags[MayDegradeLight;Prop1],
 		}
 		outputs
 		{
