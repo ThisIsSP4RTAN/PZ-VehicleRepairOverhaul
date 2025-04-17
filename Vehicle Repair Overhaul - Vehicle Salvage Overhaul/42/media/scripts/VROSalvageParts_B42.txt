@@ -74,7 +74,7 @@ module Base
 
 /************************ Hoods ************************/
 
-	craftRecipe Salvage Vehicle Hoods
+	craftRecipe Salvage Vehicle Hoods or Metal Covers
 	{
 		timedAction = Welding,
 		time = 1000,
@@ -385,7 +385,7 @@ module Base
 
 /******************* Salvage Vehicle Containers and Panels ************************/
 
-	craftRecipe Salvage Misc Vehicle Panels
+	craftRecipe Salvage Small Misc Vehicle Panels
 	{
 		timedAction = Welding,
 		time = 800,
