@@ -62,7 +62,7 @@ local function injectAllRecipeInputs()
     )
 -- Contains small, normal and military suspension
     injectRecipeInputs("Salvage Vehicle Suspension",
-        { "Base.NormalScooterSuspension", "Base.ModernScooterSuspension", "Base.NormalCycleSuspension", "Base.ModernCycleSuspension", "Base.NormalCartSuspension", "Base.ModernCartSuspension", "Base.NormalSuspension1", "Base.ModernSuspension1", "Base.NormalSuspension2", "Base.ModernSuspension2", "Base.NormalSuspension3", "Base.ModernSuspension3", "Base.NormalSuspension8", "Base.ModernSuspension8", "Base.NivaSuspension1", "Base.NormalM113Suspension8", "Base.ModernM113Suspension8", "Base.leafSuspension2", "Base.NormalM113Suspension1", "Base.ModernM113Suspension1", "Base.NormalM113Suspension2", "Base.ModernM113Suspension2", "Base.NormalM113Suspension3", "Base.ModernM113Suspension3" }
+        { "Base.NormalScooterSuspension", "Base.ModernScooterSuspension", "Base.NormalCycleSuspension", "Base.ModernCycleSuspension", "Base.NormalCartSuspension", "Base.ModernCartSuspension", "Base.NormalSuspension1", "Base.ModernSuspension1", "Base.NormalSuspension2", "Base.ModernSuspension2", "Base.NormalSuspension3", "Base.ModernSuspension3", "Base.NormalSuspension8", "Base.ModernSuspension8", "Base.NivaSuspension1", "Base.NormalM113Suspension8", "Base.ModernM113Suspension8", "damnCraft.leafSuspension2", "Base.NormalM113Suspension1", "Base.ModernM113Suspension1", "Base.NormalM113Suspension2", "Base.ModernM113Suspension2", "Base.NormalM113Suspension3", "Base.ModernM113Suspension3" }
     )
 -- Contains small, normal and military brakes
     injectRecipeInputs("Salvage Vehicle Brakes",
