@@ -765,7 +765,7 @@ module Vehicle Repairs
 
 	fixing Fix Light
 	{
-		Require : LightBulb;87toyotaMR2PopupLights3;93fordF350RoofLights2;87chevySuburbanRoofLights2;76chevyKseriesRoofLights2;82firebirdPopupLights3,
+		Require : LightBulb;87toyotaMR2PopupLights3;93fordF350RoofLights2;87chevySuburbanRoofLights2;76chevyKseriesRoofLights2;82firebirdPopupLights3;fordCVPIpoliceSearchlight,
 		ConditionModifier : 0.8,
 		
 	   Fixer : ElectronicsScrap=2;Electricity=2;Mechanics=2,

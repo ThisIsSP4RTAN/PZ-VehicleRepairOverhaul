@@ -98,7 +98,7 @@ local function injectAllRecipeInputs()
     )
 -- Contains light and battery parts
     injectRecipeInputs("Salvage Vehicle Electronics",
-        { "Base.MH_MkII_batterypack1", "Base.MH_MkII_batterypack2", "Base.MH_MkII_batterypack3", "Base.87toyotaMR2PopupLights3", "Base.93fordF350RoofLights2", "Base.87chevySuburbanRoofLights2", "Base.76chevyKseriesRoofLights2", "Base.82firebirdPopupLights3", "Base.damnCraft.dontusethis" }
+        { "Base.MH_MkII_batterypack1", "Base.MH_MkII_batterypack2", "Base.MH_MkII_batterypack3", "Base.87toyotaMR2PopupLights3", "Base.93fordF350RoofLights2", "Base.87chevySuburbanRoofLights2", "Base.76chevyKseriesRoofLights2", "Base.82firebirdPopupLights3", "Base.fordCVPIpoliceSearchlight", "Base.damnCraft.dontusethis" }
     )
 
     injectRecipeInputs("Salvage Wooden Vehicle Parts",
