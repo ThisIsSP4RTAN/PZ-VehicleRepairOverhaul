@@ -29,16 +29,16 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 	--   condition is at maximum.
 	-- Note that for modded vehicles this requires that the mod uses the vanilla glove box inventory items in their vehicle scripts.
 	local partInventoryItem = part:getInventoryItem()
-	
+
 	local currentCondition = part:getCondition()
-	
+
 	local fixingList = nil
-	
+
 	if partInventoryItem ~= nil then fixingList = FixingManager.getFixes(partInventoryItem) end
-	
+
 	if (part:getId() == "GloveBox" and fixingList ~= nil and not fixingList:isEmpty())then
 		local repairMechanicIsOn = part:getScriptPart():isRepairMechanic()
-		
+
 		if not repairMechanicIsOn and currentCondition < 100 then
 			part:getScriptPart():setRepairMechanic(true)
 		elseif currentCondition >= 100 and repairMechanicIsOn then
@@ -51,15 +51,15 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 	--   where we create the context menu instead. So it will always destroy our context menu and create a new one. So we 
 	--   have the old version of this function create the context menu, and then we add to that.
 	old_ISVehicleMechanics_doPartContextMenu(self, part, x, y)
-	
+
 	-- If the game is paused we should skip creating our context menu
 	if UIManager.getSpeedControls():getCurrentGameSpeed() == 0 then return end
-	
+
 	-- It's most likely that the old version of this function has already created an instance of the context menu, but for robustness 
 	--   we should check to ensure it exists, and if it doesn't we create a new one.
 	local playerObj = getSpecificPlayer(self.playerNum)
 	if not self.context then self.context = ISContextMenu.get(self.playerNum, x + self:getAbsoluteX(), y + self:getAbsoluteY()) end
-	
+
 	local option
 
 	-- Add the option for repairing the heater to the context menu.
@@ -72,30 +72,30 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 		local requiredParts = { ["Base.SmallSheetMetal"] = 3 }
 
 		local targetCondition = math.min(100, currentCondition + 34)
-		
+
 		local allPartsPresent = true
-		
+
 		for neededPart,numberNeeded in pairs(requiredParts) do
 			if self.chr:getInventory():getNumberOfItem(neededPart, false, true) < numberNeeded then
 				allPartsPresent = false
 				break
 			end
 		end
-		
+
 		local blowtorch = nil
-		
+
 		local primaryHandItem = playerObj:getPrimaryHandItem()
-		
+
 		if primaryHandItem ~= nil and primaryHandItem:getType() == "Base.BlowTorch" and primaryHandItem:getCurrentUses() >= 10 then
 			blowtorch = primaryHandItem
 		else
 			blowtorch = playerObj:getInventory():getFirstEvalRecurse(EHR_predicateBlowTorch)
-			
+
 			if blowtorch == nil then
 				blowtorch = playerObj:getInventory():getBestEvalRecurse(predicateNotEmptyBlowtorch, predicateFullestDrainable)
 			end
 		end
-		
+
 		local mask = playerObj:getInventory():getFirstTagRecurse("WeldingMask")
 
 		if currentCondition < 100 and allPartsPresent and self.chr:getPerkLevel(Perks.Mechanics) >= requiredMechanicsSkillLevel and self.chr:getPerkLevel(Perks.MetalWelding) >= requiredMetalworkingSkillLevel and blowtorch ~= nil and mask ~= nil then
@@ -107,7 +107,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 			self:EHR_doMenuTooltip(part, option, "EHR_repairheater", requiredParts, blowtorch, mask, requiredMechanicsSkillLevel, requiredMetalworkingSkillLevel, targetCondition)
 		end
 	end
-	
+
 	-- Since the old version of this function may have set the context menu to not be visible we must handle the case where 
 	--   we have added an option to the menu and now have to make the menu visible.
 	if self.context.numOptions == 1 then
@@ -115,7 +115,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 	else
 		self.context:setVisible(true)
 	end
-	
+
 	if JoypadState.players[self.playerNum+1] and self.context:getIsVisible() then
 		self.context.mouseOver = 1
 		self.context.origin = self
@@ -136,7 +136,7 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 	if lua == "EHR_repairheater" then
 		local rgb = " <RGB:0,1,0>"
 		local addedTxt = ""
-		
+
 		if self.chr:getPerkLevel(Perks.Mechanics) < requiredMechanicsSkillLevel then
 			rgb = " <RGB:1,0,0>"
 		end
@@ -148,7 +148,7 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 		end
 		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_MetalWelding") .. " " .. self.chr:getPerkLevel(Perks.MetalWelding) .. "/" .. requiredMetalworkingSkillLevel .. " <LINE>"
 		rgb = " <RGB:0,1,0>"
-		
+
 		for neededPart,numberNeeded in pairs(requiredParts) do
 			local scriptItem = ScriptManager.instance:getItem(neededPart)
 			local displayName = scriptItem and getItemDisplayName(neededPart)
@@ -166,16 +166,16 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 
 	local weldingmaskItem = self.chr:getInventory():getFirstTagRecurse("WeldingMask")
 	local displayName = weldingmaskItem and weldingmaskItem:getDisplayName() or "Welding Mask"
-	
+
 	if not self.chr:getInventory():containsTag("WeldingMask") then
-		tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/0 <LINE>"
+		tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/1 <LINE>"
 	else
 		tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " 1/1 <LINE>"
 	end
-	
+
 		local scriptItem = ScriptManager.instance:getItem("Base.BlowTorch")
         local displayName = scriptItem and getItemDisplayName("BlowTorch")
-		
+
 		if blowtorch == nil then
 			tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " 0/10 <LINE>"
 		else
@@ -188,7 +188,7 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 				tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " " .. blowtorchUseLeft .. "/10 <LINE>"
 			end
 		end
-		
+
 		if option.notAvailable then
 			tooltip.description = tooltip.description .. " <LINE><RGB:1,0,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
 		else
@@ -215,9 +215,9 @@ function ISVehicleMechanics.EHR_onRepairHeater(playerObj, part, requiredParts, b
 	if mask then
 		ISInventoryPaneContextMenu.wearItem(mask, playerObj:getPlayerNum());
 	end
-	
+
 	local timeToRepair = math.max(50, 170 - math.max(0, (10 * (playerObj:getPerkLevel(Perks.MetalWelding) - requiredMetalworkingSkillLevel))))
-	
+
 	-- Queue our custom TimedAction to repair the heater
 	ISTimedActionQueue.add(EHRRepairHeater:new(playerObj, part, blowtorch, mask, timeToRepair, requiredParts, targetCondition))
 end

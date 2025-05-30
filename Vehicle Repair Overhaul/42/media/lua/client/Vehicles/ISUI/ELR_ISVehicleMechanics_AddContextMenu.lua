@@ -174,10 +174,10 @@ function ISVehicleMechanics.ELR_onRepairLightbar(playerObj, part, repairBlocks, 
 	end
 
 	local typeToItem = VehicleUtils.getItems(playerObj:getPlayerNum())
-	local item = typeToItem["Base.Screwdriver"][1]
-	ISVehiclePartMenu.toPlayerInventory(playerObj, item)
+	local screwdriverItems = typeToItem["Base.Screwdriver"]
+	local item = screwdriverItems and screwdriverItems[1] or nil
 
-	local timeToRepair = (repairBlocks * 100) - math.max(0, (20 * (playerObj:getPerkLevel(Perks.Electricity) - requiredSkillLevel)))
+	ISVehiclePartMenu.toPlayerInventory(playerObj, item)
 
 	-- Have the character walk to the vehicle's driver door
 	ISTimedActionQueue.add(ISPathFindAction:pathToVehicleArea(playerObj, part:getVehicle(), "SeatFrontLeft"))

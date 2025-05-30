@@ -30,7 +30,7 @@ function ELRRepairLightbar:start()
 
 	-- Todo? - Find a better animation for working on a raised object
 	self:setOverrideHandModels(self.character:getPrimaryHandItem(), nil)
-	self:setActionAnim("Disassemble")
+	self:setActionAnim("VehicleWorkOnMid")
 end
 
 function ELRRepairLightbar:stop()
@@ -69,7 +69,7 @@ function ELRRepairLightbar:new(character, part, item, timeToRepair, repairBlocks
 	o.requiredParts = requiredParts
 	o.targetCondition = targetCondition
 
-	o.jobType = getText("ContextMenu_EHR")..' '..getText("IGUI_VehiclePartlightbar")
+	o.jobType = getText("ContextMenu_Repair")..''..getText("IGUI_VehiclePartlightbar")
 	return o
 end
 

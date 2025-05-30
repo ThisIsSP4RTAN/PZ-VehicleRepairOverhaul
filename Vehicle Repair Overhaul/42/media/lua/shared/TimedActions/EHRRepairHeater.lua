@@ -31,11 +31,11 @@ end
 function EHRRepairHeater:start()
 	-- Set the progress bar text on the equipped blowtorch in the inventory menu to be the job description
 	self.blowtorch:setJobType(self.jobType)
-	
+
 	-- Play the character animation of using the blowtorch
 	self:setActionAnim("BlowTorchMid")
 	self:setOverrideHandModels(self.character:getPrimaryHandItem(), nil)
-	
+
 	-- Play the sound of using the blowtorch and make it audible in the world so zombies can react to it
 	-- Store the reference to the sound so we can stop it once the action is done
 	self.sound = self.character:getEmitter():playSound("BlowTorch")
@@ -45,7 +45,7 @@ end
 
 function EHRRepairHeater:stop()
 	self.blowtorch:setJobDelta(0)
-	
+
 	-- Stop the sound of the blowtorch once the action is complete
 	if self.sound then
 		self.character:getEmitter():stopSound(self.sound)
@@ -106,7 +106,7 @@ function EHRRepairHeater:new(character, part, blowtorch, mask, timeToRepair, req
 	o.stopOnRun = true;
 	o.sound = nil
 
-	o.jobType = getText("ContextMenu_Repair")..' '..getText("IGUI_VehiclePartHeater")
+	o.jobType = getText("ContextMenu_Repair")..''..getText("IGUI_VehiclePartHeater")
 	return o
 end
 
