@@ -125,6 +125,7 @@ module Base
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = Woodwork:5,
+		SkillRequired = Woodwork:2,
 		OnCreate = Recipe.OnCreate.SalvageModuleReturnsWooden,
 		
 		inputs
