@@ -1,5 +1,5 @@
 -- Mod options table (replace this with actual settings loader if needed)
-local ELR = require("elr_options")
+local VRO = require("VRO_modOptions")
 
 require "Vehicles/ISUI/ISVehicleMechanics"
 
@@ -34,7 +34,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y, context)
 	-- If the game is paused we should skip creating our context menu
 	if UIManager.getSpeedControls():getCurrentGameSpeed() == 0 then return end
 
-	if ELR.Options.HideVanillaRepair then
+	if VRO.Options.HideVanillaRepair then
 		if old_ISVehicleMechanics_doPartContextMenu then
 			old_ISVehicleMechanics_doPartContextMenu(self, part, x, y)
 		end
