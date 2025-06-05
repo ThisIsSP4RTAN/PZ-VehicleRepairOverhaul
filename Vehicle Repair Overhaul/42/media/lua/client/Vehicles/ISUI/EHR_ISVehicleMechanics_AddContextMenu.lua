@@ -177,7 +177,7 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
         local displayName = scriptItem and getItemDisplayName("BlowTorch")
 
 		if blowtorch == nil then
-			tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/10 <LINE>"
+			tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " 0/10 <LINE>"
 		else
 			local blowtorchUseLeft = blowtorch:getCurrentUses();
             if blowtorchUseLeft >= 10 then
