@@ -186,7 +186,7 @@ end
 
 function Recipe.OnCreate.SalvageModuleReturnsTires(items, result, player)
 
-    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.Tailoring));
+    local skill = (player:getPerkLevel(Perks.Mechanics) + player:getPerkLevel(Perks.MetalWelding));
     local success = 45 + skill; --highest value skill is 20, added here success would be 65% win--
     local inventory = player:getInventory()
 
