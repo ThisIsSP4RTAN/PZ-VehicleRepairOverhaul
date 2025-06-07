@@ -1688,7 +1688,7 @@ module Vehicle Repairs
 
     fixing Fix Tank Containers
     {
-        Require : 250Tank1;250Tank2;250Tank3;250Tank8;500Tank1;500Tank2;500Tank3;500Tank8;1000Tank1;1000Tank2;1000Tank3;1000Tank8;500FuelTankRS1;500FuelTankRS2;500FuelTankRS3;1000FuelTankRS1;1000FuelTankRS2;1000FuelTankRS3;250PropaneTank1;250PropaneTank2;250PropaneTank3;250PropaneTank8;500PropaneTank1;500PropaneTank2;500PropaneTank3;500PropaneTank8;1000PropaneTank1;1000PropaneTank2;1000PropaneTank3;1000PropaneTank8;500_Water_Tank2;MH_MkII_waterbox1;MH_MkII_waterbox2;MH_MkII_waterbox3;90pierceArrowWaterTank2;73fordFalconPSStorage,
+        Require : 250Tank1;250Tank2;250Tank3;250Tank8;500Tank1;500Tank2;500Tank3;500Tank8;1000Tank1;1000Tank2;1000Tank3;1000Tank8;500FuelTankRS1;500FuelTankRS2;500FuelTankRS3;1000FuelTankRS1;1000FuelTankRS2;1000FuelTankRS3;250PropaneTank1;250PropaneTank2;250PropaneTank3;250PropaneTank8;500PropaneTank1;500PropaneTank2;500PropaneTank3;500PropaneTank8;1000PropaneTank1;1000PropaneTank2;1000PropaneTank3;1000PropaneTank8;500_Water_Tank2;MH_MkII_waterbox1;MH_MkII_waterbox2;MH_MkII_waterbox3;90pierceArrowWaterTank2;73fordFalconPSStorage;GasCan0;WaterCan0,
         GlobalItem : BlowTorch=4,
         ConditionModifier : 1.0,
 
