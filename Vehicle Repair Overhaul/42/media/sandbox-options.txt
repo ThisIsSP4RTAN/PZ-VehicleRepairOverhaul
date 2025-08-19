@@ -1,0 +1,10 @@
+VERSION = 1,
+
+option VRO_EnableEngineRebuild
+{
+    type = boolean,
+    default = true,
+	
+	page = VRO,
+	translation = VRO_EnableEngineRebuild,
+}

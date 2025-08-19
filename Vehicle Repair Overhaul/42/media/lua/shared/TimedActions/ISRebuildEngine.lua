@@ -5,6 +5,7 @@
 --***********************************************************
 
 require "TimedActions/ISBaseTimedAction"
+require "VRO/VRO_Sandbox"
 
 ISRebuildEngine = ISBaseTimedAction:derive("ISRebuildEngine")
 
@@ -26,6 +27,7 @@ function ISRebuildEngine:update()
 end
 
 function ISRebuildEngine:start()
+	if VRO and VRO.IsEngineRebuildEnabled and not VRO.IsEngineRebuildEnabled() then return end
 	self.item:setJobType(getText("IGUI_EER_RebuildEngine"))
 	self:setActionAnim("VehicleWorkOnMid")
 end

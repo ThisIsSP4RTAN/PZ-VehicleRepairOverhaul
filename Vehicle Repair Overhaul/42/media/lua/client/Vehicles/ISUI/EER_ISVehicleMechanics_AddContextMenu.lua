@@ -1,5 +1,15 @@
 require "Vehicles/ISUI/ISVehicleMechanics"
 
+-- === Vehicle Repair Overhaul: Sandbox helper ===
+VRO = VRO or {}
+
+function VRO.IsEngineRebuildEnabled()
+    if SandboxVars and SandboxVars.VRO_EnableEngineRebuild ~= nil then
+        return SandboxVars.VRO_EnableEngineRebuild == true
+    end
+    return true -- default ON
+end
+
 local old_ISVehicleMechanics_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
 
 function ISVehicleMechanics:doPartContextMenu(part, x,y)
@@ -25,7 +35,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 	--   6. The player's Mechanics skill level is currently higher than the skill level required to 
 	--         perform mechanics actions on the vehicle's engine (engineRepairLevel value)
 	--   7. The player currently has a wrench
-
+	if not VRO.IsEngineRebuildEnabled() then return end
 	if part:getId() == "Engine" and not VehicleUtils.RequiredKeyNotFound(part, self.chr) then
 		if part:getVehicle():getEngineQuality() < 100 then
 			-- Get the Mechanics skill level that is required to perform engine repair actions on this vehicle type
@@ -103,6 +113,7 @@ function ISVehicleMechanics:EER_doMenuTooltip(part, option, lua, name)
 end
 
 function ISVehicleMechanics.EER_onRebuildEngine(playerObj, part)
+	if not VRO.IsEngineRebuildEnabled() then return end
 	if playerObj:getVehicle() then
 		ISVehicleMenu.onExit(playerObj)
 	end
