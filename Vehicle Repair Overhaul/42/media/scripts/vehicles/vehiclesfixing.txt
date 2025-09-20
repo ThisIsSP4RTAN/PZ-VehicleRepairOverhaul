@@ -319,7 +319,7 @@ module Vehicle Repairs
 
     fixing Fix KI5 Wood Parts
     {
-        Require : 85gmBbodyWindshieldArmorW;85gmBbodyFrontWindowArmorW;85gmBbodyRearWindowArmorW;85gmBbodyWindshieldRearArmorW;89volvo240WindshieldArmorW;89volvo240FrontWindowArmorW;89volvo240RearWindowArmorW;89volvo245WagonBackWindowArmorW;89volvo244SedanBackWindowArmorW;89volvo240WindshieldRearArmorW;91geoMetroWindshieldArmor;91geoMetroFrontWindowArmor;91geoMetroRearWindowArmor;91geoMetroWindshieldRearArmor;91geoMetroRoofrack0;M923FlatbedStakes1;M35A2Stakes1;M35A2Stakes3;93chevySilveradoStakes2,
+        Require : 85gmBbodyWindshieldArmorW;85gmBbodyFrontWindowArmorW;85gmBbodyRearWindowArmorW;85gmBbodyWindshieldRearArmorW;89volvo240WindshieldArmorW;89volvo240FrontWindowArmorW;89volvo240RearWindowArmorW;89volvo245WagonBackWindowArmorW;89volvo244SedanBackWindowArmorW;89volvo240WindshieldRearArmorW;91geoMetroWindshieldArmor;91geoMetroFrontWindowArmor;91geoMetroRearWindowArmor;91geoMetroWindshieldRearArmor;91geoMetroRoofrack0;M923FlatbedStakes1;M35A2Stakes1;M35A2Stakes3;93chevySilveradoStakes2;pzkTruckSideWoodboards2,
         GlobalItem : Plank=3,
         ConditionModifier : 0.7,
 
@@ -1587,7 +1587,7 @@ module Vehicle Repairs
 
     fixing Fix SoftTops
     {
-        Require : M151A2Tarp1_Item;M101A3Tarp1_Item;IFAVFrontTop2;IFAVRearTop2;M35A2Tarp1;M35A2Tarp2;M35A2Tarp3;M35A2SoftCover2;SL500SoftTop3;M923SoftCover2_Item;CJ7softtop2;U1550LTarp2;M1008Tarp2;M35Tarp2;M35FrontSoftTop2;63Type2VanTarpCover0;93fordF350BedCover2;DG70RTRoof0;90bmwE30CabrioRoofLid3;90bmwE30CabrioRoof3;86chevyCUCVBedTarp2;85gmBbodyVinylRoofBlack;85gmBbodyVinylRoofMaroon;85gmBbodyVinylRoofWhite;85gmBbodyVinylRoofBrown;85gmBbodyVinylRoofBlue;KI5trailersTarp2;66pontiacLeMansRoof0;80manKat1Tarp2;M1082Tarp2;93chevySilveradoBedTarp2,
+        Require : M151A2Tarp1_Item;M101A3Tarp1_Item;IFAVFrontTop2;IFAVRearTop2;M35A2Tarp1;M35A2Tarp2;M35A2Tarp3;M35A2SoftCover2;SL500SoftTop3;M923SoftCover2_Item;CJ7softtop2;U1550LTarp2;M1008Tarp2;M35Tarp2;M35FrontSoftTop2;63Type2VanTarpCover0;93fordF350BedCover2;DG70RTRoof0;90bmwE30CabrioRoofLid3;90bmwE30CabrioRoof3;86chevyCUCVBedTarp2;85gmBbodyVinylRoofBlack;85gmBbodyVinylRoofMaroon;85gmBbodyVinylRoofWhite;85gmBbodyVinylRoofBrown;85gmBbodyVinylRoofBlue;KI5trailersTarp2;66pontiacLeMansRoof0;80manKat1Tarp2;M1082Tarp2;93chevySilveradoBedTarp2;pzkTruckTarp2,
         ConditionModifier : 0.5,
 
         Fixer : DuctTape=4;Tailoring=2;Mechanics=1,
@@ -1613,7 +1613,7 @@ module Vehicle Repairs
 
     fixing Fix SoftTops 1
     {
-        Require : M151A2Tarp1_Item;M101A3Tarp1_Item;IFAVFrontTop2;IFAVRearTop2;M35A2Tarp1;M35A2Tarp2;M35A2Tarp3;M35A2SoftCover2;SL500SoftTop3;M923SoftCover2_Item;CJ7softtop2;U1550LTarp2;M1008Tarp2;M35Tarp2;M35FrontSoftTop2;63Type2VanTarpCover0;93fordF350BedCover2;DG70RTRoof0;90bmwE30CabrioRoofLid3;90bmwE30CabrioRoof3;86chevyCUCVBedTarp2;85gmBbodyVinylRoofBlack;85gmBbodyVinylRoofMaroon;85gmBbodyVinylRoofWhite;85gmBbodyVinylRoofBrown;85gmBbodyVinylRoofBlue;KI5trailersTarp2;66pontiacLeMansRoof0;80manKat1Tarp2;M1082Tarp2;93chevySilveradoBedTarp2,
+        Require : M151A2Tarp1_Item;M101A3Tarp1_Item;IFAVFrontTop2;IFAVRearTop2;M35A2Tarp1;M35A2Tarp2;M35A2Tarp3;M35A2SoftCover2;SL500SoftTop3;M923SoftCover2_Item;CJ7softtop2;U1550LTarp2;M1008Tarp2;M35Tarp2;M35FrontSoftTop2;63Type2VanTarpCover0;93fordF350BedCover2;DG70RTRoof0;90bmwE30CabrioRoofLid3;90bmwE30CabrioRoof3;86chevyCUCVBedTarp2;85gmBbodyVinylRoofBlack;85gmBbodyVinylRoofMaroon;85gmBbodyVinylRoofWhite;85gmBbodyVinylRoofBrown;85gmBbodyVinylRoofBlue;KI5trailersTarp2;66pontiacLeMansRoof0;80manKat1Tarp2;M1082Tarp2;93chevySilveradoBedTarp2;pzkTruckTarp2,
         GlobalItem : Glue=1,
         ConditionModifier : 1.2,
 
@@ -1688,7 +1688,7 @@ module Vehicle Repairs
 
     fixing Fix Tank Containers
     {
-        Require : 250Tank1;250Tank2;250Tank3;250Tank8;500Tank1;500Tank2;500Tank3;500Tank8;1000Tank1;1000Tank2;1000Tank3;1000Tank8;500FuelTankRS1;500FuelTankRS2;500FuelTankRS3;1000FuelTankRS1;1000FuelTankRS2;1000FuelTankRS3;250PropaneTank1;250PropaneTank2;250PropaneTank3;250PropaneTank8;500PropaneTank1;500PropaneTank2;500PropaneTank3;500PropaneTank8;1000PropaneTank1;1000PropaneTank2;1000PropaneTank3;1000PropaneTank8;500_Water_Tank2;MH_MkII_waterbox1;MH_MkII_waterbox2;MH_MkII_waterbox3;90pierceArrowWaterTank2;73fordFalconPSStorage;GasCan0;WaterCan0,
+        Require : 250Tank1;250Tank2;250Tank3;250Tank8;500Tank1;500Tank2;500Tank3;500Tank8;1000Tank1;1000Tank2;1000Tank3;1000Tank8;250PropaneTank1;250PropaneTank2;250PropaneTank3;250PropaneTank8;500PropaneTank1;500PropaneTank2;500PropaneTank3;500PropaneTank8;1000PropaneTank1;1000PropaneTank2;1000PropaneTank3;3000PropaneTank1;3000PropaneTank2;3000PropaneTank3;1000PropaneTank8;pzk250_Water_Tank1;pzk250_Water_Tank2;pzk250_Water_Tank3;pzk500_Water_Tank1;pzk500_Water_Tank2;pzk500_Water_Tank3;1500_Water_Tank1;1500_Water_Tank2;1500_Water_Tank3;3000_Water_Tank1;3000_Water_Tank2;3000_Water_Tank3;10000_Water_Tank1;10000_Water_Tank2;10000_Water_Tank3;pzk250_Water_Tank_Tainted1;pzk250_Water_Tank_Tainted2;pzk250_Water_Tank_Tainted3;pzk500_Water_Tank_Tainted1;pzk500_Water_Tank_Tainted2;pzk500_Water_Tank_Tainted3;1500_Water_Tank_Tainted1;1500_Water_Tank_Tainted2;1500_Water_Tank_Tainted3;3000_Water_Tank_Tainted1;3000_Water_Tank_Tainted2;3000_Water_Tank_Tainted3;MH_MkII_waterbox1;MH_MkII_waterbox2;MH_MkII_waterbox3;90pierceArrowWaterTank2;73fordFalconPSStorage;GasCan0;WaterCan0,
         GlobalItem : BlowTorch=4,
         ConditionModifier : 1.0,
 

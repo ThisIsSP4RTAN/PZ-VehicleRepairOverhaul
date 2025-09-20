@@ -967,7 +967,7 @@ module Vehicle Repairs
 
     fixing Fix SoftTops
     {
-    	Require : M151A2Tarp1_Item;M101A3Tarp1_Item;IFAVFrontTop2;IFAVRearTop2;M35A2Tarp1_Item;M35A2Tarp2_Item;M35A2Tarp3_Item;M35A2SoftCover2_Item;SL500SoftTop3;M923SoftCover2_Item;CJ7softtop2;U1550LTarp2;M1008Tarp2;M35Tarp2;M35FrontSoftTop2;63Type2VanTarpCover0;93fordF350BedCover2;DG70RTRoof0;90bmwE30CabrioRoofLid3;90bmwE30CabrioRoof3;86chevyCUCVBedTarp2;85gmBbodyVinylRoofBlack;85gmBbodyVinylRoofMaroon;85gmBbodyVinylRoofWhite;85gmBbodyVinylRoofBrown;85gmBbodyVinylRoofBlue;KI5trailersTarp2;66pontiacLeMansRoof0;80manKat1Tarp2;93chevySilveradoBedTarp2,
+    	Require : M151A2Tarp1_Item;M101A3Tarp1_Item;IFAVFrontTop2;IFAVRearTop2;M35A2Tarp1_Item;M35A2Tarp2_Item;M35A2Tarp3_Item;M35A2SoftCover2_Item;SL500SoftTop3;M923SoftCover2_Item;CJ7softtop2;U1550LTarp2;M1008Tarp2;M35Tarp2;M35FrontSoftTop2;63Type2VanTarpCover0;93fordF350BedCover2;DG70RTRoof0;90bmwE30CabrioRoofLid3;90bmwE30CabrioRoof3;86chevyCUCVBedTarp2;85gmBbodyVinylRoofBlack;85gmBbodyVinylRoofMaroon;85gmBbodyVinylRoofWhite;85gmBbodyVinylRoofBrown;85gmBbodyVinylRoofBlue;KI5trailersTarp2;66pontiacLeMansRoof0;80manKat1Tarp2;93chevySilveradoBedTarp2;pzkTruckTarp2,
     	ConditionModifier : 0.5,
 
         Fixer : Tarp;Tailoring=2;Mechanics=1,
@@ -1002,7 +1002,7 @@ module Vehicle Repairs
 	
 	fixing Fix KI5 Wood Parts
     {
-       Require : 85gmBbodyWindshieldArmorW;85gmBbodyFrontWindowArmorW;85gmBbodyRearWindowArmorW;85gmBbodyWindshieldRearArmorW;89volvo240WindshieldArmorW;89volvo240FrontWindowArmorW;89volvo240RearWindowArmorW;89volvo245WagonBackWindowArmorW;89volvo244SedanBackWindowArmorW;89volvo240WindshieldRearArmorW;91geoMetroWindshieldArmor;91geoMetroFrontWindowArmor;91geoMetroRearWindowArmor;91geoMetroWindshieldRearArmor;91geoMetroRoofrack0;M923FlatbedStakes1_Item;93chevySilveradoStakes2,
+       Require : 85gmBbodyWindshieldArmorW;85gmBbodyFrontWindowArmorW;85gmBbodyRearWindowArmorW;85gmBbodyWindshieldRearArmorW;89volvo240WindshieldArmorW;89volvo240FrontWindowArmorW;89volvo240RearWindowArmorW;89volvo245WagonBackWindowArmorW;89volvo244SedanBackWindowArmorW;89volvo240WindshieldRearArmorW;91geoMetroWindshieldArmor;91geoMetroFrontWindowArmor;91geoMetroRearWindowArmor;91geoMetroWindshieldRearArmor;91geoMetroRoofrack0;M923FlatbedStakes1_Item;93chevySilveradoStakes2;pzkTruckSideWoodboards2,
        GlobalItem : Plank=3,
        ConditionModifier : 0.7,
 
