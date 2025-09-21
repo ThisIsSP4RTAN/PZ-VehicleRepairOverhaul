@@ -1,3 +1,0 @@
-ItemName_CN = {
-	ItemName_FixAFlat.FixAFlat = "快速补胎剂",
-}
