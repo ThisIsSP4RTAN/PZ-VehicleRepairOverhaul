@@ -1,0 +1,5 @@
+Sandbox_CH = {
+    Sandbox_VehicleRepairOverhaul = "Vehicle Repair Overhaul Mod",
+
+    Sandbox_DisableVehicleSalvage = "禁用車輛回收",
+}
