@@ -4,5 +4,5 @@ Sandbox_CH = {
 	
 	
 	Sandbox_VRO_EnableEngineRebuild = "允許引擎重新建造"
-	Sandbox_VRO_EnableEngineRebuild_tooltip = "遊戲中引擎重新建造操作是否可用。"
+	Sandbox_VRO_EnableEngineRebuild_tooltip = "遊戲中引擎重新建造操作是否可用."
 }

@@ -1,5 +1,5 @@
 Tooltip_CH = {
-	Tooltip_FixAFlat = "修復車輛輪胎。",
+	Tooltip_FixAFlat = "修復車輛輪胎.",
 	Tooltip_EHR_NewCondition = "完好",
 	Tooltip_ELR_NewCondition = "完好",
 	Tooltip_eer_RebuildEngine = "引擎的品質和狀況將修復到完好",
