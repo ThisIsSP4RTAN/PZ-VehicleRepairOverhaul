@@ -4,8 +4,6 @@ VRO.Options = {
     HideVanillaRepair = false
     }
 
-
-
 local config = {
     HideVanillaRepair = nil,
 }
