@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field, param-type-mismatch
 require "Vehicles/ISUI/ISVehicleMechanics"
 require "ISUI/ISToolTip"
 require "TimedActions/ISBaseTimedAction"
@@ -9,6 +10,11 @@ VRO.__index = VRO
 
 ----------------------------------------------------------------
 -- A) Recipes (edit these)
+-- You can put defaults on the recipe itself:
+--   equip = { primary="Base.BlowTorch", wearTag="WeldingMask" }
+--   anim  = "Welding"
+--   sound = "BlowTorch"
+--   time  = function(player, brokenItem) return 160 end  -- or a number
 ----------------------------------------------------------------
 VRO.Recipes = {
   {
@@ -19,38 +25,32 @@ VRO.Recipes = {
       "Base.U1550LGasTank2","Base.MH_MkIIgastank1","Base.MH_MkIIgastank2","Base.MH_MkIIgastank3",
       "Base.M35FuelTank2","Base.NivaGasTank1","Base.97BushGasTank2","Base.ShermanGasTank2","Base.87fordF700GasTank2",
     },
-    -- globalItem drives uses requirement for propane; equip.primary should be a blowtorch
+    -- Global item: drives propane usage requirement
     globalItem = { item="Base.BlowTorch", uses=3 },
     conditionModifier = 0.8,
+
+    -- RECIPE-LEVEL defaults:
+    equip = { primary="Base.BlowTorch", wearTag="WeldingMask" },
+    anim  = "Welding",
+    sound = "BlowTorch",
+    time  = function() return 160 end,
+
+    -- Fixers can override equip/anim/sound/time per entry if needed:
     fixers = {
-      { item="Base.SheetMetal",        uses=1, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.SmallSheetMetal",   uses=2, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.CopperSheet",       uses=1, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.SmallCopperSheet",  uses=2, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.GoldSheet",         uses=1, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.SilverSheet",       uses=1, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.SmallArmorPlate",   uses=2, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.AluminumScrap",     uses=8, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.BrassScrap",        uses=8, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.CopperScrap",       uses=8, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.IronScrap",         uses=8, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.ScrapMetal",        uses=8, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.SteelScrap",        uses=8, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
-      { item="Base.UnusableMetal",     uses=8, skills={ MetalWelding=3, Mechanics=3 },
-        equip={ primary="Base.BlowTorch", wearTag="WeldingMask" }, anim="Welding", sound="BlowTorch" },
+      { item="Base.SheetMetal",        uses=1, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SmallSheetMetal",   uses=2, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.CopperSheet",       uses=1, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SmallCopperSheet",  uses=2, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.GoldSheet",         uses=1, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SilverSheet",       uses=1, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SmallArmorPlate",   uses=2, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.AluminumScrap",     uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.BrassScrap",        uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.CopperScrap",       uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.IronScrap",         uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.ScrapMetal",        uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SteelScrap",        uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.UnusableMetal",     uses=8, skills={ MetalWelding=3, Mechanics=3 } },
     },
   },
 }
@@ -145,8 +145,8 @@ local function setTooltipIconFromFullType(tip, fullType)
 end
 
 -- Tag helpers (heater parity)
-local function firstTagItem(inv, tag)            return inv:getFirstTagRecurse(tag) end
-local function hasTag(inv, tag)                  return inv:containsTag(tag) end
+local function firstTagItem(inv, tag) return inv:getFirstTagRecurse(tag) end
+local function hasTag(inv, tag) return inv:containsTag(tag) end
 local function fallbackNameForTag(tag)
   if tag == "WeldingMask" then return "Welding Mask" end
   return tag
@@ -177,26 +177,23 @@ end
 
 -- Prefer a torch with >= needUses; otherwise the fullest non-empty torch.
 local function findBestBlowtorch(inv, needUses)
-  -- Try to find one that meets the quota
   if inv.getFirstEvalRecurse then
     local it = inv:getFirstEvalRecurse(function(item)
       return isTorchItem(item) and drainableUses(item) >= (needUses or 1)
     end)
     if it then return it end
   end
-  -- Fallback: pick the fullest non-empty torch
   if inv.getBestEvalRecurse then
     local best = inv:getBestEvalRecurse(
       function(item) return isTorchItem(item) and drainableUses(item) > 0 end,
       function(a,b)
         local ua = (a and a.getDrainableUsesInt) and a:getDrainableUsesInt() or drainableUses(a)
         local ub = (b and b.getDrainableUsesInt) and b:getDrainableUsesInt() or drainableUses(b)
-        return ua - ub -- same comparator style as heater code
+        return ua - ub
       end
     )
     if best then return best end
   end
-  -- Last resort: scan by explicit type
   local bagged = ArrayList.new()
   inv:getAllTypeRecurse("Base.BlowTorch", bagged)
   local best, most = nil, -1
@@ -285,7 +282,6 @@ function VRO.DoFixAction:isValid()
   return self.part and self.part:getVehicle() ~= nil
 end
 
--- Face the vehicle before starting
 function VRO.DoFixAction:waitToStart()
   local veh = self.part and self.part:getVehicle()
   if veh then self.character:faceThisObject(veh) end
@@ -300,7 +296,6 @@ end
 function VRO.DoFixAction:start()
   local anim = self.actionAnim or defaultAnimForPart(self.part)
   if anim and self.setActionAnim then self:setActionAnim(anim) end
-  -- ensure the equipped primary item renders in hand (heater parity)
   if self.setOverrideHandModels then
     self:setOverrideHandModels(self.character:getPrimaryHandItem(), nil)
   end
@@ -372,7 +367,6 @@ function VRO.DoFixAction:perform()
     self.character:getEmitter():playSound("FixingItemFailed")
   end
 
-  -- Consume fixer/global bundles (wear items are NOT consumed)
   consumeItems(self.character, self.fixerBundle)
   if self.globalBundle then consumeItems(self.character, self.globalBundle) end
 
@@ -387,7 +381,6 @@ function VRO.DoFixAction:perform()
   ISBaseTimedAction.perform(self)
 end
 
--- SINGLE-ARG constructor (table) to avoid vararg issues
 function VRO.DoFixAction:new(args)
   local o = ISBaseTimedAction.new(self, args.character)
   o.stopOnWalk   = true
@@ -417,6 +410,26 @@ end
 
 local function addNeedsLine(desc, rgb, name, have, need)
   return desc .. string.format(" <RGB:%s>%s %d/%d <LINE> ", rgb, name, have, need)
+end
+
+-- Merge helpers: fixer overrides recipe
+local function pick(a,b) if a ~= nil then return a else return b end end
+local function mergeEquip(fixEq, recEq)
+  local out = {}
+  fixEq = fixEq or {}; recEq = recEq or {}
+  out.primary   = pick(fixEq.primary,   recEq.primary)
+  out.secondary = pick(fixEq.secondary, recEq.secondary)
+  out.wearTag   = pick(fixEq.wearTag,   recEq.wearTag)
+  out.wear      = pick(fixEq.wear,      recEq.wear)
+  return out
+end
+local function resolveAnim(fixer, fixing) return pick(fixer.anim, fixing.anim) end
+local function resolveSound(fixer, fixing) return pick(fixer.sound, fixing.sound) end
+local function resolveTime(fixer, fixing, player, broken)
+  local t = (fixer.time ~= nil) and fixer.time or fixing.time
+  if type(t) == "function" then return t(player, broken) end
+  if type(t) == "number" then return t end
+  return 160
 end
 
 local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, brokenItem)
@@ -458,21 +471,19 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     desc = addNeedsLine(desc, rgb, nm, have, need)
   end
 
-  -- Wear requirement via TAG (not consumed)
-  if fixer.equip and (fixer.equip.wearTag or fixer.equip.wear) then
-    if fixer.equip.wearTag then
-      local tag = fixer.equip.wearTag
-      local ok  = hasTag(player:getInventory(), tag)
-      local item = firstTagItem(player:getInventory(), tag)
-      local name = item and item:getDisplayName() or fallbackNameForTag(tag)
-      desc = addNeedsLine(desc, ok and "0,1,0" or "1,0,0", name, ok and 1 or 0, 1)
-    else
-      local need, have = 1, 0
-      local item = findFirstTypeRecurse(player:getInventory(), fixer.equip.wear)
-      if item then have = 1 end
-      local name = item and item:getDisplayName() or displayNameFromFullType(fixer.equip.wear)
-      desc = addNeedsLine(desc, (have>=need) and "0,1,0" or "1,0,0", name, have, need)
-    end
+  -- Wear requirement (merged equip, not consumed)
+  local eq = mergeEquip(fixer.equip, fixing.equip)
+  if eq.wearTag then
+    local ok  = hasTag(player:getInventory(), eq.wearTag)
+    local it  = firstTagItem(player:getInventory(), eq.wearTag)
+    local name = it and it:getDisplayName() or fallbackNameForTag(eq.wearTag)
+    desc = addNeedsLine(desc, ok and "0,1,0" or "1,0,0", name, ok and 1 or 0, 1)
+  elseif eq.wear then
+    local need, have = 1, 0
+    local it = findFirstTypeRecurse(player:getInventory(), eq.wear)
+    if it then have = 1 end
+    local name = (it and it.getDisplayName) and it:getDisplayName() or displayNameFromFullType(eq.wear)
+    desc = addNeedsLine(desc, (have>=need) and "0,1,0" or "1,0,0", name, have, need)
   end
 
   -- Skills
@@ -509,7 +520,6 @@ end
 local function queueEquipActions(playerObj, eq, globalItem)
   if not eq then return end
 
-  -- Determine if we should do special blowtorch selection
   local needTorchUses = nil
   local torchRequested = false
   if globalItem and globalItem.item and (isFullTypeBlowTorch(globalItem.item)) then
@@ -519,14 +529,12 @@ local function queueEquipActions(playerObj, eq, globalItem)
     torchRequested = true
   end
 
-  -- Equip best blowtorch (with enough fuel) if requested
   if torchRequested then
     local bestTorch = findBestBlowtorch(playerObj:getInventory(), needTorchUses or 1)
     if bestTorch then
       toPlayerInventory(playerObj, bestTorch)
       ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, bestTorch, 50, true, false))
     else
-      -- Fallback to any item of requested full type
       local it = findFirstTypeRecurse(playerObj:getInventory(), eq.primary)
       if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
     end
@@ -540,7 +548,6 @@ local function queueEquipActions(playerObj, eq, globalItem)
     if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, false, false)) end
   end
 
-  -- Wear by TAG preferred; fall back to specific fullType if provided
   if eq.wearTag and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
     local it = firstTagItem(playerObj:getInventory(), eq.wearTag)
     if it then toPlayerInventory(playerObj, it); ISInventoryPaneContextMenu.wearItem(it, playerObj:getPlayerNum()) end
@@ -552,7 +559,6 @@ end
 
 local old_doPart = ISVehicleMechanics.doPartContextMenu
 function ISVehicleMechanics:doPartContextMenu(part, x, y)
-  -- run vanilla first
   old_doPart(self, part, x, y)
 
   local playerObj = getSpecificPlayer(self.playerNum)
@@ -567,7 +573,6 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
     self.context = ISContextMenu.get(self.playerNum, x + self:getAbsoluteX(), y + self:getAbsoluteY())
   end
 
-  -- Create parent submenu on demand
   local parent, subMenu
   local function ensureSubMenu()
     if not parent then
@@ -593,7 +598,6 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           globalBundle = gatherRequiredItems(playerObj:getInventory(), fixing.globalItem.item, fixing.globalItem.uses or 1)
         end
 
-        -- Skill check
         local skillsOK = true
         if fixer.skills then
           for name,req in pairs(fixer.skills) do
@@ -601,20 +605,21 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           end
         end
 
+        -- merged equip (recipe defaults + fixer overrides)
+        local eq = mergeEquip(fixer.equip, fixing.equip)
+
         -- Wear requirement presence (TAG or specific full type). NOT consumed.
         local wearOK = true
-        if fixer.equip and (fixer.equip.wearTag or fixer.equip.wear) then
-          if fixer.equip.wearTag then
-            wearOK = hasTag(playerObj:getInventory(), fixer.equip.wearTag)
-          else
-            wearOK = (findFirstTypeRecurse(playerObj:getInventory(), fixer.equip.wear) ~= nil)
-          end
+        if eq.wearTag then
+          wearOK = hasTag(playerObj:getInventory(), eq.wearTag)
+        elseif eq.wear then
+          wearOK = (findFirstTypeRecurse(playerObj:getInventory(), eq.wear) ~= nil)
         end
 
         local haveAll = (fixerBundle ~= nil)
-                        and (fixing.globalItem == nil or globalBundle ~= nil)
-                        and skillsOK
-                        and wearOK
+                      and (fixing.globalItem == nil or globalBundle ~= nil)
+                      and skillsOK
+                      and wearOK
 
         local rawName = displayNameFromFullType(fixer.item)
         local label   = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(rawName)
@@ -624,16 +629,17 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
         if haveAll then
           any = true
           option = subMenu:addOption(label, playerObj, function(playerObj_, part_, fixing_, fixer_, idx_, broken_, fixerBundle_, globalBundle_)
-            -- 1) Path to the part’s area
             queuePathToPartArea(playerObj_, part_)
 
-            -- 2) Equip AFTER path (primary/secondary + WEAR) with smart torch choice
-            queueEquipActions(playerObj_, fixer_.equip, fixing_.globalItem)
+            -- merged equip + smart blowtorch
+            local eq_   = mergeEquip(fixer_.equip, fixing_.equip)
+            queueEquipActions(playerObj_, eq_, fixing_.globalItem)
 
-            -- 3) Timed action (single-table ctor)
-            local tm   = (fixer_.time and fixer_.time(playerObj_, broken_)) or 160
-            local anim = fixer_.anim
-            local sfx  = fixer_.sound
+            -- resolve time/anim/sound (fixer overrides recipe)
+            local tm    = resolveTime(fixer_, fixing_, playerObj_, broken_)
+            local anim  = resolveAnim(fixer_, fixing_)
+            local sfx   = resolveSound(fixer_, fixing_)
+
             local act  = VRO.DoFixAction:new({
               character    = playerObj_,
               part         = part_,
