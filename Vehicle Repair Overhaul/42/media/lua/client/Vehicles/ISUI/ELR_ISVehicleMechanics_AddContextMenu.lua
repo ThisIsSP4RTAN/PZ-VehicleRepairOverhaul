@@ -123,7 +123,7 @@ function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, 
 	local tooltip = ISToolTip:new()
 	tooltip:initialise()
 	tooltip:setVisible(false)
-	tooltip.description = getText("Tooltip_craft_Needs") .. " : <LINE> <LINE>"
+	tooltip.description = getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
 	option.toolTip = tooltip
 	local keyvalues = part:getTable(lua)
 

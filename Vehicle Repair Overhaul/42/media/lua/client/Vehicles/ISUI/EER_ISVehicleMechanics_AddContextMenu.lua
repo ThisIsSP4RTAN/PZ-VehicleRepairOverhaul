@@ -61,7 +61,7 @@ function ISVehicleMechanics:EER_doMenuTooltip(part, option, lua, name)
 	local tooltip = ISToolTip:new();
 	tooltip:initialise();
 	tooltip:setVisible(false);
-	tooltip.description = getText("Tooltip_craft_Needs") .. " : <LINE>";
+	tooltip.description = getText("Tooltip_craft_Needs") .. ": <LINE>";
 	option.toolTip = tooltip;
 	local keyvalues = part:getTable(lua);
 

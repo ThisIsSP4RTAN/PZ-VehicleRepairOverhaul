@@ -129,7 +129,7 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 	local tooltip = ISToolTip:new()
 	tooltip:initialise()
 	tooltip:setVisible(false)
-	tooltip.description = getText("Tooltip_craft_Needs") .. " : <LINE> <LINE>"
+	tooltip.description = getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
 	option.toolTip = tooltip
 
 	-- Repair heater tooltip
