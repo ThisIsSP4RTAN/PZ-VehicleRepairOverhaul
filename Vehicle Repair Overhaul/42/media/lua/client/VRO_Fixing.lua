@@ -1,13 +1,8 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch
--- VRO_Fixing.lua (Lua 5.1-safe)
--- Repair submenu + auto path to part:getArea() + face vehicle +
--- equip/wear with in-hand model + custom anim/sfx + dynamic tooltips.
--- Wear requirement uses a TAG (e.g., "WeldingMask") and is NOT consumed.
--- Blowtorch equip prefers a torch with enough fuel for the recipe.
--- NEW: You can set equip/anim/sound/time on the RECIPE; per-fixer values override recipe defaults.
 
 require "Vehicles/ISUI/ISVehicleMechanics"
 require "ISUI/ISToolTip"
+require "ISUI/ISInventoryPaneContextMenu"
 require "TimedActions/ISBaseTimedAction"
 require "TimedActions/ISPathFindAction"
 require "TimedActions/ISEquipWeaponAction"
@@ -66,7 +61,6 @@ VRO.Recipes = {
 -- B) Helpers
 ----------------------------------------------------------------
 local function isDrainable(it) return it and instanceof(it,"DrainableComboItem") end
-
 local function drainableUses(it)
   if not it then return 0 end
   if isDrainable(it) then
@@ -96,9 +90,9 @@ local function gatherRequiredItems(inv, fullType, needUses)
   for i = 1, bagged:size() do
     local it = bagged:get(i-1)
     local u  = drainableUses(it)
-    if u > 0 then
-      local take = math.min(u, needUses - total)
-      table.insert(list, { item = it, takeUses = take })
+    if u>0 then
+      local take = math.min(u, needUses-total)
+      list[#list+1] = { item=it, takeUses=take }
       total = total + take
       if total >= needUses then return list end
     end
@@ -277,14 +271,15 @@ VRO.DoFixAction = ISBaseTimedAction:derive("VRO_DoFixAction")
 local function defaultAnimForPart(part)
   if not part then return "VehicleWorkOnMid" end
   if part.getWheelIndex and part:getWheelIndex() ~= -1 then return "VehicleWorkOnTire" end
-  local id = part.getId and part:getId() or ""
-  id = tostring(id)
+  local id = tostring(part.getId and part:getId() or "")
   if string.find(id, "Brake", 1, true) then return "VehicleWorkOnTire" end
   return "VehicleWorkOnMid"
 end
 
 function VRO.DoFixAction:isValid()
-  return self.part and self.part:getVehicle() ~= nil
+  if self.part and self.part:getVehicle() then return true end
+  if self.brokenItem then return true end
+  return false
 end
 
 function VRO.DoFixAction:waitToStart()
@@ -321,31 +316,38 @@ function VRO.DoFixAction:stop()
 end
 
 function VRO.DoFixAction:perform()
-  local part     = self.part
-  local broken   = self.brokenItem
-  local hbr      = getHBR(part, broken)
+  local part   = self.part
+  local broken = self.brokenItem
+  local hbr    = getHBR(part, broken)
 
-  local fail     = chanceOfFail(broken, self.character, self.fixing, self.fixer, hbr)
-  local success  = ZombRand(100) >= fail
+  local fail    = chanceOfFail(broken, self.character, self.fixing, self.fixer, hbr)
+  local success = ZombRand(100) >= fail
 
-  local partMax  = (part.getConditionMax and part:getConditionMax()) or 100
-  local partCur  = math.min(part:getCondition(), partMax)
+  -- Compute target stats from either the installed part or the loose item.
+  local targetMax, targetCur
+  if part then
+    targetMax = (part.getConditionMax and part:getConditionMax()) or 100
+    targetCur = math.min(part:getCondition(), targetMax)
+  else
+    targetMax = (broken and broken.getConditionMax and broken:getConditionMax()) or 100
+    targetCur = broken and broken:getCondition() or 0
+  end
 
   if success then
-    local pct      = condRepairedPercent(broken, self.character, self.fixing, self.fixer, hbr, self.fixerIndex)
-    local missing  = partMax - partCur
-    local gain     = math.floor((missing * (pct / 100.0)) + 0.5)
+    local pct     = condRepairedPercent(broken, self.character, self.fixing, self.fixer, hbr, self.fixerIndex)
+    local missing = math.max(0, targetMax - targetCur)
+    local gain    = math.floor((missing * (pct / 100.0)) + 0.5)
     if gain < 1 then gain = 1 end
 
-    part:setCondition(math.min(partMax, partCur + gain))
-    if part.getVehicle and part:getVehicle() and part:getVehicle().transmitPartCondition then
-      part:getVehicle():transmitPartCondition(part)
+    if part then
+      part:setCondition(math.min(targetMax, targetCur + gain))
+      if part.getVehicle and part:getVehicle() and part:getVehicle().transmitPartCondition then
+        part:getVehicle():transmitPartCondition(part)
+      end
     end
-
     if broken then
-      local itemMax = (broken.getConditionMax and broken:getConditionMax()) or 100
-      local newItem = math.min(itemMax, broken:getCondition() + gain)
-      if broken.setConditionNoSound then broken:setConditionNoSound(newItem) else broken:setCondition(newItem) end
+      local newVal = math.min(targetMax, targetCur + gain)
+      if broken.setConditionNoSound then broken:setConditionNoSound(newVal) else broken:setCondition(newVal) end
       broken:syncItemFields()
     end
 
@@ -358,34 +360,28 @@ function VRO.DoFixAction:perform()
       end
     end
   else
-    if partCur > 0 then
-      part:setCondition(partCur - 1)
+    if part and targetCur > 0 then
+      part:setCondition(targetCur - 1)
       if part.getVehicle and part:getVehicle() and part:getVehicle().transmitPartCondition then
         part:getVehicle():transmitPartCondition(part)
       end
-      if broken then
-        local newItem = math.max(0, broken:getCondition() - 1)
-        if broken.setConditionNoSound then broken:setConditionNoSound(newItem) else broken:setCondition(newItem) end
-        broken:syncItemFields()
-      end
+    end
+    if broken then
+      local newVal = math.max(0, targetCur - 1)
+      if broken.setConditionNoSound then broken:setConditionNoSound(newVal) else broken:setCondition(newVal) end
+      broken:syncItemFields()
     end
     self.character:getEmitter():playSound("FixingItemFailed")
   end
 
-  -- Consume resources (wear items never included here)
   consumeItems(self.character, self.fixerBundle)
   if self.globalBundle then consumeItems(self.character, self.globalBundle) end
 
-  if self._soundHandle then
-    self.character:getEmitter():stopSound(self._soundHandle)
-    self._soundHandle = nil
-  end
-  if self.setOverrideHandModels then
-    self:setOverrideHandModels(nil, nil)
-  end
-
+  if self._soundHandle then self.character:getEmitter():stopSound(self._soundHandle) end
+  if self.setOverrideHandModels then self:setOverrideHandModels(nil,nil) end
   ISBaseTimedAction.perform(self)
 end
+
 
 function VRO.DoFixAction:new(args)
   local o = ISBaseTimedAction.new(self, args.character)
@@ -406,7 +402,7 @@ function VRO.DoFixAction:new(args)
 end
 
 ----------------------------------------------------------------
--- F) Tooltip helpers (vanilla-style color interp)
+-- F) Tooltip (dynamic color + icon)
 ----------------------------------------------------------------
 local function interpColorTag(frac)
   local c = ColorInfo.new(0,0,0,1)
@@ -485,11 +481,9 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     local name = it and it:getDisplayName() or fallbackNameForTag(eq.wearTag)
     desc = addNeedsLine(desc, ok and "0,1,0" or "1,0,0", name, ok and 1 or 0, 1)
   elseif eq.wear then
-    local need, have = 1, 0
     local it = findFirstTypeRecurse(player:getInventory(), eq.wear)
-    if it then have = 1 end
-    local name = (it and it.getDisplayName) and it:getDisplayName() or displayNameFromFullType(eq.wear)
-    desc = addNeedsLine(desc, (have>=need) and "0,1,0" or "1,0,0", name, have, need)
+    local nm = (it and it.getDisplayName) and it:getDisplayName() or displayNameFromFullType(eq.wear)
+    desc = addNeedsLine(desc, it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1)
   end
 
   -- Skills
@@ -567,40 +561,29 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
   local playerObj = getSpecificPlayer(self.playerNum)
   if not playerObj or not part then return end
+  if not part:getItemType() or part:getItemType():isEmpty() then return end
+  local broken = part:getInventoryItem(); if not broken then return end
   if part:getCondition() >= 100 then return end
 
-  local broken = part:getInventoryItem()
-  local fullType = broken and broken:getFullType() or nil
-  if not fullType then return end
-
-  if not self.context then
-    self.context = ISContextMenu.get(self.playerNum, x + self:getAbsoluteX(), y + self:getAbsoluteY())
+  local ft, any = broken:getFullType(), false
+  for _,fx in ipairs(VRO.Recipes) do
+    for _,req in ipairs(fx.require or {}) do if req==ft then any=true break end end
+    if any then break end
   end
+  if not any then return end
 
-  local parent, subMenu
-  local function ensureSubMenu()
-    if not parent then
-      parent  = self.context:addOption(getText("ContextMenu_Repair"), nil, nil)
-      subMenu = ISContextMenu:getNew(self.context)
-      self.context:addSubMenu(parent, subMenu)
-    end
-  end
+  self.context = self.context or ISContextMenu.get(self.playerNum, x + self:getAbsoluteX(), y + self:getAbsoluteY())
+  local fixParent = self.context:addOption(getText("ContextMenu_Repair"), nil, nil)
+  local subMenu   = ISContextMenu:getNew(self.context); self.context:addSubMenu(fixParent, subMenu)
+  local rendered  = false
 
-  local any = false
-
-  for _, fixing in ipairs(VRO.Recipes) do
-    local applies = false
-    for _, req in ipairs(fixing.require or {}) do
-      if req == fullType then applies = true; break end
-    end
-
+  for _,fixing in ipairs(VRO.Recipes) do
+    local applies=false
+    for _,req in ipairs(fixing.require or {}) do if req==ft then applies=true break end end
     if applies then
       for idx, fixer in ipairs(fixing.fixers or {}) do
-        local fixerBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
-        local globalBundle = nil
-        if fixing.globalItem then
-          globalBundle = gatherRequiredItems(playerObj:getInventory(), fixing.globalItem.item, fixing.globalItem.uses or 1)
-        end
+        local fxBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
+        local glBundle  = fixing.globalItem and gatherRequiredItems(playerObj:getInventory(), fixing.globalItem.item, fixing.globalItem.uses or 1) or nil
 
         local skillsOK = true
         if fixer.skills then
@@ -620,62 +603,141 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           wearOK = (findFirstTypeRecurse(playerObj:getInventory(), eq.wear) ~= nil)
         end
 
-        local haveAll = (fixerBundle ~= nil)
-                      and (fixing.globalItem == nil or globalBundle ~= nil)
-                      and skillsOK
-                      and wearOK
+        local haveAll = fxBundle and (not fixing.globalItem or glBundle) and skillsOK and wearOK
+        local raw = displayNameFromFullType(fixer.item)
+        local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
 
-        local rawName = displayNameFromFullType(fixer.item)
-        local label   = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(rawName)
-
-        ensureSubMenu()
         local option
         if haveAll then
-          any = true
-          option = subMenu:addOption(label, playerObj, function(playerObj_, part_, fixing_, fixer_, idx_, broken_, fixerBundle_, globalBundle_)
-            queuePathToPartArea(playerObj_, part_)
-
-            -- merged equip + smart blowtorch
-            local eq_   = mergeEquip(fixer_.equip, fixing_.equip)
-            queueEquipActions(playerObj_, eq_, fixing_.globalItem)
-
-            -- resolve time/anim/sound (fixer overrides recipe)
-            local tm    = resolveTime(fixer_, fixing_, playerObj_, broken_)
-            local anim  = resolveAnim(fixer_, fixing_)
-            local sfx   = resolveSound(fixer_, fixing_)
-
-            local act  = VRO.DoFixAction:new({
-              character    = playerObj_,
-              part         = part_,
-              fixing       = fixing_,
-              fixer        = fixer_,
-              fixerIndex   = idx_,
-              brokenItem   = broken_,
-              fixerBundle  = fixerBundle_,
-              globalBundle = globalBundle_,
-              time         = tm,
-              anim         = anim,
-              sfx          = sfx,
+          rendered = true
+          option = subMenu:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB)
+            queuePathToPartArea(p, prt)
+            queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), fixg.globalItem)
+            local tm   = resolveTime(fixr, fixg, p, brk)
+            local anim = resolveAnim(fixr, fixg)
+            local sfx  = resolveSound(fixr, fixg)
+            ISTimedActionQueue.add(VRO.DoFixAction:new{
+              character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
+              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, time=tm, anim=anim, sfx=sfx,
             })
-            ISTimedActionQueue.add(act)
-          end, part, fixing, fixer, idx, broken, fixerBundle, globalBundle)
+          end, part, fixing, fixer, idx, broken, fxBundle, glBundle)
         else
-          option = subMenu:addOption(label, nil, nil)
-          option.notAvailable = true
+          option = subMenu:addOption(label, nil, nil); option.notAvailable = true
         end
-
-        local tip = ISToolTip:new()
-        addFixerTooltip(tip, playerObj, part, fixing, fixer, idx, broken)
-        option.toolTip = tip
+        local tip = ISToolTip:new(); addFixerTooltip(tip, playerObj, part, fixing, fixer, idx, broken); option.toolTip = tip
       end
     end
   end
 
-  if parent and not any then parent.notAvailable = true end
+  if not rendered then fixParent.notAvailable = true end
 end
 
 ----------------------------------------------------------------
--- H) Public API
+-- I) Inventory repairs (vanilla-style submenu creation)
+----------------------------------------------------------------
+local function resolveInvItemFromContext(items)
+  if not items or #items==0 then return nil end
+  local first = items[1]
+  if instanceof(first,"InventoryItem") then return first end
+  if type(first)=="table" then
+    if first.items and #first.items>0 and instanceof(first.items[1],"InventoryItem") then return first.items[1] end
+    if first.item and instanceof(first.item,"InventoryItem") then return first.item end
+  end
+  for _,v in ipairs(items) do
+    if instanceof(v,"InventoryItem") then return v end
+    if type(v)=="table" then
+      if v.items and #v.items>0 and instanceof(v.items[1],"InventoryItem") then return v.items[1] end
+      if v.item and instanceof(v.item,"InventoryItem") then return v.item end
+    end
+  end
+  return nil
+end
+local function isInventoryItemBroken(item)
+  if not item then return false end
+  if item.isBroken and item:isBroken() then return true end
+  if item.getCondition and item.getConditionMax then return item:getCondition() <= 0 end
+  return false
+end
+local function invRepairLabel(item)
+  local nm = (getItemNameFromFullType and getItemNameFromFullType(item:getFullType()))
+           or (item.getDisplayName and item:getDisplayName())
+           or (item.getType and item:getType()) or "Item"
+  return getText("ContextMenu_Repair") .. nm
+end
+
+local function addInventoryFixOptions(playerObj, context, broken)
+  if not broken or isInventoryItemBroken(broken) then return end -- vanilla: only when NOT broken
+  local ft = broken:getFullType(); if not ft then return end
+
+  local any=false
+  for _,fx in ipairs(VRO.Recipes) do
+    for _,req in ipairs(fx.require or {}) do if req==ft then any=true break end end
+    if any then break end
+  end
+  if not any then return end
+
+  local parent = context:addOption(invRepairLabel(broken), nil, nil)
+  local sub    = ISContextMenu:getNew(context); context:addSubMenu(parent, sub)
+
+  local rendered=false
+  for _,fixing in ipairs(VRO.Recipes) do
+    local applies=false
+    for _,req in ipairs(fixing.require or {}) do if req==ft then applies=true break end end
+    if applies then
+      for idx,fixer in ipairs(fixing.fixers or {}) do
+        local fxBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
+        local glBundle  = fixing.globalItem and gatherRequiredItems(playerObj:getInventory(), fixing.globalItem.item, fixing.globalItem.uses or 1) or nil
+        local skillsOK = true
+        if fixer.skills then
+          for name,req in pairs(fixer.skills) do if perkLevel(playerObj,name) < req then skillsOK=false break end end
+        end
+        local eq = mergeEquip(fixer.equip, fixing.equip)
+        local wearOK = true
+        if eq.wearTag then wearOK = hasTag(playerObj:getInventory(), eq.wearTag)
+        elseif eq.wear then wearOK = (findFirstTypeRecurse(playerObj:getInventory(), eq.wear) ~= nil) end
+
+        local haveAll = fxBundle and (not fixing.globalItem or glBundle) and skillsOK and wearOK
+        local raw = displayNameFromFullType(fixer.item)
+        local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
+
+        local option
+        if haveAll then
+          rendered=true
+          option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB)
+            queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), fixg.globalItem)
+            local tm   = resolveTime(fixr, fixg, p, brk)
+            local anim = resolveAnim(fixr, fixg)
+            local sfx  = resolveSound(fixr, fixg)
+            ISTimedActionQueue.add(VRO.DoFixAction:new{
+              character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
+              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, time=tm, anim=anim, sfx=sfx,
+            })
+          end, fixing, fixer, idx, broken, fxBundle, glBundle)
+        else
+          option = sub:addOption(label, nil, nil); option.notAvailable = true
+        end
+        local tip = ISToolTip:new(); addFixerTooltip(tip, playerObj, nil, fixing, fixer, idx, broken); option.toolTip = tip
+      end
+    end
+  end
+
+  if not rendered then parent.notAvailable = true end
+end
+
+local function OnFillInventoryObjectContextMenu(playerNum, context, items)
+  local playerObj = getSpecificPlayer(playerNum); if not playerObj then return end
+  local broken = resolveInvItemFromContext(items); if not broken then return end
+  addInventoryFixOptions(playerObj, context, broken)
+end
+
+-- Guard re-registering on hot-reload
+if not _G.VRO_InvHooked then
+  Events.OnFillInventoryObjectContextMenu.Add(OnFillInventoryObjectContextMenu)
+  _G.VRO_InvHooked = true
+end
+
+----------------------------------------------------------------
+-- J) Public API
 ----------------------------------------------------------------
 function VRO.addRecipe(recipe) table.insert(VRO.Recipes, recipe) end
 VRO.API = { addRecipe = VRO.addRecipe }
