@@ -103,6 +103,7 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
             option.notAvailable = true;
         end
 
+---@diagnostic disable-next-line: undefined-global
         local blowTorch = ISBlacksmithMenu.getBlowTorchWithMostUses(playerObj:getInventory());
         if blowTorch then
             local blowTorchUseLeft = blowTorch:getDrainableUsesInt();

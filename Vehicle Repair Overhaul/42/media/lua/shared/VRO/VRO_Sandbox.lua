@@ -10,3 +10,17 @@ function VRO.IsEngineRebuildEnabled()
     end
     return true
 end
+
+-- NEW: Prefer vanilla fixing (script recipes) vs our Lua ones (default OFF)
+function VRO.UseVanillaFixingRecipes()
+    if not SandboxVars then return false end
+    -- normal (top-level) sandbox var
+    if SandboxVars.VRO_UseVanillaFixingRecipes ~= nil then
+        return SandboxVars.VRO_UseVanillaFixingRecipes == true
+    end
+    -- backward-compat if someone shipped a nested "VRO" table
+    if SandboxVars.VRO and SandboxVars.VRO.UseVanillaFixingRecipes ~= nil then
+        return SandboxVars.VRO.UseVanillaFixingRecipes == true
+    end
+    return false
+end

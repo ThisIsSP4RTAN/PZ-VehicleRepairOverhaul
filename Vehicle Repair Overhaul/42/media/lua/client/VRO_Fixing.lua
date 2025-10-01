@@ -11,8 +11,98 @@ local VRO = {}
 VRO.__index = VRO
 
 ----------------------------------------------------------------
+-- A) Recipes (edit these)
+-- You can put defaults on the recipe itself:
+--   equip = { primary="Base.BlowTorch", wearTag="WeldingMask" }
+--   anim  = "Welding"
+--   sound = "BlowTorch"
+--   time  = function(player, brokenItem) return 160 end  -- or a number
+----------------------------------------------------------------
+VRO.Recipes = {
+  {
+    name = "Fix Gas Tank Welding",
+    require = {
+      "Base.NormalGasTank1","Base.BigGasTank1","Base.NormalGasTank2","Base.BigGasTank2",
+      "Base.NormalGasTank3","Base.BigGasTank3","Base.NormalGasTank8","Base.BigGasTank8",
+      "Base.U1550LGasTank2","Base.MH_MkIIgastank1","Base.MH_MkIIgastank2","Base.MH_MkIIgastank3",
+      "Base.M35FuelTank2","Base.NivaGasTank1","Base.97BushGasTank2","Base.ShermanGasTank2","Base.87fordF700GasTank2",
+    },
+    -- Global item: drives propane usage requirement
+    globalItem = { item="Base.BlowTorch", uses=3 },
+    conditionModifier = 0.8,
+
+    -- Recipe-level defaults (fixers may override)
+    equip = { primary="Base.BlowTorch", wearTag="WeldingMask" },
+    anim  = "Welding",
+    sound = "BlowTorch",
+    time  = function() return 160 end,
+
+    -- Fixers can override equip/anim/sound/time per entry if needed:
+    fixers = {
+      { item="Base.SheetMetal",        uses=1, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SmallSheetMetal",   uses=2, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.CopperSheet",       uses=1, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SmallCopperSheet",  uses=2, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.GoldSheet",         uses=1, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SilverSheet",       uses=1, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SmallArmorPlate",   uses=2, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.AluminumScrap",     uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.BrassScrap",        uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.CopperScrap",       uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.IronScrap",         uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.ScrapMetal",        uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.SteelScrap",        uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+      { item="Base.UnusableMetal",     uses=8, skills={ MetalWelding=3, Mechanics=3 } },
+    },
+  },
+}
+
+----------------------------------------------------------------
+-- Sandbox toggle (do not show our Lua options when vanilla recipes are preferred)
+----------------------------------------------------------------
+local function VRO_UseVanillaFixingRecipes()
+  if VRO and VRO.UseVanillaFixingRecipes then
+    return VRO.UseVanillaFixingRecipes()
+  end
+  if SandboxVars then
+    if SandboxVars.VRO_UseVanillaFixingRecipes ~= nil then
+      return SandboxVars.VRO_UseVanillaFixingRecipes == true
+    end
+    if SandboxVars.VRO and SandboxVars.VRO.UseVanillaFixingRecipes ~= nil then
+      return SandboxVars.VRO.UseVanillaFixingRecipes == true
+    end
+  end
+  return false
+end
+
+----------------------------------------------------------------
 -- B) Helpers
 ----------------------------------------------------------------
+-- Optional external recipe loader (keeps existing list; append from another file if present)
+local function _appendRecipesFrom(source)
+  if type(source) == "table" then
+    if source.recipes and type(source.recipes) == "table" then
+      for _, r in ipairs(source.recipes) do table.insert(VRO.Recipes, r) end
+    elseif source[1] then
+      for _, r in ipairs(source) do table.insert(VRO.Recipes, r) end
+    elseif source.name then
+      table.insert(VRO.Recipes, source)
+    end
+  elseif type(source) == "function" then
+    local ok, tbl = pcall(source)
+    if ok and type(tbl) == "table" then _appendRecipesFrom(tbl) end
+  end
+end
+
+local function VRO_LoadExternalRecipes()
+  local ok, mod = pcall(require, "VRO_Recipes")
+  if ok and mod then _appendRecipesFrom(mod) end
+  if _G.VRO_Recipes  then _appendRecipesFrom(_G.VRO_Recipes)  end
+  if _G.VRO_RECIPES  then _appendRecipesFrom(_G.VRO_RECIPES)  end
+end
+
+VRO_LoadExternalRecipes()
+
 local function isDrainable(it) return it and instanceof(it,"DrainableComboItem") end
 local function drainableUses(it)
   if not it then return 0 end
@@ -454,7 +544,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
 end
 
 ----------------------------------------------------------------
--- G) Context Menu Injection (under "Repair >")
+-- G) Context Menu Injection (attach to vanilla "Repair")
 ----------------------------------------------------------------
 local function toPlayerInventory(playerObj, it)
   if not it then return end
@@ -508,9 +598,52 @@ local function queueEquipActions(playerObj, eq, globalItem)
   end
 end
 
+-- Find an existing "Repair" parent option in a context menu.
+local function findRepairParentOption(context, matcherFn)
+  local opts = context and context.options or nil
+  if not opts then return nil end
+  for i=1,#opts do
+    local opt = opts[i]
+    if opt and opt.name and matcherFn(opt.name) then
+      return opt
+    end
+  end
+  return nil
+end
+
+-- NEW: always return a valid submenu object (create if missing/malformed)
+local function ensureSubMenu(context, parent)
+  if not (context and parent) then return nil end
+  local sub = parent.subOption
+  if sub and type(sub.addOption) == "function" then
+    return sub
+  end
+  local newSub = ISContextMenu:getNew(context)
+  context:addSubMenu(parent, newSub)
+  return newSub
+end
+
+-- NEW: robust check for an empty submenu (works for tables and Java-like objects)
+local function isSubmenuEmpty(parent)
+  if not (parent and parent.subOption) then return true end
+  local sub = parent.subOption
+  local opts = sub.options
+  if type(opts) == "table" then
+    return next(opts) == nil
+  end
+  if opts and opts.size then
+    return opts:size() == 0
+  end
+  return true
+end
+
+-- Mechanics window: attach our rows to vanilla "Repair" submenu if present, otherwise create it.
 local old_doPart = ISVehicleMechanics.doPartContextMenu
 function ISVehicleMechanics:doPartContextMenu(part, x, y)
   old_doPart(self, part, x, y)
+
+  -- If sandbox is set to use vanilla only, do not add our Lua rows.
+  if VRO_UseVanillaFixingRecipes() then return end
 
   local playerObj = getSpecificPlayer(self.playerNum)
   if not playerObj or not part then return end
@@ -526,10 +659,13 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   if not any then return end
 
   self.context = self.context or ISContextMenu.get(self.playerNum, x + self:getAbsoluteX(), y + self:getAbsoluteY())
-  local fixParent = self.context:addOption(getText("ContextMenu_Repair"), nil, nil)
-  local subMenu   = ISContextMenu:getNew(self.context); self.context:addSubMenu(fixParent, subMenu)
-  local rendered  = false
 
+  local repairTxt = getText("ContextMenu_Repair")
+  local parent = findRepairParentOption(self.context, function(n) return n == repairTxt end)
+  if not parent then parent = self.context:addOption(repairTxt, nil, nil) end
+  local sub = ensureSubMenu(self.context, parent); if not sub then return end
+
+  local rendered  = false
   for _,fixing in ipairs(VRO.Recipes) do
     local applies=false
     for _,req in ipairs(fixing.require or {}) do if req==ft then applies=true break end end
@@ -563,7 +699,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
         local option
         if haveAll then
           rendered = true
-          option = subMenu:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB)
+          option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB)
             queuePathToPartArea(p, prt)
             queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), fixg.globalItem)
             local tm   = resolveTime(fixr, fixg, p, brk)
@@ -575,18 +711,20 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
             })
           end, part, fixing, fixer, idx, broken, fxBundle, glBundle)
         else
-          option = subMenu:addOption(label, nil, nil); option.notAvailable = true
+          option = sub:addOption(label, nil, nil); option.notAvailable = true
         end
         local tip = ISToolTip:new(); addFixerTooltip(tip, playerObj, part, fixing, fixer, idx, broken); option.toolTip = tip
       end
     end
   end
 
-  if not rendered then fixParent.notAvailable = true end
+  if parent and not rendered and isSubmenuEmpty(parent) then
+    parent.notAvailable = true
+  end
 end
 
 ----------------------------------------------------------------
--- I) Inventory repairs (vanilla-style submenu creation)
+-- I) Inventory repairs (vanilla-style submenu; attach to existing)
 ----------------------------------------------------------------
 local function resolveInvItemFromContext(items)
   if not items or #items==0 then return nil end
@@ -619,6 +757,7 @@ local function invRepairLabel(item)
 end
 
 local function addInventoryFixOptions(playerObj, context, broken)
+  if VRO_UseVanillaFixingRecipes() then return end -- sandbox toggle
   if not broken or isInventoryItemBroken(broken) then return end -- vanilla: only when NOT broken
   local ft = broken:getFullType(); if not ft then return end
 
@@ -629,8 +768,12 @@ local function addInventoryFixOptions(playerObj, context, broken)
   end
   if not any then return end
 
-  local parent = context:addOption(invRepairLabel(broken), nil, nil)
-  local sub    = ISContextMenu:getNew(context); context:addSubMenu(parent, sub)
+  local repairPrefix = getText("ContextMenu_Repair")
+  local parent = findRepairParentOption(context, function(n)
+    return string.sub(n, 1, string.len(repairPrefix)) == repairPrefix
+  end)
+  if not parent then parent = context:addOption(invRepairLabel(broken), nil, nil) end
+  local sub = ensureSubMenu(context, parent); if not sub then return end
 
   local rendered=false
   for _,fixing in ipairs(VRO.Recipes) do
@@ -674,7 +817,9 @@ local function addInventoryFixOptions(playerObj, context, broken)
     end
   end
 
-  if not rendered then parent.notAvailable = true end
+  if parent and not rendered and isSubmenuEmpty(parent) then
+    parent.notAvailable = true
+  end
 end
 
 local function OnFillInventoryObjectContextMenu(playerNum, context, items)
