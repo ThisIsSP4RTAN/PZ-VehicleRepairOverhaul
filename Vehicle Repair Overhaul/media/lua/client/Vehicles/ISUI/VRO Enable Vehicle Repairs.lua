@@ -18,7 +18,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
         if part:getCondition() < 100 then
             part:getScriptPart():setRepairMechanic(true);
-        elseif part:getCondition() == 100 and repairMechanicIsOn then
+        elseif part:getCondition() == 100 then
             part:getScriptPart():setRepairMechanic(false);
         end
     end

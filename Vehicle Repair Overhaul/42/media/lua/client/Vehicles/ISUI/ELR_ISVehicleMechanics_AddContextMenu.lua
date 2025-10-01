@@ -1,3 +1,4 @@
+---@diagnostic disable: param-type-mismatch
 -- Mod options table (replace this with actual settings loader if needed)
 local VRO = require("VRO_modOptions")
 
