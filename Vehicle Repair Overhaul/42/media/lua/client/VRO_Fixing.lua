@@ -17,6 +17,11 @@ VRO.__index = VRO
 --   anim  = "Welding"
 --   sound = "BlowTorch"
 --   time  = function(player, brokenItem) return 160 end  -- or a number
+--
+-- globalItem supports:
+--   { item="<FullType>", uses=3, consume=true }
+--   { tag ="<TagName>",  uses=3, consume=true }
+-- If consume=false, the item is required but NOT consumed.
 ----------------------------------------------------------------
 VRO.Recipes = {
   {
@@ -58,7 +63,7 @@ VRO.Recipes = {
 }
 
 ----------------------------------------------------------------
--- Sandbox toggle (do not show our Lua options when vanilla recipes are preferred)
+-- Sandbox toggle (hide our Lua options if vanilla-only is selected)
 ----------------------------------------------------------------
 local function VRO_UseVanillaFixingRecipes()
   if VRO and VRO.UseVanillaFixingRecipes then
@@ -125,6 +130,12 @@ local function findFirstTypeRecurse(inv, fullType)
   return bagged:get(0)
 end
 
+local function countTypeRecurse(inv, fullType)
+  local bagged = ArrayList.new()
+  inv:getAllTypeRecurse(fullType, bagged)
+  return bagged:size()
+end
+
 local function gatherRequiredItems(inv, fullType, needUses)
   local bagged = ArrayList.new()
   inv:getAllTypeRecurse(fullType, bagged)
@@ -143,12 +154,59 @@ local function gatherRequiredItems(inv, fullType, needUses)
   return nil
 end
 
-local function consumeItems(chr, bundles)
+-- Tag helpers
+local function firstTagItem(inv, tag) return inv:getFirstTagRecurse(tag) end
+local function hasTag(inv, tag) return inv:containsTag(tag) end
+
+-- Best single item by tag (favor meeting needUses for drainables; else fullest)
+local function findBestByTag(inv, tag, needUses)
+  needUses = needUses or 1
+  if inv.getFirstEvalRecurse then
+    local it = inv:getFirstEvalRecurse(function(item)
+      return item and item.hasTag and item:hasTag(tag) and (not isDrainable(item) or drainableUses(item) >= needUses)
+    end)
+    if it then return it end
+  end
+  if inv.getBestEvalRecurse then
+    local best = inv:getBestEvalRecurse(
+      function(item) return item and item.hasTag and item:hasTag(tag) end,
+      function(a,b)
+        local ua = isDrainable(a) and drainableUses(a) or 1
+        local ub = isDrainable(b) and drainableUses(b) or 1
+        return ua - ub
+      end
+    )
+    if best then return best end
+  end
+  return firstTagItem(inv, tag)
+end
+
+-- Consume bundle entries { {item=InventoryItem, takeUses=N}, ... }
+local function consumeItems(character, bundles)
   if not bundles then return end
-  for _,b in ipairs(bundles) do
-    local it, uses = b.item, b.takeUses or 0
-    if isDrainable(it) then for _=1,uses do it:Use() end
-    else chr:getInventory():Remove(it) end
+  for _, b in ipairs(bundles) do
+    local it   = b.item
+    local take = b.takeUses or 0
+    if it and take > 0 then
+      if isDrainable(it) then
+        if it.Use then
+          for i = 1, take do
+            if drainableUses(it) <= 0 then break end
+            it:Use()
+          end
+        elseif it.getUseDelta and it.getUsedDelta and it.setUsedDelta then
+          local step = it:getUseDelta()
+          it:setUsedDelta(math.min(1.0, it:getUsedDelta() + step * take))
+        end
+        if drainableUses(it) <= 0 then
+          local con = it.getContainer and it:getContainer() or (character and character:getInventory()) or nil
+          if con then con:Remove(it) end
+        end
+      else
+        local con = it.getContainer and it:getContainer() or (character and character:getInventory()) or nil
+        if con then con:Remove(it) end
+      end
+    end
   end
 end
 
@@ -158,6 +216,11 @@ local function displayNameFromFullType(fullType)
     if nm and nm ~= "" then return nm end
   end
   return fullType
+end
+
+local function displayNameForTag(inv, tag)
+  local it = firstTagItem(inv, tag)
+  return (it and it.getDisplayName and it:getDisplayName()) or tag
 end
 
 local function humanizeForMenuLabel(name)
@@ -205,20 +268,7 @@ local function isTorchItem(it)
   return ft == "Base.BlowTorch"
 end
 
-local function scriptFullTypeHasTorchTag(fullType)
-  local sm = ScriptManager and ScriptManager.instance
-  if not (sm and sm.getItem) then return false end
-  local si = sm:getItem(fullType)
-  return si and si:hasTag("BlowTorch") or false
-end
-
-local function isFullTypeBlowTorch(fullType)
-  if not fullType then return false end
-  if fullType == "Base.BlowTorch" or string.find(fullType, "BlowTorch", 1, true) then return true end
-  return scriptFullTypeHasTorchTag(fullType)
-end
-
--- Prefer a torch with >= needUses; otherwise the fullest non-empty torch.
+-- Prefer a torch with >= needUses; otherwise fullest non-empty torch
 local function findBestBlowtorch(inv, needUses)
   if inv.getFirstEvalRecurse then
     local it = inv:getFirstEvalRecurse(function(item)
@@ -425,7 +475,6 @@ function VRO.DoFixAction:perform()
   ISBaseTimedAction.perform(self)
 end
 
-
 function VRO.DoFixAction:new(args)
   local o = ISBaseTimedAction.new(self, args.character)
   o.stopOnWalk   = true
@@ -505,15 +554,40 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     desc = addNeedsLine(desc, rgb, nm, have, need)
   end
 
-  -- Global item
+  -- Global item (item or tag; consumed vs required-only)
   if fixing.globalItem then
-    local need = fixing.globalItem.uses or 1
-    local have = 0
-    local bundles = gatherRequiredItems(player:getInventory(), fixing.globalItem.item, need)
-    if bundles then for _,b in ipairs(bundles) do have = have + (b.takeUses or 0) end end
-    local nm  = displayNameFromFullType(fixing.globalItem.item)
-    local rgb = (have >= need) and "0,1,0" or "1,0,0"
-    desc = addNeedsLine(desc, rgb, nm, have, need)
+    local gi = fixing.globalItem
+    if gi.consume == false then
+      if gi.tag then
+        local present = hasTag(player:getInventory(), gi.tag)
+        local nm  = displayNameForTag(player:getInventory(), gi.tag)
+        local rgb = present and "0,1,0" or "1,0,0"
+        desc = addNeedsLine(desc, rgb, nm, present and 1 or 0, 1)
+      else
+        local present = countTypeRecurse(player:getInventory(), gi.item) > 0
+        local nm  = displayNameFromFullType(gi.item)
+        local rgb = present and "0,1,0" or "1,0,0"
+        desc = addNeedsLine(desc, rgb, nm, present and 1 or 0, 1)
+      end
+    else
+      local need = gi.uses or 1
+      local have = 0
+      if gi.tag then
+        local it = findBestByTag(player:getInventory(), gi.tag, need)
+        if it then
+          have = isDrainable(it) and math.min(drainableUses(it), need) or 1
+        end
+        local nm  = displayNameForTag(player:getInventory(), gi.tag)
+        local rgb = (have >= need) and "0,1,0" or "1,0,0"
+        desc = addNeedsLine(desc, rgb, nm, have, need)
+      else
+        local bundles = gatherRequiredItems(player:getInventory(), gi.item, need)
+        if bundles then for _,b in ipairs(bundles) do have = have + (b.takeUses or 0) end end
+        local nm  = displayNameFromFullType(gi.item)
+        local rgb = (have >= need) and "0,1,0" or "1,0,0"
+        desc = addNeedsLine(desc, rgb, nm, have, need)
+      end
+    end
   end
 
   -- Wear requirement (merged equip, not consumed)
@@ -557,14 +631,28 @@ local function toPlayerInventory(playerObj, it)
   end
 end
 
--- Equip logic (smart torch):
+-- FullType blowtorch check
+local function isFullTypeBlowTorch(fullType)
+  if not fullType then return false end
+  if fullType == "Base.BlowTorch" or string.find(fullType, "BlowTorch", 1, true) then return true end
+  local sm = ScriptManager and ScriptManager.instance
+  if sm and sm.getItem then
+    local si = sm:getItem(fullType)
+    if si and si:hasTag("BlowTorch") then return true end
+  end
+  return false
+end
+
 local function queueEquipActions(playerObj, eq, globalItem)
   if not eq then return end
 
   local needTorchUses = nil
   local torchRequested = false
-  if globalItem and globalItem.item and (isFullTypeBlowTorch(globalItem.item)) then
-    needTorchUses = globalItem.uses or 1
+
+  if globalItem then
+    if (globalItem.item and isFullTypeBlowTorch(globalItem.item)) or (globalItem.tag == "BlowTorch") then
+      needTorchUses = globalItem.uses or 1
+    end
   end
   if eq.primary and isFullTypeBlowTorch(eq.primary) then
     torchRequested = true
@@ -576,7 +664,7 @@ local function queueEquipActions(playerObj, eq, globalItem)
       toPlayerInventory(playerObj, bestTorch)
       ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, bestTorch, 50, true, false))
     else
-      local it = findFirstTypeRecurse(playerObj:getInventory(), eq.primary)
+      local it = eq.primary and findFirstTypeRecurse(playerObj:getInventory(), eq.primary) or nil
       if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
     end
   elseif eq.primary then
@@ -598,7 +686,6 @@ local function queueEquipActions(playerObj, eq, globalItem)
   end
 end
 
--- Find an existing "Repair" parent option in a context menu.
 local function findRepairParentOption(context, matcherFn)
   local opts = context and context.options or nil
   if not opts then return nil end
@@ -611,7 +698,6 @@ local function findRepairParentOption(context, matcherFn)
   return nil
 end
 
--- NEW: always return a valid submenu object (create if missing/malformed)
 local function ensureSubMenu(context, parent)
   if not (context and parent) then return nil end
   local sub = parent.subOption
@@ -623,7 +709,6 @@ local function ensureSubMenu(context, parent)
   return newSub
 end
 
--- NEW: robust check for an empty submenu (works for tables and Java-like objects)
 local function isSubmenuEmpty(parent)
   if not (parent and parent.subOption) then return true end
   local sub = parent.subOption
@@ -672,7 +757,32 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
     if applies then
       for idx, fixer in ipairs(fixing.fixers or {}) do
         local fxBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
-        local glBundle  = fixing.globalItem and gatherRequiredItems(playerObj:getInventory(), fixing.globalItem.item, fixing.globalItem.uses or 1) or nil
+
+        -- global item presence/consumption logic (supports tag or item)
+        local glOK, glBundle = true, nil
+        if fixing.globalItem then
+          local gi = fixing.globalItem
+          if gi.consume == false then
+            if gi.tag then
+              glOK = hasTag(playerObj:getInventory(), gi.tag)
+            else
+              glOK = countTypeRecurse(playerObj:getInventory(), gi.item) > 0
+            end
+          else
+            if gi.tag then
+              local it = findBestByTag(playerObj:getInventory(), gi.tag, gi.uses or 1)
+              if it and (not isDrainable(it) or drainableUses(it) >= (gi.uses or 1)) then
+                glOK = true
+                glBundle = { { item = it, takeUses = isDrainable(it) and (gi.uses or 1) or 1 } }
+              else
+                glOK = false
+              end
+            else
+              glBundle = gatherRequiredItems(playerObj:getInventory(), gi.item, gi.uses or 1)
+              glOK = (glBundle ~= nil)
+            end
+          end
+        end
 
         local skillsOK = true
         if fixer.skills then
@@ -681,10 +791,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           end
         end
 
-        -- merged equip (recipe defaults + fixer overrides)
         local eq = mergeEquip(fixer.equip, fixing.equip)
-
-        -- Wear requirement presence (TAG or specific full type). NOT consumed.
         local wearOK = true
         if eq.wearTag then
           wearOK = hasTag(playerObj:getInventory(), eq.wearTag)
@@ -692,7 +799,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           wearOK = (findFirstTypeRecurse(playerObj:getInventory(), eq.wear) ~= nil)
         end
 
-        local haveAll = fxBundle and (not fixing.globalItem or glBundle) and skillsOK and wearOK
+        local haveAll = fxBundle and glOK and skillsOK and wearOK
         local raw = displayNameFromFullType(fixer.item)
         local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
 
@@ -743,12 +850,14 @@ local function resolveInvItemFromContext(items)
   end
   return nil
 end
+
 local function isInventoryItemBroken(item)
   if not item then return false end
   if item.isBroken and item:isBroken() then return true end
   if item.getCondition and item.getConditionMax then return item:getCondition() <= 0 end
   return false
 end
+
 local function invRepairLabel(item)
   local nm = (getItemNameFromFullType and getItemNameFromFullType(item:getFullType()))
            or (item.getDisplayName and item:getDisplayName())
@@ -782,7 +891,33 @@ local function addInventoryFixOptions(playerObj, context, broken)
     if applies then
       for idx,fixer in ipairs(fixing.fixers or {}) do
         local fxBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
-        local glBundle  = fixing.globalItem and gatherRequiredItems(playerObj:getInventory(), fixing.globalItem.item, fixing.globalItem.uses or 1) or nil
+
+        -- global item presence/consumption logic (supports tag or item)
+        local glOK, glBundle = true, nil
+        if fixing.globalItem then
+          local gi = fixing.globalItem
+          if gi.consume == false then
+            if gi.tag then
+              glOK = hasTag(playerObj:getInventory(), gi.tag)
+            else
+              glOK = countTypeRecurse(playerObj:getInventory(), gi.item) > 0
+            end
+          else
+            if gi.tag then
+              local it = findBestByTag(playerObj:getInventory(), gi.tag, gi.uses or 1)
+              if it and (not isDrainable(it) or drainableUses(it) >= (gi.uses or 1)) then
+                glOK = true
+                glBundle = { { item = it, takeUses = isDrainable(it) and (gi.uses or 1) or 1 } }
+              else
+                glOK = false
+              end
+            else
+              glBundle = gatherRequiredItems(playerObj:getInventory(), gi.item, gi.uses or 1)
+              glOK = (glBundle ~= nil)
+            end
+          end
+        end
+
         local skillsOK = true
         if fixer.skills then
           for name,req in pairs(fixer.skills) do if perkLevel(playerObj,name) < req then skillsOK=false break end end
@@ -792,7 +927,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
         if eq.wearTag then wearOK = hasTag(playerObj:getInventory(), eq.wearTag)
         elseif eq.wear then wearOK = (findFirstTypeRecurse(playerObj:getInventory(), eq.wear) ~= nil) end
 
-        local haveAll = fxBundle and (not fixing.globalItem or glBundle) and skillsOK and wearOK
+        local haveAll = fxBundle and glOK and skillsOK and wearOK
         local raw = displayNameFromFullType(fixer.item)
         local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
 
