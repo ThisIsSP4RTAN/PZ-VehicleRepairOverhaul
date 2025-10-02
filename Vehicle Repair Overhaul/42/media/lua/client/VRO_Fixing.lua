@@ -13,7 +13,11 @@ VRO.__index = VRO
 ----------------------------------------------------------------
 -- A) Recipes (edit these)
 -- You can put defaults on the recipe itself:
---   equip = { primary="Base.BlowTorch", wearTag="WeldingMask" }
+--   equip = {
+--     primary="Base.BlowTorch",  -- or primaryTag="BlowTorch"
+--     secondary="Base.Hammer",   -- or secondaryTag="Hammer"
+--     wearTag="WeldingMask"      -- or wear="Base.WelderMask"
+--   }
 --   anim  = "Welding"
 --   sound = "BlowTorch"          -- loops during repair (if set)
 --   successSound = "SomeEvent"   -- plays after a successful repair (optional)
@@ -483,10 +487,12 @@ local function pick(a,b) if a ~= nil then return a else return b end end
 local function mergeEquip(fixEq, recEq)
   local out = {}
   fixEq = fixEq or {}; recEq = recEq or {}
-  out.primary   = pick(fixEq.primary,   recEq.primary)
-  out.secondary = pick(fixEq.secondary, recEq.secondary)
-  out.wearTag   = pick(fixEq.wearTag,   recEq.wearTag)
-  out.wear      = pick(fixEq.wear,      recEq.wear)
+  out.primary     = pick(fixEq.primary,     recEq.primary)
+  out.secondary   = pick(fixEq.secondary,   recEq.secondary)
+  out.primaryTag  = pick(fixEq.primaryTag,  recEq.primaryTag)
+  out.secondaryTag= pick(fixEq.secondaryTag,recEq.secondaryTag)
+  out.wearTag     = pick(fixEq.wearTag,     recEq.wearTag)
+  out.wear        = pick(fixEq.wear,        recEq.wear)
   return out
 end
 local function resolveAnim(fixer, fixing) return pick(fixer.anim, fixing.anim) end
@@ -516,7 +522,14 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   desc = desc .. " <LINE> " .. c2 .. " " .. getText("Tooltip_chanceSuccess") .. " " .. (success or 0) .. "%"
   desc = desc .. " <LINE> <LINE> <RGB:1,1,1> " .. getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
 
-  -- Fixer item
+  -- We'll track "seen" so we don't duplicate lines (e.g., primary==global)
+  local seen = {}
+  if fixing.globalItem then
+    local gi = fixing.globalItem
+    if gi.tag then seen["tag:"..tostring(gi.tag)] = true
+    elseif gi.item then seen["item:"..tostring(gi.item)] = true end
+  end
+
   do
     local need = fixer.uses or 1
     local have = 0
@@ -547,9 +560,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
       local have = 0
       if gi.tag then
         local it = findBestByTag(player:getInventory(), gi.tag, need)
-        if it then
-          have = isDrainable(it) and math.min(drainableUses(it), need) or 1
-        end
+        if it then have = isDrainable(it) and math.min(drainableUses(it), need) or 1 end
         local nm  = displayNameForTag(player:getInventory(), gi.tag)
         local rgb = (have >= need) and "0,1,0" or "1,0,0"
         desc = addNeedsLine(desc, rgb, nm, have, need)
@@ -574,6 +585,37 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     local it = findFirstTypeRecurse(player:getInventory(), eq.wear)
     local nm = (it and it.getDisplayName) and it:getDisplayName() or displayNameFromFullType(eq.wear)
     desc = addNeedsLine(desc, it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1)
+  end
+
+  -- Primary / Secondary (merged equip, not consumed) + tag support + de-dup with global
+  local function showEquipLineByItem(fullType)
+    local key = "item:"..tostring(fullType)
+    if seen[key] then return end
+    local present = countTypeRecurse(player:getInventory(), fullType) > 0
+    local nm  = displayNameFromFullType(fullType)
+    local rgb = present and "0,1,0" or "1,0,0"
+    desc = addNeedsLine(desc, rgb, nm, present and 1 or 0, 1)
+    seen[key] = true
+  end
+  local function showEquipLineByTag(tag)
+    local key = "tag:"..tostring(tag)
+    if seen[key] then return end
+    local present = hasTag(player:getInventory(), tag)
+    local nm  = displayNameForTag(player:getInventory(), tag)
+    local rgb = present and "0,1,0" or "1,0,0"
+    desc = addNeedsLine(desc, rgb, nm, present and 1 or 0, 1)
+    seen[key] = true
+  end
+
+  if eq.primaryTag then showEquipLineByTag(eq.primaryTag)
+  elseif eq.primary then showEquipLineByItem(eq.primary) end
+
+  if eq.secondaryTag then showEquipLineByTag(eq.secondaryTag)
+  elseif eq.secondary then
+    -- avoid duplicate if same as primary
+    if not (eq.primary and eq.primary == eq.secondary) and not (eq.primaryTag and eq.primaryTag == eq.secondary) then
+      showEquipLineByItem(eq.secondary)
+    end
   end
 
   -- Skills
@@ -627,29 +669,46 @@ local function queueEquipActions(playerObj, eq, globalItem)
       needTorchUses = globalItem.uses or 1
     end
   end
-  if eq.primary and isFullTypeBlowTorch(eq.primary) then
+  if (eq.primary and isFullTypeBlowTorch(eq.primary)) or (eq.primaryTag == "BlowTorch") then
     torchRequested = true
   end
 
+  -- PRIMARY
   if torchRequested then
     local bestTorch = findBestBlowtorch(playerObj:getInventory(), needTorchUses or 1)
     if bestTorch then
       toPlayerInventory(playerObj, bestTorch)
       ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, bestTorch, 50, true, false))
     else
-      local it = eq.primary and findFirstTypeRecurse(playerObj:getInventory(), eq.primary) or nil
+      -- Fall back: fullType or first item by tag
+      if eq.primary and not eq.primaryTag then
+        local it = findFirstTypeRecurse(playerObj:getInventory(), eq.primary)
+        if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
+      elseif eq.primaryTag then
+        local it = findBestByTag(playerObj:getInventory(), eq.primaryTag, 1)
+        if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
+      end
+    end
+  else
+    if eq.primary then
+      local it = findFirstTypeRecurse(playerObj:getInventory(), eq.primary)
+      if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
+    elseif eq.primaryTag then
+      local it = findBestByTag(playerObj:getInventory(), eq.primaryTag, 1)
       if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
     end
-  elseif eq.primary then
-    local it = findFirstTypeRecurse(playerObj:getInventory(), eq.primary)
-    if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
   end
 
+  -- SECONDARY
   if eq.secondary then
     local it = findFirstTypeRecurse(playerObj:getInventory(), eq.secondary)
     if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, false, false)) end
+  elseif eq.secondaryTag then
+    local it = findBestByTag(playerObj:getInventory(), eq.secondaryTag, 1)
+    if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, false, false)) end
   end
 
+  -- WEAR
   if eq.wearTag and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
     local it = firstTagItem(playerObj:getInventory(), eq.wearTag)
     if it then toPlayerInventory(playerObj, it); ISInventoryPaneContextMenu.wearItem(it, playerObj:getPlayerNum()) end
