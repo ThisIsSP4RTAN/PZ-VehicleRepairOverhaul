@@ -15,7 +15,8 @@ VRO.__index = VRO
 -- You can put defaults on the recipe itself:
 --   equip = { primary="Base.BlowTorch", wearTag="WeldingMask" }
 --   anim  = "Welding"
---   sound = "BlowTorch"
+--   sound = "BlowTorch"          -- loops during repair (if set)
+--   successSound = "SomeEvent"   -- plays after a successful repair (optional)
 --   time  = function(player, brokenItem) return 160 end  -- or a number
 --
 -- globalItem supports:
@@ -24,42 +25,7 @@ VRO.__index = VRO
 -- If consume=false, the item is required but NOT consumed.
 ----------------------------------------------------------------
 VRO.Recipes = {
-  {
-    name = "Fix Gas Tank Welding",
-    require = {
-      "Base.NormalGasTank1","Base.BigGasTank1","Base.NormalGasTank2","Base.BigGasTank2",
-      "Base.NormalGasTank3","Base.BigGasTank3","Base.NormalGasTank8","Base.BigGasTank8",
-      "Base.U1550LGasTank2","Base.MH_MkIIgastank1","Base.MH_MkIIgastank2","Base.MH_MkIIgastank3",
-      "Base.M35FuelTank2","Base.NivaGasTank1","Base.97BushGasTank2","Base.ShermanGasTank2","Base.87fordF700GasTank2",
-    },
-    -- Global item: drives propane usage requirement
-    globalItem = { item="Base.BlowTorch", uses=3 },
-    conditionModifier = 0.8,
-
-    -- Recipe-level defaults (fixers may override)
-    equip = { primary="Base.BlowTorch", wearTag="WeldingMask" },
-    anim  = "Welding",
-    sound = "BlowTorch",
-    time  = function() return 160 end,
-
-    -- Fixers can override equip/anim/sound/time per entry if needed:
-    fixers = {
-      { item="Base.SheetMetal",        uses=1, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.SmallSheetMetal",   uses=2, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.CopperSheet",       uses=1, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.SmallCopperSheet",  uses=2, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.GoldSheet",         uses=1, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.SilverSheet",       uses=1, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.SmallArmorPlate",   uses=2, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.AluminumScrap",     uses=8, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.BrassScrap",        uses=8, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.CopperScrap",       uses=8, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.IronScrap",         uses=8, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.ScrapMetal",        uses=8, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.SteelScrap",        uses=8, skills={ MetalWelding=3, Mechanics=3 } },
-      { item="Base.UnusableMetal",     uses=8, skills={ MetalWelding=3, Mechanics=3 } },
-    },
-  },
+--[[  (recipes may be injected via VRO_Recipes.lua)  ]]
 }
 
 ----------------------------------------------------------------
@@ -250,9 +216,6 @@ local function setTooltipIconFromFullType(tip, fullType)
   end
 end
 
--- Tag helpers
-local function firstTagItem(inv, tag) return inv:getFirstTagRecurse(tag) end
-local function hasTag(inv, tag) return inv:containsTag(tag) end
 local function fallbackNameForTag(tag)
   if tag == "WeldingMask" then return "Welding Mask" end
   return tag
@@ -446,6 +409,14 @@ function VRO.DoFixAction:perform()
 
     setHBR(part, broken, hbr + 1)
 
+    if self._soundHandle then
+      self.character:getEmitter():stopSound(self._soundHandle)
+      self._soundHandle = nil
+    end
+    if self.successSfx then
+      self.character:getEmitter():playSound(self.successSfx)
+    end
+
     if self.fixer.skills then
       for perkName,_ in pairs(self.fixer.skills) do
         local perk = resolvePerk(perkName)
@@ -490,6 +461,7 @@ function VRO.DoFixAction:new(args)
   o.maxTime      = args.time or 150
   o.actionAnim   = args.anim
   o.fxSound      = args.sfx
+  o.successSfx   = args.successSfx
   return o
 end
 
@@ -519,6 +491,7 @@ local function mergeEquip(fixEq, recEq)
 end
 local function resolveAnim(fixer, fixing) return pick(fixer.anim, fixing.anim) end
 local function resolveSound(fixer, fixing) return pick(fixer.sound, fixing.sound) end
+local function resolveSuccessSound(fixer, fixing) return pick(fixer.successSound, fixing.successSound) end
 local function resolveTime(fixer, fixing, player, broken)
   local t = (fixer.time ~= nil) and fixer.time or fixing.time
   if type(t) == "function" then return t(player, broken) end
@@ -809,12 +782,14 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB)
             queuePathToPartArea(p, prt)
             queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), fixg.globalItem)
-            local tm   = resolveTime(fixr, fixg, p, brk)
-            local anim = resolveAnim(fixr, fixg)
-            local sfx  = resolveSound(fixr, fixg)
+            local tm    = resolveTime(fixr, fixg, p, brk)
+            local anim  = resolveAnim(fixr, fixg)
+            local sfx   = resolveSound(fixr, fixg)
+            local sfxOK = resolveSuccessSound(fixr, fixg)
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
-              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, time=tm, anim=anim, sfx=sfx,
+              brokenItem=brk, fixerBundle=fxB, globalBundle=glB,
+              time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
             })
           end, part, fixing, fixer, idx, broken, fxBundle, glBundle)
         else
@@ -936,12 +911,14 @@ local function addInventoryFixOptions(playerObj, context, broken)
           rendered=true
           option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB)
             queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), fixg.globalItem)
-            local tm   = resolveTime(fixr, fixg, p, brk)
-            local anim = resolveAnim(fixr, fixg)
-            local sfx  = resolveSound(fixr, fixg)
+            local tm    = resolveTime(fixr, fixg, p, brk)
+            local anim  = resolveAnim(fixr, fixg)
+            local sfx   = resolveSound(fixr, fixg)
+            local sfxOK = resolveSuccessSound(fixr, fixg)
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
-              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, time=tm, anim=anim, sfx=sfx,
+              brokenItem=brk, fixerBundle=fxB, globalBundle=glB,
+              time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
             })
           end, fixing, fixer, idx, broken, fxBundle, glBundle)
         else
