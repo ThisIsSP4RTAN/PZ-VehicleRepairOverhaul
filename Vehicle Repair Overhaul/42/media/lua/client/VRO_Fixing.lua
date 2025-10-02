@@ -155,15 +155,11 @@ end
 local function consumeItems(character, bundles)
   if not bundles then return end
   for _, b in ipairs(bundles) do
-    local it   = b.item
-    local take = b.takeUses or 0
+    local it, take = b.item, b.takeUses or 0
     if it and take > 0 then
       if isDrainable(it) then
         if it.Use then
-          for i = 1, take do
-            if drainableUses(it) <= 0 then break end
-            it:Use()
-          end
+          for i=1,take do if drainableUses(it) <= 0 then break end; it:Use() end
         elseif it.getUseDelta and it.getUsedDelta and it.setUsedDelta then
           local step = it:getUseDelta()
           it:setUsedDelta(math.min(1.0, it:getUsedDelta() + step * take))
@@ -357,7 +353,14 @@ function VRO.DoFixAction:start()
   local anim = self.actionAnim or defaultAnimForPart(self.part)
   if anim and self.setActionAnim then self:setActionAnim(anim) end
   if self.setOverrideHandModels then
-    self:setOverrideHandModels(self.character:getPrimaryHandItem(), nil)
+    if self.showModel ~= false then
+      local p = self.expectedPrimary   or self.character:getPrimaryHandItem()
+      local s = self.expectedSecondary or self.character:getSecondaryHandItem()
+      self:setOverrideHandModels(p, s)
+    else
+      self:setOverrideHandModels(nil, nil)
+    end
+    self._didOverride = true
   end
   if self.fxSound then
     self._soundHandle = self.character:getEmitter():playSound(self.fxSound)
@@ -369,8 +372,9 @@ function VRO.DoFixAction:stop()
     self.character:getEmitter():stopSound(self._soundHandle)
     self._soundHandle = nil
   end
-  if self.setOverrideHandModels then
+  if self._didOverride and self.setOverrideHandModels then
     self:setOverrideHandModels(nil, nil)
+    self._didOverride = nil
   end
   ISBaseTimedAction.stop(self)
 end
@@ -446,7 +450,10 @@ function VRO.DoFixAction:perform()
   if self.globalBundle then consumeItems(self.character, self.globalBundle) end
 
   if self._soundHandle then self.character:getEmitter():stopSound(self._soundHandle) end
-  if self.setOverrideHandModels then self:setOverrideHandModels(nil,nil) end
+  if self._didOverride and self.setOverrideHandModels then
+    self:setOverrideHandModels(nil,nil)
+    self._didOverride = nil
+  end
   ISBaseTimedAction.perform(self)
 end
 
@@ -466,6 +473,9 @@ function VRO.DoFixAction:new(args)
   o.actionAnim   = args.anim
   o.fxSound      = args.sfx
   o.successSfx   = args.successSfx
+  o.showModel    = (args.showModel ~= false) -- default true
+  o.expectedPrimary   = args.expectedPrimary
+  o.expectedSecondary = args.expectedSecondary
   return o
 end
 
@@ -487,17 +497,24 @@ local function pick(a,b) if a ~= nil then return a else return b end end
 local function mergeEquip(fixEq, recEq)
   local out = {}
   fixEq = fixEq or {}; recEq = recEq or {}
-  out.primary     = pick(fixEq.primary,     recEq.primary)
-  out.secondary   = pick(fixEq.secondary,   recEq.secondary)
-  out.primaryTag  = pick(fixEq.primaryTag,  recEq.primaryTag)
-  out.secondaryTag= pick(fixEq.secondaryTag,recEq.secondaryTag)
-  out.wearTag     = pick(fixEq.wearTag,     recEq.wearTag)
-  out.wear        = pick(fixEq.wear,        recEq.wear)
+  out.primary      = pick(fixEq.primary,      recEq.primary)
+  out.secondary    = pick(fixEq.secondary,    recEq.secondary)
+  out.primaryTag   = pick(fixEq.primaryTag,   recEq.primaryTag)
+  out.secondaryTag = pick(fixEq.secondaryTag, recEq.secondaryTag)
+  out.wearTag      = pick(fixEq.wearTag,      recEq.wearTag)
+  out.wear         = pick(fixEq.wear,         recEq.wear)
+  out.showModel    = pick(fixEq.showModel,    recEq.showModel)
   return out
 end
 local function resolveAnim(fixer, fixing) return pick(fixer.anim, fixing.anim) end
 local function resolveSound(fixer, fixing) return pick(fixer.sound, fixing.sound) end
 local function resolveSuccessSound(fixer, fixing) return pick(fixer.successSound, fixing.successSound) end
+local function resolveShowModel(fixer, fixing)
+  local f = (fixer.equip and fixer.equip.showModel)
+  if f == nil and fixing.equip then f = fixing.equip.showModel end
+  if f == nil then f = true end
+  return f
+end
 local function resolveTime(fixer, fixing, player, broken)
   local t = (fixer.time ~= nil) and fixer.time or fixing.time
   if type(t) == "function" then return t(player, broken) end
@@ -524,10 +541,10 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
 
   -- We'll track "seen" so we don't duplicate lines (e.g., primary==global)
   local seen = {}
-  if fixing.globalItem then
-    local gi = fixing.globalItem
-    if gi.tag then seen["tag:"..tostring(gi.tag)] = true
-    elseif gi.item then seen["item:"..tostring(gi.item)] = true end
+  local effGlobal = fixer.globalItem or fixing.globalItem
+  if effGlobal then
+    if effGlobal.tag then seen["tag:"..tostring(effGlobal.tag)] = true
+    elseif effGlobal.item then seen["item:"..tostring(effGlobal.item)] = true end
   end
 
   do
@@ -540,9 +557,8 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     desc = addNeedsLine(desc, rgb, nm, have, need)
   end
 
-  -- Global item (item or tag; consumed vs required-only)
-  if fixing.globalItem then
-    local gi = fixing.globalItem
+  if effGlobal then
+    local gi = effGlobal
     if gi.consume == false then
       if gi.tag then
         local present = hasTag(player:getInventory(), gi.tag)
@@ -657,8 +673,20 @@ local function isFullTypeBlowTorch(fullType)
   return false
 end
 
+-- helper to DRY up fullType/tag selection
+local function _pickByFullOrTag(inv, fullType, tag, needUses)
+  if fullType then
+    return findFirstTypeRecurse(inv, fullType)
+  elseif tag then
+    return findBestByTag(inv, tag, needUses or 1)
+  end
+  return nil
+end
+
+-- returns (chosenPrimary, chosenSecondary)
 local function queueEquipActions(playerObj, eq, globalItem)
   if not eq then return end
+  local chosenPrimary, chosenSecondary = nil, nil
 
   local needTorchUses = nil
   local torchRequested = false
@@ -673,38 +701,34 @@ local function queueEquipActions(playerObj, eq, globalItem)
   end
 
   -- PRIMARY
-  if torchRequested then
-    local bestTorch = findBestBlowtorch(playerObj:getInventory(), needTorchUses or 1)
-    if bestTorch then
-      toPlayerInventory(playerObj, bestTorch)
-      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, bestTorch, 50, true, false))
-    else
-      -- Fall back: fullType or first item by tag
-      if eq.primary and not eq.primaryTag then
-        local it = findFirstTypeRecurse(playerObj:getInventory(), eq.primary)
-        if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
-      elseif eq.primaryTag then
-        local it = findBestByTag(playerObj:getInventory(), eq.primaryTag, 1)
-        if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
+  do
+    local inv = playerObj:getInventory()
+    local desiredPrimary = nil
+    if torchRequested then
+      desiredPrimary = findBestBlowtorch(inv, needTorchUses or 1)
+      if not desiredPrimary then
+        desiredPrimary = _pickByFullOrTag(inv, eq.primary, eq.primaryTag, 1)
       end
+    else
+      desiredPrimary = _pickByFullOrTag(inv, eq.primary, eq.primaryTag, 1)
     end
-  else
-    if eq.primary then
-      local it = findFirstTypeRecurse(playerObj:getInventory(), eq.primary)
-      if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
-    elseif eq.primaryTag then
-      local it = findBestByTag(playerObj:getInventory(), eq.primaryTag, 1)
-      if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, true, false)) end
+
+    if desiredPrimary then
+      chosenPrimary = desiredPrimary
+      toPlayerInventory(playerObj, desiredPrimary)
+      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, desiredPrimary, 50, true, false))
     end
   end
 
   -- SECONDARY
-  if eq.secondary then
-    local it = findFirstTypeRecurse(playerObj:getInventory(), eq.secondary)
-    if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, false, false)) end
-  elseif eq.secondaryTag then
-    local it = findBestByTag(playerObj:getInventory(), eq.secondaryTag, 1)
-    if it then toPlayerInventory(playerObj, it); ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, it, 50, false, false)) end
+  do
+    local inv = playerObj:getInventory()
+    local desiredSecondary = _pickByFullOrTag(inv, eq.secondary, eq.secondaryTag, 1)
+    if desiredSecondary then
+      chosenSecondary = desiredSecondary
+      toPlayerInventory(playerObj, desiredSecondary)
+      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, desiredSecondary, 50, false, false))
+    end
   end
 
   -- WEAR
@@ -715,6 +739,8 @@ local function queueEquipActions(playerObj, eq, globalItem)
     local it = findFirstTypeRecurse(playerObj:getInventory(), eq.wear)
     if it then toPlayerInventory(playerObj, it); ISInventoryPaneContextMenu.wearItem(it, playerObj:getPlayerNum()) end
   end
+
+  return chosenPrimary, chosenSecondary
 end
 
 local function findRepairParentOption(context, matcherFn)
@@ -789,10 +815,11 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
       for idx, fixer in ipairs(fixing.fixers or {}) do
         local fxBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
 
-        -- global item presence/consumption logic (supports tag or item)
+        local effGlobal = fixer.globalItem or fixing.globalItem
+
         local glOK, glBundle = true, nil
-        if fixing.globalItem then
-          local gi = fixing.globalItem
+        if effGlobal then
+          local gi = effGlobal
           if gi.consume == false then
             if gi.tag then
               glOK = hasTag(playerObj:getInventory(), gi.tag)
@@ -837,19 +864,21 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
         local option
         if haveAll then
           rendered = true
-          option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB)
+          option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB, gItem)
             queuePathToPartArea(p, prt)
-            queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), fixg.globalItem)
+            local chosenP, chosenS = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), gItem)
             local tm    = resolveTime(fixr, fixg, p, brk)
             local anim  = resolveAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
             local sfxOK = resolveSuccessSound(fixr, fixg)
+            local showM = resolveShowModel(fixr, fixg)
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
               brokenItem=brk, fixerBundle=fxB, globalBundle=glB,
-              time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
+              time=tm, anim=anim, sfx=sfx, successSfx=sfxOK, showModel=showM,
+              expectedPrimary=chosenP, expectedSecondary=chosenS,
             })
-          end, part, fixing, fixer, idx, broken, fxBundle, glBundle)
+          end, part, fixing, fixer, idx, broken, fxBundle, glBundle, effGlobal)
         else
           option = sub:addOption(label, nil, nil); option.notAvailable = true
         end
@@ -925,10 +954,11 @@ local function addInventoryFixOptions(playerObj, context, broken)
       for idx,fixer in ipairs(fixing.fixers or {}) do
         local fxBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
 
+        local effGlobal = fixer.globalItem or fixing.globalItem
         -- global item presence/consumption logic (supports tag or item)
         local glOK, glBundle = true, nil
-        if fixing.globalItem then
-          local gi = fixing.globalItem
+        if effGlobal then
+          local gi = effGlobal
           if gi.consume == false then
             if gi.tag then
               glOK = hasTag(playerObj:getInventory(), gi.tag)
@@ -967,18 +997,20 @@ local function addInventoryFixOptions(playerObj, context, broken)
         local option
         if haveAll then
           rendered=true
-          option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB)
-            queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), fixg.globalItem)
+          option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB, gItem)
+            local chosenP, chosenS = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), gItem)
             local tm    = resolveTime(fixr, fixg, p, brk)
             local anim  = resolveAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
             local sfxOK = resolveSuccessSound(fixr, fixg)
+            local showM = resolveShowModel(fixr, fixg)
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
               brokenItem=brk, fixerBundle=fxB, globalBundle=glB,
-              time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
+              time=tm, anim=anim, sfx=sfx, successSfx=sfxOK, showModel=showM,
+              expectedPrimary=chosenP, expectedSecondary=chosenS,
             })
-          end, fixing, fixer, idx, broken, fxBundle, glBundle)
+          end, fixing, fixer, idx, broken, fxBundle, glBundle, effGlobal)
         else
           option = sub:addOption(label, nil, nil); option.notAvailable = true
         end

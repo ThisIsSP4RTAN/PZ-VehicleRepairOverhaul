@@ -1,6 +1,13 @@
 ----------------------------------------------------------------
+-- Recipe Key
+--
 -- You can put defaults on the recipe itself:
---   equip = { primary="Base.BlowTorch", wearTag="WeldingMask" }
+--   equip = {
+--     primary="Base.BlowTorch",  -- or primaryTag="BlowTorch"
+--     secondary="Base.Hammer",   -- or secondaryTag="Hammer"
+--     wearTag="WeldingMask"      -- or wear="Base.WelderMask"
+--     showModel=true,            -- controls hand model visibility during action
+--   }
 --   anim  = "Welding"
 --   sound = "BlowTorch"          -- loops during repair (if set)
 --   successSound = "SomeEvent"   -- plays after a successful repair (optional)
@@ -10,6 +17,10 @@
 --   { item="<FullType>", uses=3, consume=true }
 --   { tag ="<TagName>",  uses=3, consume=true }
 -- If consume=false, the item is required but NOT consumed.
+--
+-- Per-fixer overrides:
+--   fixer.equip       -- overrides recipe equip for that fixer
+--   fixer.globalItem  -- overrides recipe-level globalItem for that fixer
 ----------------------------------------------------------------
 
 return {
@@ -25,7 +36,7 @@ return {
       globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
       conditionModifier = 0.8,
       -- Recipe-level defaults (fixers can override)
-      equip = { primary = "Base.BlowTorch", wearTag = "WeldingMask" },
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 160,
@@ -77,7 +88,7 @@ return {
       },
       globalItem = { item = "Base.BlowTorch", uses = 2, consume = true },
       conditionModifier = 0.6,
-      equip = { primary = "Base.BlowTorch", wearTag = "WeldingMask" },
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 160,
@@ -131,7 +142,7 @@ return {
       },
       globalItem = { item = "Base.BlowTorch", uses = 5, consume = true },
       conditionModifier = 1.2,
-      equip = { primary = "Base.BlowTorch", wearTag = "WeldingMask" },
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 160,
@@ -168,6 +179,7 @@ return {
       },
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.7,
+      equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
       time  = 160,
       fixers = {
@@ -181,7 +193,7 @@ return {
         { item="Base.MetalPipe",        uses=1, skills={ Mechanics=3 } },
         { item="Base.MetalBar",         uses=1, skills={ Mechanics=3 } },
         { item="Base.LeadPipe",         uses=1, skills={ Mechanics=3 } },
-        { item="Base.Plank",            uses=4, skills={ Woodwork=3, Mechanics=3 }, equip = { primaryTag = "Hammer" }, anim = "Build" ,sound = "Hammering" },
+        { item="Base.Plank",            uses=4, skills={ Woodwork=3, Mechanics=3 }, equip = { primaryTag = "Hammer", showModel=true }, anim = "Build", sound = "Hammering", globalItem = { item="Base.Nails", uses=5, consume=true }, },
         { item="Base.AluminumScrap",    uses=8, skills={ Mechanics=3 } },
         { item="Base.BrassScrap",       uses=8, skills={ Mechanics=3 } },
         { item="Base.CopperScrap",      uses=8, skills={ Mechanics=3 } },
@@ -223,7 +235,7 @@ return {
       },
       globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
       conditionModifier = 1.0,
-      equip = { primary = "Base.BlowTorch", wearTag = "WeldingMask" },
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 160,
@@ -257,6 +269,7 @@ return {
       },
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.7,
+      equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
       time  = 160,
       fixers = {
@@ -270,7 +283,7 @@ return {
         { item="Base.MetalPipe",        uses=1, skills={ Mechanics=3 } },
         { item="Base.MetalBar",         uses=1, skills={ Mechanics=3 } },
         { item="Base.LeadPipe",         uses=1, skills={ Mechanics=3 } },
-        { item="Base.Plank",            uses=2, skills={ Woodwork=3, Mechanics=3 }, equip = { primaryTag = "Hammer" }, anim = "Build", sound = "Hammering" },
+        { item="Base.Plank",            uses=2, skills={ Woodwork=3, Mechanics=3 }, equip = { primaryTag = "Hammer", showModel=true }, anim = "Build", sound = "Hammering", globalItem = { item="Base.Nails", uses=5, consume=true }, },
         { item="Base.AluminumScrap",    uses=8, skills={ Mechanics=3 } },
         { item="Base.BrassScrap",       uses=8, skills={ Mechanics=3 } },
         { item="Base.CopperScrap",      uses=8, skills={ Mechanics=3 } },
@@ -338,7 +351,7 @@ return {
       },
       globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
       conditionModifier = 1.0,
-      equip = { primary = "Base.BlowTorch", wearTag = "WeldingMask" },
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 160,
@@ -401,9 +414,8 @@ return {
       },
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.5,
-      equip = { primaryTag = "Screwdriver" },
+      equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
-      sound = "Screwdriver",
       time  = 160,
       fixers = {
         { item="Base.SheetMetal",       uses=2, skills={ Mechanics=3 } },
@@ -416,7 +428,7 @@ return {
         { item="Base.MetalPipe",        uses=1, skills={ Mechanics=3 } },
         { item="Base.MetalBar",         uses=1, skills={ Mechanics=3 } },
         { item="Base.LeadPipe",         uses=1, skills={ Mechanics=3 } },
-        { item="Base.Plank",            uses=4, skills={ Woodwork=3, Mechanics=3 }, equip = { primaryTag = "Hammer" }, anim = "Build", sound = "Hammering" },
+        { item="Base.Plank",            uses=4, skills={ Woodwork=3, Mechanics=3 }, equip = { primaryTag = "Hammer", showModel=true }, anim = "Build", sound = "Hammering", globalItem = { item="Base.Nails", uses=5, consume=true }, },
         { item="Base.AluminumScrap",    uses=8, skills={ Mechanics=3 } },
         { item="Base.BrassScrap",       uses=8, skills={ Mechanics=3 } },
         { item="Base.CopperScrap",      uses=8, skills={ Mechanics=3 } },
@@ -504,7 +516,7 @@ return {
       },
       globalItem = { item = "Base.BlowTorch", uses = 4, consume = true },
       conditionModifier = 1.2,
-      equip = { primary = "Base.BlowTorch", wearTag = "WeldingMask" },
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 160,
@@ -606,9 +618,8 @@ return {
       },
       globalItem = { item = "Base.Screws", uses = 16, consume = true },
       conditionModifier = 0.7,
-      equip = { primaryTag = "Screwdriver" },
+      equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
-      sound = "Screwdriver",
       time  = 160,
       fixers = {
         { item="Base.SheetMetal",       uses=3,  skills={ Mechanics=4 } },
@@ -621,7 +632,7 @@ return {
         { item="Base.MetalPipe",        uses=2,  skills={ Mechanics=4 } },
         { item="Base.MetalBar",         uses=2,  skills={ Mechanics=4 } },
         { item="Base.LeadPipe",         uses=4,  skills={ Mechanics=4 } },
-        { item="Base.Plank",            uses=6,  skills={ Woodwork=4, Mechanics=4 }, equip = { primaryTag = "Hammer" }, anim = "Build", sound = "Hammering" },
+        { item="Base.Plank",            uses=6,  skills={ Woodwork=4, Mechanics=4 }, equip = { primaryTag = "Hammer", showModel=true }, anim = "Build", sound = "Hammering", globalItem = { item="Base.Nails", uses=5, consume=true }, },
         { item="Base.AluminumScrap",    uses=12, skills={ Mechanics=4 } },
         { item="Base.BrassScrap",       uses=12, skills={ Mechanics=4 } },
         { item="Base.CopperScrap",      uses=12, skills={ Mechanics=4 } },
