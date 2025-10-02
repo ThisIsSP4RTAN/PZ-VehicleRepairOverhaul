@@ -646,7 +646,6 @@ local function toPlayerInventory(playerObj, it)
   end
 end
 
--- FullType blowtorch check
 local function isFullTypeBlowTorch(fullType)
   if not fullType then return false end
   if fullType == "Base.BlowTorch" or string.find(fullType, "BlowTorch", 1, true) then return true end
