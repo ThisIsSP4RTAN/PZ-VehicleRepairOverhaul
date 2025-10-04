@@ -75,8 +75,86 @@ local function VRO_LoadExternalRecipes()
   if _G.VRO_Recipes  then _appendRecipesFrom(_G.VRO_Recipes)  end
   if _G.VRO_RECIPES  then _appendRecipesFrom(_G.VRO_RECIPES)  end
 end
-
 VRO_LoadExternalRecipes()
+
+-- Named Part Lists (optional external file): define lists once, reuse in recipes
+-- File format suggestion: media/lua/client/VRO_PartLists.lua -> return { ListName = { "Base.Foo", ... }, ... }
+VRO.PartLists = VRO.PartLists or {}
+local function VRO_LoadPartLists()
+  local ok, mod = pcall(require, "VRO_PartLists")
+  if ok and type(mod) == "table" then
+    for k,v in pairs(mod) do VRO.PartLists[k] = v end
+  end
+  if _G.VRO_PartLists and type(_G.VRO_PartLists)=="table" then
+    for k,v in pairs(_G.VRO_PartLists) do VRO.PartLists[k] = v end
+  end
+  if _G.VRO_PART_LISTS and type(_G.VRO_PART_LISTS)=="table" then
+    for k,v in pairs(_G.VRO_PART_LISTS) do VRO.PartLists[k] = v end
+  end
+end
+VRO_LoadPartLists()
+
+-- Expand a single "require" entry into a set of full types.
+-- Supports:
+--   "Base.Something"
+--   "@ListName"                       -- pulls from VRO.PartLists[ListName]
+--   { list="ListName" } / { requireList="ListName" }
+--   { "@ListName", "Base.Other", ... }  (nested arrays)
+local function _expandRequireEntry(entry, out_set, seenLists)
+  seenLists = seenLists or {}
+  local t = type(entry)
+
+  if t == "string" then
+    if string.sub(entry,1,1) == "@" then
+      local key = string.sub(entry,2)
+      if key ~= "" and not seenLists[key] then
+        seenLists[key] = true
+        local lst = VRO.PartLists[key]
+        if type(lst) == "table" then
+          for _,ft in ipairs(lst) do out_set[ft] = true end
+        else
+          print("[VRO] Part list not found: " .. tostring(key))
+        end
+      end
+    else
+      out_set[entry] = true
+    end
+    return
+  end
+
+  if t == "table" then
+    local key = entry.list or entry.requireList
+    if type(key) == "string" then
+      _expandRequireEntry("@"..key, out_set, seenLists)
+      return
+    end
+    local n = #entry
+    if n > 0 then
+      for i = 1, n do _expandRequireEntry(entry[i], out_set, seenLists) end
+      return
+    end
+  end
+end
+
+-- Returns a set { fullType=true, ... } for recipe's require/requireLists
+local function resolveRequireSet(fixing)
+  local set = {}
+  if fixing then
+    if fixing.require ~= nil then
+      _expandRequireEntry(fixing.require, set)
+    end
+    if fixing.requireLists ~= nil then
+      if type(fixing.requireLists) == "string" then
+        _expandRequireEntry("@"..fixing.requireLists, set)
+      elseif type(fixing.requireLists) == "table" then
+        for _,name in ipairs(fixing.requireLists) do
+          _expandRequireEntry("@"..tostring(name), set)
+        end
+      end
+    end
+  end
+  return set
+end
 
 local function isDrainable(it) return it and instanceof(it,"DrainableComboItem") end
 local function drainableUses(it)
@@ -795,8 +873,8 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
   local ft, any = broken:getFullType(), false
   for _,fx in ipairs(VRO.Recipes) do
-    for _,req in ipairs(fx.require or {}) do if req==ft then any=true break end end
-    if any then break end
+    local set = resolveRequireSet(fx)
+    if set[ft] then any=true break end
   end
   if not any then return end
 
@@ -809,8 +887,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
   local rendered  = false
   for _,fixing in ipairs(VRO.Recipes) do
-    local applies=false
-    for _,req in ipairs(fixing.require or {}) do if req==ft then applies=true break end end
+    local applies = resolveRequireSet(fixing)[ft] == true
     if applies then
       for idx, fixer in ipairs(fixing.fixers or {}) do
         local fxBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
@@ -934,8 +1011,8 @@ local function addInventoryFixOptions(playerObj, context, broken)
 
   local any=false
   for _,fx in ipairs(VRO.Recipes) do
-    for _,req in ipairs(fx.require or {}) do if req==ft then any=true break end end
-    if any then break end
+    local set = resolveRequireSet(fx)
+    if set[ft] then any=true break end
   end
   if not any then return end
 
@@ -948,8 +1025,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
 
   local rendered=false
   for _,fixing in ipairs(VRO.Recipes) do
-    local applies=false
-    for _,req in ipairs(fixing.require or {}) do if req==ft then applies=true break end end
+    local applies = resolveRequireSet(fixing)[ft] == true
     if applies then
       for idx,fixer in ipairs(fixing.fixers or {}) do
         local fxBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)

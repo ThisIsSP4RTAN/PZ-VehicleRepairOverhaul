@@ -13,6 +13,7 @@ local HIDE_BY_NAME = {
     "Fix Door Welding",
     "Fix Glove box",
     "Fix Car seat",
+    "Fix DAMN Trunk Welding", -- KI5
 }
 
 -- Optional: also ALWAYS hide by required item fullType(s)
