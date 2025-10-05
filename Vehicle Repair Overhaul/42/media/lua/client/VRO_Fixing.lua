@@ -1,4 +1,4 @@
----@diagnostic disable: undefined-field, param-type-mismatch
+---@diagnostic disable: undefined-field, param-type-mismatch, redundant-parameter
 
 require "Vehicles/ISUI/ISVehicleMechanics"
 require "ISUI/ISToolTip"

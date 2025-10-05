@@ -1,33 +1,35 @@
-return {
-  GasTank_All = {
+VRO = VRO or {}
+VRO.PartLists = VRO.PartLists or {}
+
+  VRO.PartLists.GasTank_All = {
     "Base.NormalGasTank1","Base.BigGasTank1","Base.NormalGasTank2","Base.BigGasTank2",
     "Base.NormalGasTank3","Base.BigGasTank3","Base.NormalGasTank8","Base.BigGasTank8",
     "Base.U1550LGasTank2","Base.MH_MkIIgastank1","Base.MH_MkIIgastank2","Base.MH_MkIIgastank3",
     "Base.M35FuelTank2","Base.NivaGasTank1","Base.97BushGasTank2","Base.ShermanGasTank2",
     "Base.87fordF700GasTank2",
-  },
+  }
 
-  GasTankSmall_All = {
+  VRO.PartLists.GasTankSmall_All = {
     "Base.SmallGasTank1","Base.SmallGasTank2","Base.SmallGasTank3","Base.SmallGasTank8",
     "Base.SmallCycleGasTank","Base.CycleGasTank","Base.ATAMotoBMWGasTank","Base.ATAMotoHarleyGasTank",
     "Base.KZ1KgasTank","Base.SS100gasTank3","Base.ZNL50gasTank",
-  },
+  }
 
-  Trailer_All = {
+  VRO.PartLists.Trailer_All = {
     "Base.TrailerTrunk1","Base.TrailerTrunk2","Base.TrailerTrunk3","Base.FRTrailerTrunk1",
     "Base.FRTrailerTrunk2","Base.FRTrailerTrunk3","Base.FRXLCargoTrunk1","Base.FRXLCargoTrunk2",
     "Base.FRXLCargoTrunk3","Base.FRXLCargoTrunk8","Base.FRCargoTrunk1","Base.FRCargoTrunk2",
     "Base.FRCargoTrunk3","Base.FRCargoTrunk8","Base.IsoContainerTrunkDoor2",
     "Base.IsoContainerDoubleTrunkDoor2","Base.IsoContainerTankerTrunkDoor2","Base.ISOHalfStorage2",
     "Base.TrailerFirstTrunk","Base.TrailerSecondTrunk",
-  },
+  }
 
-  TrailerLids_All = {
+  VRO.PartLists.TrailerLids_All = {
     "Base.M101A3Cover1_Item","Base.FRSideContainer1","Base.FRSideContainer2","Base.FRSideContainer3",
     "Base.FRSideContainer8","Base.FRSideContainer_RS1","Base.FRSideContainer_RS2","Base.FRSideContainer_RS3",
-  },
+  }
 
-  Hood_All = {
+  VRO.PartLists.Hood_All = {
     "Base.EngineDoor1","Base.EngineDoor2","Base.EngineDoor3","Base.EngineDoor8","Base.ECTO1EngineDoor1",
     "Base.SL500HardTop3","Base.W460EngineDoor2","Base.R32EngineDoor0","Base.R32EngineDoor3","Base.ATASamaraHood2Item3",
     "Base.ATASamaraHood3Item3","Base.McLarenF1Hood3","Base.E150EngineDoor2","Base.M35FrontHardTop2","Base.DG70RTEngineDoor",
@@ -60,9 +62,9 @@ return {
     "Base.04vwTouranEngineDoor1","Base.91nissan240sxEngineDoor3","Base.91fordRangerEngineDoor2","Base.91fordRangerBedCap2",
     "Base.65bansheeFinEngineDoor3","Base.65bansheeCowlEngineDoor3","Base.65bansheeMetalRoof3","Base.89defenderEngineDoor2",
     "Base.89defenderHardCover2","Base.98stageaEngineDoor3",
-  },
+  }
   -- Armor
-  MilitaryHood_All = {
+  VRO.PartLists.MilitaryHood_All = {
     "Base.PotomacFrontArmor","Base.PotomacFrontLeftWindowArmor","Base.PotomacFrontRightWindowArmor","Base.PotomacRearLeftWindowArmor",
     "Base.PotomacRearRightWindowArmor","Base.PotomacWindshieldArmor","Base.PotomacWindshieldRearArmor","Base.DeathMustangRearWindshield3",
     "Base.DeathMustangWindshield3","Base.DeathMustangHood3","Base.DeathMustangFrontWindow3","Base.DeathMustangRearWindow3","Base.DeathMustangDoor3",
@@ -140,26 +142,26 @@ return {
     "Base.89defenderFrontWindowArmor","Base.89defenderRearWindowArmor","Base.89defenderBackWindowArmor","Base.89defenderWindshieldRearArmor",
     "Base.98stageaWindshieldArmor","Base.98stageaFrontWindowArmor","Base.98stageaRearWindowArmor","Base.98stageaBackWindowArmor",
     "Base.98stageaWindshieldRearArmor",
-  },
+  }
 
-  WoodParts_All = {
+  VRO.PartLists.WoodParts_All = {
     "Base.85gmBbodyWindshieldArmorW","Base.85gmBbodyFrontWindowArmorW","Base.85gmBbodyRearWindowArmorW","Base.85gmBbodyWindshieldRearArmorW",
     "Base.89volvo240WindshieldArmorW","Base.89volvo240FrontWindowArmorW","Base.89volvo240RearWindowArmorW","Base.89volvo245WagonBackWindowArmorW",
     "Base.89volvo244SedanBackWindowArmorW","Base.89volvo240WindshieldRearArmorW","Base.91geoMetroWindshieldArmor","Base.91geoMetroFrontWindowArmor",
     "Base.91geoMetroRearWindowArmor","Base.91geoMetroWindshieldRearArmor","Base.91geoMetroRoofrack0","Base.M923FlatbedStakes1","Base.M35A2Stakes1",
-    "Base.M35A2Stakes3","Base.93chevySilveradoStakes2","Base.pzkTruckSideWoodboards2",
-  },
+    "Base.M35A2Stakes3","Base.93chevySilveradoStakes2","Base.pzkTruckSideWoodboards2","Base.97BushRoofStorage0",
+  }
 
-  SmallTrunk_All = {
+  VRO.PartLists.SmallTrunk_All = {
     "Base.SmallTrunk1","Base.SmallTrunk2","Base.SmallTrunk3","Base.VanSeatsTrunk2","Base.FRTinyTrunk1","Base.FRTinyTrunk2","Base.FRTinyTrunk3",
     "Base.FRTinyTrunk8","Base.FRSmallTrunk1","Base.FRSmallTrunk2","Base.FRSmallTrunk3","Base.FRSmallTrunk8","Base.ATA150Trunk","Base.ATA150Trunk1",
     "Base.ATA150Trunk2","Base.ATA150Trunk3","Base.M911Toolbox2","Base.89trooperTrunkSmall2","Base.93townCarMiniBar1","Base.69miniTrunkSmall1",
     "Base.63Type2VanToolbox1","Base.93fordF350Toolbox2","Base.87fordB700SmallTrunk2","Base.76chevyKseriesToolbox2","Base.KI5trailersToolBox2",
     "Base.87chevySuburbanSideStorage2","Base.80manKat1Storage2","Base.76chevyCseriesWreckerMountLeft","Base.76chevyCseriesWreckerMountRight",
     "Base.93chevyK3500toolbox2",
-  },
+  }
 
-  Trunk_All = {
+  VRO.PartLists.Trunk_All = {
     "Base.NormalTrunk1","Base.BigTrunk1","Base.NormalTrunk2","Base.BigTrunk2","Base.NormalTrunk3","Base.VanSeatsTrunk2","Base.BigTrunk3","Base.FRNormalTrunk1",
     "Base.FRNormalTrunk2","Base.FRNormalTrunk3","Base.FRNormalTrunk8","Base.FRBigTrunk1","Base.FRBigTrunk2","Base.FRBigTrunk3","Base.FRBigTrunk8",
     "Base.FRLargeTrunk1","Base.FRLargeTrunk2","Base.FRLargeTrunk3","Base.FRLargeTrunk8","Base.ECTO1Trunk2","Base.W460Trunk2","Base.W4602Trunk2",
@@ -181,15 +183,15 @@ return {
     "Base.93fordF350TrunkL2","Base.1988fuegoTrunk3","Base.1970fiat600Trunk1","Base.90bmwE30TrunkSedan3","Base.90bmwE30TrunkTouring3","Base.87fordB700Trunk2",
     "Base.93fordTaurusTrunkSedan1","Base.93fordTaurusTrunkWagon1","Base.1979rastrojeroTrunk2","Base.1979rastrojeroFleteTrunk2","Base.1979rastrojeroCarniTrunk2",
     "Base.1979rastrojeroCajaTrunk2","Base.1978renault12Trunk1","Base.87chevySuburbanTrunk2","damnCraft.Trunk1","damnCraft.Trunk2","damnCraft.Trunk3",
-  },
+  }
 
-  TrunkMilitary_All = {
+  VRO.PartLists.TrunkMilitary_All = {
     "Base.M998Trunk2","Base.M998Extra2","Base.M101A3Trunk2","Base.M101A3Extra2","Base.P19ASmallTrunk2","Base.P19ABigTrunk2","Base.M12Trunk2","Base.M12Extra2",
     "Base.ATSMegaTrunk","Base.M151A2Trunk2","Base.M151A2Extra2","Base.M35A2Trunk2","Base.M49A2CTrunk2","Base.M923Trunk2","Base.M923Flatbed2","Base.M923Extra2",
     "Base.M12CTrunk2","Base.M911Trunk2","Base.90pierceArrowTrunk2","Base.80manKat1Trunk2",
-  },
+  }
 
-  TrunkDoor_All = {
+  VRO.PartLists.TrunkDoor_All = {
     "Base.TrunkDoor1","Base.TrunkDoor2","Base.TrunkDoor3","Base.TrunkDoor8","Base.ECTO1TrunkDoor1","Base.SL500TrunkDoor3","Base.W460TrunkDoor2",
     "Base.K5TrunkLidSC2","Base.R32TrunkDoor3","Base.McLarenF1TrunkDoor3","Base.E150TrunkDoor2","Base.DG70TrunkDoor3","Base.NivaTrunkDoor1",
     "Base.89BroncoTrunkDoor2","Base.88ChevyS10TrunkDoor2","Base.88ChevyS10TrunkDoorTop2","Base.82JeepJ10TrunkDoor2","Base.82JeepJ10TrunkDoorTop2",
@@ -216,16 +218,16 @@ return {
     "Base.utilityBoxTrunkDoor2","Base.68firebirdTrunkDoor3","Base.77firebirdTrunkDoor3","Base.82firebirdTrunkDoor3","Base.73fordFalconTrunkDoor3",
     "Base.04vwTouranTrunkDoor1","Base.87fordF700RollTrunkDoor2","Base.91nissan240sxTrunkDoor3","Base.91fordRangerTrunkDoor2","Base.65bansheeTrunkDoor3",
     "Base.89defenderTrunkDoor2","Base.89defenderTrunkLid2","Base.98stageaTrunkDoor3",
-  },
+  }
 
-  TrunkDoorMilitary_All = {
+  VRO.PartLists.TrunkDoorMilitary_All = {
     "Base.92amgeneralM998TrunkDoor2","Base.M101A3TrunkDoor2","Base.M101A3TrunkDoorTwo2","Base.P19ATrunkDoor2","Base.M1082TrunkDoor2","Base.M12TrunkDoor2",
     "Base.M35A2tailgate2","Base.M923Tailgate2","Base.M923Trunkdoor2","Base.FR_VehicleArmory","Base.U1550LTrunkDoor2","Base.M911TrunkDoor2",
     "Base.M129TrunkDoor2","Base.M127TrunkDoor2","Base.M128TrunkDoor2","Base.M967TrunkDoor2","Base.90pierceArrowTrunkDoor2","Base.90pierceArrowTrunkDoorsLeft2",
     "Base.90pierceArrowTrunkDoorsRight2","Base.HMMWVTrunkLidSC2","Base.80manKat1TrunkDoor2","Base.W460TrunkSplitDoor2",
-  },
+  }
 
-  Door_All = {
+  VRO.PartLists.Door_All = {
     "Base.FrontCarDoor1","Base.FrontCarDoor2","Base.FrontCarDoor3","Base.RearCarDoor1","Base.RearCarDoor2","Base.RearCarDoor3","Base.RearCarDoorDouble1",
     "Base.RearCarDoorDouble2","Base.RearCarDoorDouble3","Base.FrontCarDoor8","Base.RearCarDoor8","Base.RearCarDoorDouble8","Base.ECTO1CarFrontDoor1",
     "Base.ECTO1CarRearDoor1","Base.67commandoToolboxLid2","Base.IFAVDoor2","Base.SL500Door3","Base.W460CarFrontDoor2","Base.W460CarRearDoor2",
@@ -268,9 +270,9 @@ return {
     "Base.3rdGenChevyCKseriesRearDoor2","Base.68firebirdFrontDoor3","Base.77firebirdFrontDoor3","Base.82firebirdFrontDoor3","Base.73fordFalconFrontDoor3",
     "Base.04vwTouranFrontDoor1","Base.04vwTouranRearDoor1","Base.87fordF700FrontDoor2","Base.91nissan240sxFrontDoor3","Base.91fordRangerFrontDoor2",
     "Base.65bansheeFrontDoor3","Base.89defenderFrontDoor2","Base.89defenderRearDoor2","Base.98stageaFrontDoor3","Base.98stageaRearDoor3",
-  },
+  }
 
-  DoorMilitary_All = {
+  VRO.PartLists.DoorMilitary_All = {
     "Base.FrontM113Door8","Base.RearM113Door8","Base.67commandoFrontDoor2","Base.67commandoRearDoor2","Base.ECTO1CarFrontDoorArmor",
     "Base.ECTO1CarRearDoorArmor","Base.92amgeneralM998FrontDoor2","Base.92amgeneralM998RearDoor2","Base.P19ACarFrontDoor2","Base.P19ARoofHatch2",
     "Base.M12LeftDoor2","Base.M12RightDoor2","Base.SemiTruckArmorFront_Item2","Base.SemiTruckArmorRear_Item2","Base.SemiTruckArmorDoor_Item2",
@@ -280,13 +282,13 @@ return {
     "Base.97BushDoor2","Base.97BushHatch2","Base.M911CarFrontDoor2","Base.90pierceArrowFrontDoor2","Base.90pierceArrowRearDoor2","Base.HMMWVHardDoorSC2",
     "Base.M1025SlantDoorSC2","Base.M1025SlantBaseSC2","Base.80manKat1FrontDoor2","Base.87fordF700ArmoredFrontDoor2","Base.87fordF700ArmoredRearDoor2",
     "Base.87fordF700ArmoredTrunkDoor2",
-  },
+  }
 
-  GloveBox_All = {
+  VRO.PartLists.GloveBox_All = {
     "Base.GloveBox1","Base.GloveBox2","Base.GloveBox3","Base.GloveBox8","Base.M113GloveBox8","Base.M113GloveBox1","Base.M113GloveBox2","Base.M113GloveBox3",
-  },
+  }
 
-  CarSeat_All = {
+  VRO.PartLists.CarSeat_All = {
     "Base.NormalCarSeat1","Base.BigCarSeat1","Base.SportCarSeat1","Base.NormalCarSeat2","Base.BigCarSeat2","Base.SportCarSeat2","Base.NormalCarSeat3",
     "Base.BigCarSeat3","Base.SportCarSeat3","Base.NormalCarSeat8","Base.BigCarSeat8","Base.SportCarSeat8","Base.CycleSeat","Base.CycleSeatSidecar",
     "Base.ECTO1CarSeatfl1","Base.ECTO1CarSeatfr1","Base.ECTO1CarSeatrr1","Base.M998CarSeat2","Base.M12CarSeat2","Base.ATAMotoBMWSeat",
@@ -330,9 +332,9 @@ return {
     "Base.04vwTouranRearSeat1","Base.87fordF700Seat2","Base.91nissan240sxSeatFront3","Base.91nissan240sxSeatRear3","Base.91fordRangerSeatFront2",
     "Base.91fordRangerSeatRear2","Base.65bansheeSeat3","Base.89defenderSeatFront2","Base.89defenderSeatRear2","Base.98stageaSeatFront3",
     "Base.98stageaSeatRear3",
-  },
+  }
 
-  Tire_All = {
+  VRO.PartLists.Tire_All = {
     "Base.OldTire1","Base.NormalTire1","Base.ModernTire1","Base.OldTire2","Base.NormalTire2","Base.ModernTire2","Base.OldTire3","Base.NormalTire3",
     "Base.ModernTire3","Base.NormalTire8","Base.ModernTire8","Base.OldTire8","Base.OldScooterTire","Base.OldATVTire","Base.OldCartTire","Base.OldCycleTire",
     "damnCraft.SmallTire1","damnCraft.SmallTire2","damnCraft.SteelTire1","Base.ECTO1tire1","Base.ECTO1tire2","Base.ATAMotoHarleyOldTire",
@@ -358,69 +360,69 @@ return {
     "Base.87chevySuburbanTire2","Base.76chevyKseriesDoubleTires2","Base.77firebirdTire3","Base.77firebirdTATire3","Base.82firebirdTire3",
     "Base.73fordFalconTire3","Base.73fordFalconPSTire3","Base.04vwTouranTire1","Base.91nissan240sxOEM13","Base.91nissan240sxOEM23","Base.91nissan240sxG73",
     "Base.91nissan240sxGT3","Base.91fordRangerTire2","Base.89defenderTire2","Base.89defenderDakarTire2","Base.98stageaTire3",
-  },
+  }
 
-  MilitaryTire_All = {
+  VRO.PartLists.MilitaryTire_All = {
     "Base.V100Tire1","Base.V100Tire2","Base.V100Tire3","Base.V100Tires2","Base.V100Axle2","Base.V100AxleSmall2","Base.V101Tire2","Base.V102Tire2",
     "Base.V103Tire2","Base.V103Axle2","Base.M113Tire8","Base.M12Tire2","Base.BRDM2Tire","Base.M923Axle2","Base.DoubleOldTire2","Base.DoubleNormalTire2",
     "Base.DoubleModernTire2","Base.AxleOldTire2","Base.AxleNormalTire2","Base.AxleModernTire2","Base.U1550LWheel2","Base.M12CTire2","Base.BushmasterTire",
     "Base.49powerWagonApocalypseTire","Base.90pierceArrowTire2","Base.90pierceArrowDoubleTires2","runFlat.LargeTire","runFlat.Large2TireAxle",
     "runFlat.LargeDoubleTires","runFlat.Large4TireAxle","runFlat.MediumTire","runFlat.Medium4TireAxle","runFlat.SmallTire","runFlat.ModernTire",
-  },
+  }
 
-  SmallBrake_All = {
+  VRO.PartLists.SmallBrake_All = {
     "Base.OldScooterBrake","Base.NormalScooterBrake","Base.ModernScooterBrake","Base.OldCycleBrake","Base.NormalCycleBrake","Base.ModernCycleBrake",
     "Base.OldCartBrake","Base.NormalCartBrake","Base.ModernCartBrake",
-  },
+  }
 
-  Brake_All = {
+  VRO.PartLists.Brake_All = {
     "Base.OldBrake1","Base.NormalBrake1","Base.ModernBrake1","Base.OldBrake2","Base.NormalBrake2","Base.ModernBrake2","Base.OldBrake3","Base.NormalBrake3",
     "Base.ModernBrake3","Base.OldBrake8","Base.NormalBrake8","Base.ModernBrake8",
-  },
+  }
 
-  MilitaryBrake_All = {
+  VRO.PartLists.MilitaryBrake_All = {
     "Base.OldM113Brake8","Base.NormalM113Brake8","Base.ModernM113Brake8","Base.OldM113Brake1","Base.NormalM113Brake1","Base.ModernM113Brake1",
     "Base.OldM113Brake2","Base.NormalM113Brake2","Base.ModernM113Brake2","Base.OldM113Brake3","Base.NormalM113Brake3","Base.ModernM113Brake3",
-  },
+  }
 
-  Battery_All = {
+  VRO.PartLists.Battery_All = {
     "Base.CarBattery1","Base.CarBattery2","Base.CarBattery3","Base.CarBattery8","Base.CycleBattery",
-  },
+  }
 
-  LargeBattery_All = {
-    "Base.MH_MkII_batterypack1","MH_MkII_batterypack2","Base.MH_MkII_batterypack3","Base.82JeepJ10DorothyAnemometer",
-  },
+  VRO.PartLists.LargeBattery_All = {
+    "Base.MH_MkII_batterypack1","Base.MH_MkII_batterypack2","Base.MH_MkII_batterypack3","Base.82JeepJ10DorothyAnemometer",
+  }
 
-  SmallSuspension_All = {
+  VRO.PartLists.SmallSuspension_All = {
     "Base.NormalScooterSuspension","Base.ModernScooterSuspension","Base.NormalCycleSuspension","Base.ModernCycleSuspension","Base.NormalCartSuspension",
     "Base.ModernCartSuspension",
-  },
+  }
 
-  Suspension_All = {
+  VRO.PartLists.Suspension_All = {
     "Base.NormalSuspension1","Base.ModernSuspension1","Base.NormalSuspension2","Base.ModernSuspension2","Base.NormalSuspension3","Base.ModernSuspension3",
     "Base.NormalSuspension8","Base.ModernSuspension8","Base.NivaSuspension1",
-  },
+  }
 
-  MilitarySuspension_All = {
+  VRO.PartLists.MilitarySuspension_All = {
     "Base.NormalM113Suspension8","Base.ModernM113Suspension8","damnCraft.leafSuspension2","Base.NormalM113Suspension1","Base.ModernM113Suspension1",
     "Base.NormalM113Suspension2","Base.ModernM113Suspension2","Base.NormalM113Suspension3","Base.ModernM113Suspension3",
-  },
+  }
 
-  MufflerSmall_All = {
+  VRO.PartLists.MufflerSmall_All = {
     "Base.OldScooterMuffler","Base.NormalScooterMuffler","Base.ModernScooterMuffler","Base.OldCycleMuffler","Base.NormalCycleMuffler","Base.ModernCycleMuffler",
     "Base.OldCartMuffler","Base.NormalCartMuffler","Base.ModernCartMuffler","Base.ATAMotoBMWCustomMuffler","Base.ATAMotoBMWClassicMuffler",
     "Base.ATAMotoHarleyMuffler","Base.KZ1Kmuffler","Base.VN125muffler","Base.SS100muffler3","Base.ZNL50muffler","Base.73fordFalconPSMuffler3",
-  },
+  }
 
-  Muffler_All = {
+  VRO.PartLists.Muffler_All = {
     "Base.OldCarMuffler1","Base.NormalCarMuffler1","Base.ModernCarMuffler1","Base.OldCarMuffler2","Base.NormalCarMuffler2","Base.ModernCarMuffler2",
     "Base.OldCarMuffler3","Base.NormalCarMuffler3","Base.ModernCarMuffler3","Base.OldCarMuffler8","Base.NormalCarMuffler8","Base.ModernCarMuffler8",
     "Base.M12Muffler2","Base.92amgeneralM998Muffler1","Base.92amgeneralM998Muffler2","Base.M35A2Muffler1","Base.M923Muffler1","Base.U1550LMuffler2",
     "Base.R32Muffler0","Base.R32Muffler1","Base.M911Muffler","Base.CytAstra89Muffler1","Base.93fordCF8000Muffler0","Base.CytMercEvoMuffler3",
     "Base.80manKat1Muffler2",
-  },
+  }
 
-  Window_All = {
+  VRO.PartLists.Window_All = {
     "Base.FrontWindow1","Base.RearWindow1","Base.FrontWindow2","Base.RearWindow2","Base.FrontWindow3","Base.RearWindow3","Base.FrontWindow8","Base.RearWindow8",
     "Base.ECTO1SideWindow1","Base.SL500SideWindow3","Base.W460SideWindow2","Base.U1550LRearWindow2","Base.U1550LWindow2","Base.R32FrontSideWindow3",
     "Base.R32RearSideWindow3","Base.McLarenF1SideWindow3","Base.92amgeneralM998SideWindow2","Base.M1010RearWindows2","Base.M35Window2","Base.M35RearWindow2",
@@ -524,36 +526,36 @@ return {
     "Base.87fordF700WindshieldRear2","Base.91nissan240sxWindshield3","Base.91nissan240sxRearWindshield3","Base.91fordRangerWindshield2",
     "Base.91fordRangerWindshieldRear2","Base.65bansheeWindshield3","Base.65bansheeRearWindshield3","Base.89defenderWindshield2",
     "Base.89defenderWindshieldRear2","Base.89defender130WindshieldRear2","Base.98stageaWindshield3","Base.98stageaRearWindshield3",
-  },
+  }
 
-  MilitaryWindow_All = {
+  VRO.PartLists.MilitaryWindow_All = {
     "Base.V100Window1","Base.V100Window2","Base.V100Window3","Base.V100Window8","Base.WindowV100","Base.M113FrontWindow8","Base.M12Window2",
     "Base.M151A2Windshield2","Base.M151A2SideWindow2","Base.M35A2SideWindow2","Base.M923SideWindow2","Base.M923Gunport2","Base.Int4700SideWindow2",
     "Base.Int4700RearWindow2","Base.Int4700FrontWindow2","Base.P19ASideWindow2","Base.97BushFrontSideWindow2","Base.97BushSideWindow2","Base.M911SideWindow2",
     "USMIL.SmallViewport0","USMIL.LargeViewport0","Base.80manKat1FrontSideWindow2","Base.87fordF700ArmoredFrontSideWindow2",
     "Base.87fordF700ArmoredRearSideWindow2","Base.87fordF700ArmoredSmallWindow2",
-  },
+  }
 
-  Light_All = {
+  VRO.PartLists.Light_All = {
     "Base.LightBulb","Base.87toyotaMR2PopupLights3","Base.93fordF350RoofLights2","Base.87chevySuburbanRoofLights2","Base.76chevyKseriesRoofLights2",
     "Base.82firebirdPopupLights3","Base.fordCVPIpoliceSearchlight","Base.87fordF700RoofLights2","Base.91nissan240sxPopupLights3",
     "Base.91nissan240sxTaillightsMod3","Base.93chevyK3500rooflights2","Base.65bansheePopupLights3",
-  },
+  }
 
-  RoofRack_All = {
+  VRO.PartLists.RoofRack_All = {
     "Base.PotomacRoofRack","Base.ShubertSedanRoofRack","Base.mercroofrack1","Base.mercroofrack2","Base.mercroofrack3","Base.cruiserRoofrack1",
     "Base.cruiserRoofrack2","Base.cruiserRoofrack3","Base.ECTO1Roofrack1","Base.92amgeneralM998Roofrack","Base.ATA_Bus_Roof_Rack","Base.ATA_Bus_Roof_Box_Item",
-    "Base.W460Roofrack1","Base.W460RoofrackM","Base.P19ARoofrack","Base.80sPickupRoofrackA","Base.ATAMustangRoofRackItem","Base.97BushRoofStorage0",
-    "Base.89trooperRoofrack2","Base.69miniRoofrack1","Base.CytAstraRoofrack1","Base.91rangeRoofrack2","Base.E150MysteryMachineRoofrack2",
-    "Base.63beetleRoofrack1","Base.91geoMetroRoofrack1","Base.67gt500Roofrack3","Base.63Type2VanRoofrackSmall1","Base.63Type2VanRoofrackLarge1",
-    "Base.89dodgeCaravanRoofrack0","Base.87toyotaMR2Roofrack3","Base.90bmwE30Roofrack3","Base.87fordB700Roofrack2","Base.93fordTaurusRoofrack1",
-    "Base.93fordTaurusWagonRoofrack1","Base.93chevySuburbanRoofrack2","Base.84jeepXJRoofrack2","Base.76chevyKseriesRoofrack2","Base.76chevyCseriesRoofrack2",
-    "Base.85gmBbodyRoofrack1","Base.OldSmallRoofrack3","Base.ModernSmallRoofrack3","Base.ModernLargeRoofrack3","Base.91fordLTDRoofrack1",
-    "Base.87buickRegalRoofrack3","Base.89volvo245WagonRoofrack1","Base.89volvo240Roofrack1","Base.87chevySuburbanRoofrack2","Base.80manKat1Roofrack2",
-    "Base.93townCarTrunkRack1","Base.89defenderRoofrackM2",
-  },
+    "Base.W460Roofrack1","Base.W460RoofrackM","Base.P19ARoofrack","Base.80sPickupRoofrackA","Base.ATAMustangRoofRackItem","Base.89trooperRoofrack2",
+    "Base.69miniRoofrack1","Base.CytAstraRoofrack1","Base.91rangeRoofrack2","Base.E150MysteryMachineRoofrack2","Base.63beetleRoofrack1",
+    "Base.91geoMetroRoofrack1","Base.67gt500Roofrack3","Base.63Type2VanRoofrackSmall1","Base.63Type2VanRoofrackLarge1","Base.89dodgeCaravanRoofrack0",
+    "Base.87toyotaMR2Roofrack3","Base.90bmwE30Roofrack3","Base.87fordB700Roofrack2","Base.93fordTaurusRoofrack1","Base.93fordTaurusWagonRoofrack1",
+    "Base.93chevySuburbanRoofrack2","Base.84jeepXJRoofrack2","Base.76chevyKseriesRoofrack2","Base.76chevyCseriesRoofrack2","Base.85gmBbodyRoofrack1",
+    "Base.OldSmallRoofrack3","Base.ModernSmallRoofrack3","Base.ModernLargeRoofrack3","Base.91fordLTDRoofrack1","Base.87buickRegalRoofrack3",
+    "Base.89volvo245WagonRoofrack1","Base.89volvo240Roofrack1","Base.87chevySuburbanRoofrack2","Base.80manKat1Roofrack2","Base.93townCarTrunkRack1",
+    "Base.89defenderRoofrackM2",
+  }
 
-  Bullbar_All = {
+  VRO.PartLists.Bullbar_All = {
     "Base.M911Bullbar0","Base.M911Bullbar1","Base.ECTO1Bumper1","Base.ECTO1BumperA","Base.ECTO1Bullbar1","Base.ECTO1BumperRear1","Base.92amgeneralM998BullbarA",
     "Base.92amgeneralM998BullbarB","Base.92amgeneralM998TrunkBarrier1","Base.92amgeneralM998TrunkBarrier2","Base.SemiTruckBullbar_Item2",
     "Base.ATA_Bus_Kengur_3_Item","Base.ATA_Bus_Kengur_2_Item","Base.ATA_Bus_Kengur_1_Item","Base.M151A2Bumper1_Item","Base.IFAVFrontBumper2",
@@ -622,24 +624,24 @@ return {
     "Base.91fordRangerBumperRear0","Base.91fordRangerRollbar2","Base.65bansheeBumperFront0","Base.65bansheeBumperFrontA","Base.65bansheeBumperRear0",
     "Base.65bansheeBumperRearA","Base.65bansheeRollbar3","Base.89defenderBumperFront0","Base.89defenderBullbarFrontA","Base.89defenderBumperRear0",
     "Base.89defender130Bumperettes0","Base.89defenderRollbarWithToolbox2","Base.98stageaBumperFront0","Base.98stageaBumperFrontA","Base.98stageaBullbarFrontA",
-    "Base.98stageaBumperRear0",
-  },
+    "Base.98stageaBumperRear0","Base.97BushBullbarSAS",
+  }
 
-  SaddlebagsHard_All = {
+  VRO.PartLists.SaddlebagsHard_All = {
     "Base.KZ1KsidestorageLid","Base.KZ1KstorageLid","Base.KZ1Kextra3","Base.KZ1Ksidestorage3","Base.KZ1Kstorage3","Base.VN125storage1","Base.VN125sidestorage1",
     "Base.VN125storagePizza1","Base.SS100sidebag3"
-  },
+  }
 
-  SoftTops_All = {
+  VRO.PartLists.SoftTops_All = {
     "Base.M151A2Tarp1_Item","Base.M101A3Tarp1_Item","Base.IFAVFrontTop2","Base.IFAVRearTop2","Base.M35A2Tarp1","Base.M35A2Tarp2","Base.M35A2Tarp3",
     "Base.M35A2SoftCover2","Base.SL500SoftTop3","Base.M923SoftCover2_Item","Base.CJ7softtop2","Base.U1550LTarp2","Base.M1008Tarp2","Base.M35Tarp2",
     "Base.M35FrontSoftTop2","Base.63Type2VanTarpCover0","Base.93fordF350BedCover2","Base.DG70RTRoof0","Base.90bmwE30CabrioRoofLid3","Base.90bmwE30CabrioRoof3",
     "Base.86chevyCUCVBedTarp2","Base.85gmBbodyVinylRoofBlack","Base.85gmBbodyVinylRoofMaroon","Base.85gmBbodyVinylRoofWhite","Base.85gmBbodyVinylRoofBrown",
     "Base.85gmBbodyVinylRoofBlue","Base.KI5trailersTarp2","Base.66pontiacLeMansRoof0","Base.80manKat1Tarp2","Base.M1082Tarp2","Base.93chevySilveradoBedTarp2",
     "Base.pzkTruckTarp2","Base.65bansheeVinylRoof3","Base.89defenderTarpCover2",
-  },
+  }
 
-  Panels_All = {
+  VRO.PartLists.Panels_All = {
     "Base.P19AFenderLeft1","Base.P19AFenderLeft2","Base.P19AFenderRight1","Base.P19AFenderRight2","Base.P19AFenderRight3","Base.P19ASpareMount1",
     "Base.P19ASpareMount2","Base.R32Sideskirts1","Base.R32Sideskirts2","Base.R32Sideskirts3","Base.R32Spoiler0","Base.R32Spoiler1","Base.R32Spoiler2",
     "Base.R32Spoiler3","Base.ATAMustangFendersWideItem","Base.ATAMustangSkirtsSideItem","Base.ATAMustangSpoilerFrontItem","Base.ATAMustangSpoilerRear1Item",
@@ -673,9 +675,9 @@ return {
     "Base.89volvo240Mudflaps1","Base.76chevyKseriesFDMudflaps","Base.80manKat1Mudflaps2","Base.M1082Mudflaps2","Base.87fordF700MudflapsSmall2",
     "Base.87fordF700MudflapsLarge2","Base.91fordRangerMudflaps2","Base.76chevyKseriesFDMudflaps","Base.76chevyCseriesWreckerMudflaps","Base.93chevyK3500mudflaps2",
     "Base.89defenderMudflaps2",
-  },
+  }
 
-  TankContainers_All = {
+  VRO.PartLists.TankContainers_All = {
     "Base.250Tank1","Base.250Tank2","Base.250Tank3","Base.250Tank8","Base.500Tank1","Base.500Tank2","Base.500Tank3","Base.500Tank8","Base.1000Tank1",
     "Base.1000Tank2","Base.1000Tank3","Base.1000Tank8","Base.250PropaneTank1","Base.250PropaneTank2","Base.250PropaneTank3","Base.250PropaneTank8",
     "Base.500PropaneTank1","Base.500PropaneTank2","Base.500PropaneTank3","Base.500PropaneTank8","Base.1000PropaneTank1","Base.1000PropaneTank2",
@@ -687,13 +689,13 @@ return {
     "Base.1500_Water_Tank_Tainted2","Base.1500_Water_Tank_Tainted3","Base.3000_Water_Tank_Tainted1","Base.3000_Water_Tank_Tainted2","Base.3000_Water_Tank_Tainted3",
     "Base.MH_MkII_waterbox1","Base.MH_MkII_waterbox2","Base.MH_MkII_waterbox3","Base.90pierceArrowWaterTank2","Base.73fordFalconPSStorage","USMIL.GasCan0",
     "USMIL.WaterCan0",
-  },
+  }
 
-  VehicleShovel_All = {
+  VRO.PartLists.VehicleShovel_All = {
     "Base.MH_MkII_shovel1","Base.MH_MkII_shovel2","Base.MH_MkII_shovel3","Base.ShermanRoadWheel2","Base.ShermanTrack2",
-  },
+  }
 
-  FixAFlat_All = {
+  VRO.PartLists.FixAFlat_All = {
     "Base.OldTire1","Base.NormalTire1","Base.ModernTire1","Base.OldTire2","Base.NormalTire2","Base.ModernTire2","Base.OldTire3","Base.NormalTire3",
     "Base.ModernTire3","Base.NormalTire8","Base.ModernTire8","Base.OldTire8","Base.OldScooterTire","Base.OldATVTire","Base.OldCartTire","Base.OldCycleTire",
     "damnCraft.SmallTire1","damnCraft.SmallTire2","damnCraft.SteelTire1","Base.ECTO1tire1","Base.ECTO1tire2","Base.ATAMotoHarleyOldTire",
@@ -724,5 +726,6 @@ return {
     "Base.DoubleModernTire2","Base.AxleOldTire2","Base.AxleNormalTire2","Base.AxleModernTire2","Base.U1550LWheel2","Base.M12CTire2","Base.BushmasterTire",
     "Base.49powerWagonApocalypseTire","Base.90pierceArrowTire2","Base.90pierceArrowDoubleTires2","USMIL.LargeTire","USMIL.Large2TireAxle",
     "USMIL.LargeDoubleTires","USMIL.Large4TireAxle","USMIL.MediumTire","USMIL.Medium4TireAxle","USMIL.SmallTire","USMIL.ModernTire",
-  },
-}
+  }
+
+return VRO.PartLists

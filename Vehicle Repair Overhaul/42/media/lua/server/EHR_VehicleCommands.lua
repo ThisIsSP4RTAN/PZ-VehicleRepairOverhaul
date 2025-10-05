@@ -35,17 +35,11 @@ function EHR_Commands.repairHeater(player, args)
 			player:sendObjectChange('removeItemType', { type = partType, count = partCount })
 		end
 
-		blowtorch:Use()
-		blowtorch:Use()
-		blowtorch:Use()
-		blowtorch:Use()
-		blowtorch:Use()
-
-		blowtorch:Use()
-		blowtorch:Use()
-		blowtorch:Use()
-		blowtorch:Use()
-		blowtorch:Use()
+		if blowtorch then
+			for i = 1, 10 do
+				blowtorch:Use()
+			end
+		end
 
 		vehicle:updatePartStats()
 		vehicle:updateBulletStats()
