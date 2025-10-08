@@ -1,7 +1,8 @@
 name=Vehicle Salvage Overhaul [build 42]
+require=\VehicleRepairOverhaul
 description=Vehicle Salvage Overhaul for Project Zomboid Build 42
 poster=poster.png
 icon=icon.png
 versionMin=42.0.0
-id=Vehicle Salvage Overhaul
-author=hehehemann
+id=VehicleSalvageOverhaul
+author=hehehemann, SP4RTAN
