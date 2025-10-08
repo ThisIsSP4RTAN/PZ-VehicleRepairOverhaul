@@ -40,7 +40,7 @@ end
 
 function ELRTurnOffLightbar:perform()
 	ISBaseTimedAction.perform(self)
-	
+
 	-- If we are operating in the mode that the player is outside of the vehicle then use our custom commands to 
 	--   turn off the lightbar as the vanilla commands assume the player is inside of the vehicle. If in the 
 	--   the other mode, then use the vanilla commands.
@@ -64,7 +64,7 @@ function ELRTurnOffLightbar:new(character, isCharacterOutside, vehicleId)
 	o.character = character
 	o.isCharacterOutside = isCharacterOutside
 	o.vehicleId = vehicleId
-	
+
 	-- Default time, just a short pause
 	o.maxTime = 50
 	return o

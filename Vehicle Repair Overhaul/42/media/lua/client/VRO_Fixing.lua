@@ -6,9 +6,11 @@ require "ISUI/ISInventoryPaneContextMenu"
 require "TimedActions/ISBaseTimedAction"
 require "TimedActions/ISPathFindAction"
 require "TimedActions/ISEquipWeaponAction"
+require "VRO_DoFixAction"
 
-local VRO = {}
+local VRO = rawget(_G, "VRO") or {}
 VRO.__index = VRO
+_G.VRO = VRO
 
 ----------------------------------------------------------------
 -- A) Recipes (edit these)
@@ -229,31 +231,6 @@ local function findBestByTag(inv, tag, needUses)
   return firstTagItem(inv, tag)
 end
 
--- Consume bundle entries { {item=InventoryItem, takeUses=N}, ... }
-local function consumeItems(character, bundles)
-  if not bundles then return end
-  for _, b in ipairs(bundles) do
-    local it, take = b.item, b.takeUses or 0
-    if it and take > 0 then
-      if isDrainable(it) then
-        if it.Use then
-          for i=1,take do if drainableUses(it) <= 0 then break end; it:Use() end
-        elseif it.getUseDelta and it.getUsedDelta and it.setUsedDelta then
-          local step = it:getUseDelta()
-          it:setUsedDelta(math.min(1.0, it:getUsedDelta() + step * take))
-        end
-        if drainableUses(it) <= 0 then
-          local con = it.getContainer and it:getContainer() or (character and character:getInventory()) or nil
-          if con then con:Remove(it) end
-        end
-      else
-        local con = it.getContainer and it:getContainer() or (character and character:getInventory()) or nil
-        if con then con:Remove(it) end
-      end
-    end
-  end
-end
-
 local function displayNameFromFullType(fullType)
   if getItemNameFromFullType then
     local nm = getItemNameFromFullType(fullType)
@@ -277,10 +254,6 @@ local function getHBR(part, invItem)
   if invItem and invItem.getHaveBeenRepaired then return invItem:getHaveBeenRepaired() end
   local md = part and part:getModData() or {}
   return md.VRO_HaveBeenRepaired or 0
-end
-local function setHBR(part, invItem, val)
-  if invItem and invItem.setHaveBeenRepaired then invItem:setHaveBeenRepaired(val) end
-  if part then part:getModData().VRO_HaveBeenRepaired = val end
 end
 
 -- Tooltip icon from script data (ISToolTip in 5.1 expects string path)
@@ -398,167 +371,7 @@ local function queuePathToPartArea(playerObj, part)
 end
 
 ----------------------------------------------------------------
--- E) Timed Action
-----------------------------------------------------------------
-VRO.DoFixAction = ISBaseTimedAction:derive("VRO_DoFixAction")
-
-local function defaultAnimForPart(part)
-  if not part then return "VehicleWorkOnMid" end
-  if part.getWheelIndex and part:getWheelIndex() ~= -1 then return "VehicleWorkOnTire" end
-  local id = tostring(part.getId and part:getId() or "")
-  if string.find(id, "Brake", 1, true) then return "VehicleWorkOnTire" end
-  return "VehicleWorkOnMid"
-end
-
-function VRO.DoFixAction:isValid()
-  if self.part and self.part:getVehicle() then return true end
-  if self.brokenItem then return true end
-  return false
-end
-
-function VRO.DoFixAction:waitToStart()
-  local veh = self.part and self.part:getVehicle()
-  if veh then self.character:faceThisObject(veh) end
-  return self.character:shouldBeTurning()
-end
-
-function VRO.DoFixAction:update()
-  local veh = self.part and self.part:getVehicle()
-  if veh then self.character:faceThisObject(veh) end
-end
-
-function VRO.DoFixAction:start()
-  local anim = self.actionAnim or defaultAnimForPart(self.part)
-  if anim and self.setActionAnim then self:setActionAnim(anim) end
-  if self.setOverrideHandModels then
-    if self.showModel ~= false then
-      local p = self.expectedPrimary   or self.character:getPrimaryHandItem()
-      local s = self.expectedSecondary or self.character:getSecondaryHandItem()
-      self:setOverrideHandModels(p, s)
-    else
-      self:setOverrideHandModels(nil, nil)
-    end
-    self._didOverride = true
-  end
-  if self.fxSound then
-    self._soundHandle = self.character:getEmitter():playSound(self.fxSound)
-  end
-end
-
-function VRO.DoFixAction:stop()
-  if self._soundHandle then
-    self.character:getEmitter():stopSound(self._soundHandle)
-    self._soundHandle = nil
-  end
-  if self._didOverride and self.setOverrideHandModels then
-    self:setOverrideHandModels(nil, nil)
-    self._didOverride = nil
-  end
-  ISBaseTimedAction.stop(self)
-end
-
-function VRO.DoFixAction:perform()
-  local part   = self.part
-  local broken = self.brokenItem
-  local hbr    = getHBR(part, broken)
-
-  local fail    = chanceOfFail(broken, self.character, self.fixing, self.fixer, hbr)
-  local success = ZombRand(100) >= fail
-
-  -- Compute target stats from either the installed part or the loose item.
-  local targetMax, targetCur
-  if part then
-    targetMax = (part.getConditionMax and part:getConditionMax()) or 100
-    targetCur = math.min(part:getCondition(), targetMax)
-  else
-    targetMax = (broken and broken.getConditionMax and broken:getConditionMax()) or 100
-    targetCur = broken and broken:getCondition() or 0
-  end
-
-  if success then
-    local pct     = condRepairedPercent(broken, self.character, self.fixing, self.fixer, hbr, self.fixerIndex)
-    local missing = math.max(0, targetMax - targetCur)
-    local gain    = math.floor((missing * (pct / 100.0)) + 0.5)
-    if gain < 1 then gain = 1 end
-
-    if part then
-      part:setCondition(math.min(targetMax, targetCur + gain))
-      if part.getVehicle and part:getVehicle() and part:getVehicle().transmitPartCondition then
-        part:getVehicle():transmitPartCondition(part)
-      end
-    end
-    if broken then
-      local newVal = math.min(targetMax, targetCur + gain)
-      if broken.setConditionNoSound then broken:setConditionNoSound(newVal) else broken:setCondition(newVal) end
-      broken:syncItemFields()
-    end
-
-    setHBR(part, broken, hbr + 1)
-
-    if self._soundHandle then
-      self.character:getEmitter():stopSound(self._soundHandle)
-      self._soundHandle = nil
-    end
-    if self.successSfx then
-      self.character:getEmitter():playSound(self.successSfx)
-    end
-
-    if self.fixer.skills then
-      for perkName,_ in pairs(self.fixer.skills) do
-        local perk = resolvePerk(perkName)
-        if perk then self.character:getXp():AddXP(perk, ZombRand(3,6)) end
-      end
-    end
-  else
-    if part and targetCur > 0 then
-      part:setCondition(targetCur - 1)
-      if part.getVehicle and part:getVehicle() and part:getVehicle().transmitPartCondition then
-        part:getVehicle():transmitPartCondition(part)
-      end
-    end
-    if broken then
-      local newVal = math.max(0, targetCur - 1)
-      if broken.setConditionNoSound then broken:setConditionNoSound(newVal) else broken:setCondition(newVal) end
-      broken:syncItemFields()
-    end
-    self.character:getEmitter():playSound("FixingItemFailed")
-  end
-
-  consumeItems(self.character, self.fixerBundle)
-  if self.globalBundle then consumeItems(self.character, self.globalBundle) end
-
-  if self._soundHandle then self.character:getEmitter():stopSound(self._soundHandle) end
-  if self._didOverride and self.setOverrideHandModels then
-    self:setOverrideHandModels(nil,nil)
-    self._didOverride = nil
-  end
-  ISBaseTimedAction.perform(self)
-end
-
-function VRO.DoFixAction:new(args)
-  local o = ISBaseTimedAction.new(self, args.character)
-  o.stopOnWalk   = true
-  o.stopOnRun    = true
-  o.character    = args.character
-  o.part         = args.part
-  o.fixing       = args.fixing
-  o.fixer        = args.fixer
-  o.fixerIndex   = args.fixerIndex or 1
-  o.brokenItem   = args.brokenItem
-  o.fixerBundle  = args.fixerBundle
-  o.globalBundle = args.globalBundle
-  o.maxTime      = args.time or 150
-  o.actionAnim   = args.anim
-  o.fxSound      = args.sfx
-  o.successSfx   = args.successSfx
-  o.showModel    = (args.showModel ~= false) -- default true
-  o.expectedPrimary   = args.expectedPrimary
-  o.expectedSecondary = args.expectedSecondary
-  return o
-end
-
-----------------------------------------------------------------
--- F) Tooltip (dynamic color + icon)
+-- E) Tooltip (dynamic color + icon)
 ----------------------------------------------------------------
 local function interpColorTag(frac)
   local c = ColorInfo.new(0,0,0,1)
@@ -727,7 +540,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
 end
 
 ----------------------------------------------------------------
--- G) Context Menu Injection (attach to vanilla "Repair")
+-- F) Context Menu Injection (attach to vanilla "Repair")
 ----------------------------------------------------------------
 local function toPlayerInventory(playerObj, it)
   if not it then return end
@@ -970,7 +783,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 end
 
 ----------------------------------------------------------------
--- I) Inventory repairs (vanilla-style submenu; attach to existing)
+-- G) Inventory repairs (vanilla-style submenu; attach to existing)
 ----------------------------------------------------------------
 local function resolveInvItemFromContext(items)
   if not items or #items==0 then return nil end
@@ -1113,7 +926,7 @@ if not _G.VRO_InvHooked then
 end
 
 ----------------------------------------------------------------
--- J) Public API
+-- H) Public API
 ----------------------------------------------------------------
 function VRO.addRecipe(recipe) table.insert(VRO.Recipes, recipe) end
 VRO.API = { addRecipe = VRO.addRecipe }

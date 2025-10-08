@@ -46,25 +46,25 @@ function ISRebuildEngine:perform()
 
 	local skill = self.character:getPerkLevel(Perks.Mechanics) - engineRepairLevel;
 	local numberOfParts = self.character:getInventory():getNumberOfItem("EngineParts", false, true);
-	
+
 
 	-- Set how many Spare Engine Parts are required to rebuild the engine on this vehicle. Equal to 5 * the Mechanics skill level required 
 	--   to work on the engine.
 	local requiredEngineParts = engineRepairLevel * 5;
-	
+
 --	local args = { vehicle = self.vehicle:getId(), condition = self.part:getCondition(), skillLevel = skill, numberOfParts = numberOfParts }
 --	args.giveXP = self.character:getMechanicsItem(self.part:getVehicle():getMechanicalID() .. "2") == nil
 --	sendClientCommand(self.character, 'vehicle', 'repairEngine', args)
 
 	-- Engine is rebuilt, so its condition should now be full as well.
 	self.part:setCondition(100.0);	
-	
+
 	-- This function is how the Indie Stone code sets the engine to maximum quality as part of the debug/cheat menus. So we use this rather than 
 	--   setting the individual stats so that any additional support code (e.g. client/server code) also runs.
 	sendClientCommand(self.character, "vehicle", "repairPart", { vehicle = self.part:getVehicle():getId(), part = self.part:getId() });
 
 	local inventory = self.character:getInventory();
-	
+
 	for i=1,requiredEngineParts do
 		inventory:RemoveOneOf("EngineParts");
 	end
@@ -84,5 +84,3 @@ function ISRebuildEngine:new(character, part, item, time)
 	o.jobType = getText("IGUI_EER_RebuildEngine")
 	return o
 end
-
-

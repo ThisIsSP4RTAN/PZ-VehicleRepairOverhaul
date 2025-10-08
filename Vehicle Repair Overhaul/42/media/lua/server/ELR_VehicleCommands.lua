@@ -1,3 +1,4 @@
+---@diagnostic disable: param-type-mismatch
 if isClient() then return end
 
 local ELR_VehicleCommands = {}
@@ -15,21 +16,21 @@ function ELR_Commands.repairLightbar(player, args)
 	local vehicle = getVehicleById(args.vehicle)
 	if vehicle then
 		local part = vehicle:getPartById("lightbar")
-		
+
 		if not part then
 			noise('no such part lightbar')
 			return
 		end
-		
-		
+
+
 		part:setCondition(args.targetCondition)
-		
+
 		player:sendObjectChange('addXp', { perk = Perks.Electricity:index(), xp = args.repairBlocks, noMultiplier = false })
-		
+
 		for partType,partCount in pairs(args["repairParts"]) do
 			player:sendObjectChange('removeItemType', { type = partType, count = partCount })
 		end
-		
+
 		vehicle:updatePartStats()
 		vehicle:updateBulletStats()
 		vehicle:transmitPartCondition(part)
@@ -71,11 +72,11 @@ ELR_VehicleCommands.OnClientCommand = function(module, command, player, args)
 		for k,v in pairs(args) do
 			if k == "repairParts" then
 				argStr = argStr..' '..k..'={'
-				
+
 				for l,w in pairs(args[k]) do
 					argStr = argStr..' '..l..'='..tostring(w)
 				end
-				
+
 				argStr = argStr..'}'
 			else
 				argStr = argStr..' '..k..'='..tostring(v)

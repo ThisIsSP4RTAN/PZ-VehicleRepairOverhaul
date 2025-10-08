@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field, param-type-mismatch
 --***********************************************************
 --**                    Based on code by                   **
 --**                                                       **
