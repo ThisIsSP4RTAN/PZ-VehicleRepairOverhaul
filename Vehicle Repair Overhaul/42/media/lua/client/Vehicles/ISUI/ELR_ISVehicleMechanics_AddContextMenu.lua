@@ -1,113 +1,110 @@
 ---@diagnostic disable: param-type-mismatch
--- Mod options table (replace this with actual settings loader if needed)
-local VRO = require("VRO_modOptions")
 
 require "Vehicles/ISUI/ISVehicleMechanics"
 
--- Full override of ISVehicleMechanics:doPartContextMenu with vanilla Lightbar repair block removed
 local _Original_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
-local old_ISVehicleMechanics_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
+
+local function _findRepairOption(ctx)
+	if not (ctx and ctx.options) then return nil end
+	local label = getText("ContextMenu_Repair")
+	for i = 1, #ctx.options do
+		local opt = ctx.options[i]
+		if opt and opt.name == label then
+			return opt
+		end
+	end
+	return nil
+end
+
+local function _clearSubMenu(opt)
+	if not opt then return end
+	if opt.subOption and opt.subOption.options then
+		for i = #opt.subOption.options, 1, -1 do
+			table.remove(opt.subOption.options, i)
+		end
+	end
+	opt.subOption = nil
+end
 
 function ISVehicleMechanics:doPartContextMenu(part, x, y, context)
-    if not self.context then
-        self.context = ISContextMenu.get(self.playerNum, x + self:getAbsoluteX(), y + self:getAbsoluteY())
-    end
-    if not context then
-        self.context = ISContextMenu.get(self.playerNum, x + self:getAbsoluteX(), y + self:getAbsoluteY())
-    else
-        self.context = context
-    end
+	_Original_doPartContextMenu(self, part, x, y, context)
 
-    if self.context then
-        self.context:clear()
-    end
+	if not (part and part.getId and part:getId()) then return end
+	if string.lower(part:getId():trim()) ~= "lightbar" then return end
 
-    local option = nil
+	local ctx = context or self.context
+	if not ctx then return end
 
-    	-- SKIPPING: Vanilla Lightbar Repair block intentionally
-    if part and part:getId() and string.lower(part:getId():trim()) == "lightbar" then
-        -- Custom mod logic (ContextMenu_EHR) will run separately
-    else
-        -- Let vanilla logic handle all other parts
-        _Original_doPartContextMenu(self, part, x, y)
-    end
+	local parent = _findRepairOption(ctx)
+	if not parent then
+		parent = ctx:addOption(getText("ContextMenu_Repair"), nil, nil)
+	end
 
-	-- If the game is paused we should skip creating our context menu
+	_clearSubMenu(parent)
+	parent.toolTip = nil
+
 	if UIManager.getSpeedControls():getCurrentGameSpeed() == 0 then return end
 
-	if VRO.Options.HideVanillaRepair then
-		if old_ISVehicleMechanics_doPartContextMenu then
-			old_ISVehicleMechanics_doPartContextMenu(self, part, x, y)
-		end
-	end
-	-- It's most likely that the old version of this function has already created an instance of the context menu, but for robustness 
-	--   we should check to ensure it exists, and if it doesn't we create a new one.
 	local playerObj = getSpecificPlayer(self.playerNum)
+	local requiredSkillLevel = math.min(5, part:getVehicle():getScript():getEngineRepairLevel() - 1)
+	local currentCondition = math.max(0, part:getCondition())
 
-	local option
+	local requiredParts = { ["Base.ElectronicsScrap"] = 5, ["Base.ElectricWire"] = 1, ["Base.LightBulb"] = 0, ["Base.Amplifier"] = 0 }
 
+	if currentCondition <= 0 then
+		requiredParts["Base.LightBulb"] = 2
+		requiredParts["Base.Amplifier"] = 1
+		requiredSkillLevel = math.min(requiredSkillLevel + 1, 6)
+	end
 
-	-- Add the option for repairing the lightbar to the context menu.
+	local inv = self.chr:getInventory()
+	local numberOfScrapElectronics = inv:getNumberOfItem("Base.ElectronicsScrap", false, true)
+	local numberOfElectricWire     = inv:getNumberOfItem("Base.ElectricWire", false, true)
 
-    if part:getId() == "lightbar" then
-		-- Get the Mechanics skill level that is required to perform engine repair actions on this vehicle type and interpret that 
-		--   as one higher than the Electricity skill level that will be required to repair the lightbar. We do this so we keep things simple and 
-		--   don't have to worry about adding additional information to vehicle scripts to support different skill levels for 
-		--   different vehicle types.
-		-- Set the maximum skill level needed for repairs where condition > 0 at 5. We set the maximum skill level needed to repair the lightbar from condition 0 
-		--   to be 6, so the skill level needed for all other repairs should be lower than that.
-		local requiredSkillLevel = math.min(5, part:getVehicle():getScript():getEngineRepairLevel() - 1)
-		local currentCondition = math.max(0, part:getCondition())
+	local repairBlocksPossibleByParts     = math.min(math.floor(numberOfScrapElectronics / 5.0), numberOfElectricWire)
+	local repairBlocksPossibleByCondition = math.ceil(math.max(0.0, (100.0 - currentCondition)) / 10.0)
+	local repairBlocksPossible            = math.min(repairBlocksPossibleByParts, repairBlocksPossibleByCondition)
 
-		local requiredParts = { ["Base.ElectronicsScrap"] = 5, ["Base.ElectricWire"] =  1, ["Base.LightBulb"] = 0, ["Base.Amplifier"] = 0 }
+	local targetCondition = currentCondition
+	if repairBlocksPossible > 0 then
+		requiredParts["Base.ElectronicsScrap"] = repairBlocksPossible * 5
+		requiredParts["Base.ElectricWire"]     = repairBlocksPossible
+		targetCondition = math.min(100, targetCondition + (repairBlocksPossible * 10))
+	end
 
-		if currentCondition <= 0 then
-			requiredParts["Base.LightBulb"] = 2
-			requiredParts["Base.Amplifier"] = 1
-			requiredSkillLevel = math.min(requiredSkillLevel + 1, 6)
-
-		end
-
-		local numberOfScrapElectronics = self.chr:getInventory():getNumberOfItem("Base.ElectronicsScrap", false, true)
-		local numberOfElectricWire = self.chr:getInventory():getNumberOfItem("Base.ElectricWire", false, true)
-
-		local repairBlocksPossibleByParts = math.min(math.floor(numberOfScrapElectronics / 5.0), numberOfElectricWire)
-		local repairBlocksPossibleByCondition = math.ceil(math.max(0.0, (100.0 - currentCondition)) / 10.0)
-
-		local repairBlocksPossible = math.min(repairBlocksPossibleByParts, repairBlocksPossibleByCondition)
-
-		local targetCondition = currentCondition
-
-		if repairBlocksPossible > 0 then
-			requiredParts["Base.ElectronicsScrap"] = repairBlocksPossible * 5
-			requiredParts["Base.ElectricWire"] = repairBlocksPossible
-			targetCondition = math.min(100, targetCondition + (repairBlocksPossible * 10))
-		end
-
-		local allPartsPresent = true
-
-		for neededPart,numberNeeded in pairs(requiredParts) do
-			if self.chr:getInventory():getNumberOfItem(neededPart, false, true) < numberNeeded then
-				allPartsPresent = false
-                    break
-			end
-		end
-
-		if currentCondition < 100 and allPartsPresent and self.chr:getPerkLevel(Perks.Electricity) >= requiredSkillLevel and self.chr:getInventory():containsTag("Screwdriver") then
-			option = self.context:addOption(getText("ContextMenu_Repair"), playerObj, ISVehicleMechanics.ELR_onRepairLightbar, part, repairBlocksPossible, requiredParts, targetCondition, requiredSkillLevel)
-			self:ELR_doMenuTooltip(part, option, "ELR_repairlightbar", requiredParts, requiredSkillLevel, targetCondition)
-		else
-			option = self.context:addOption(getText("ContextMenu_Repair"), nil, nil)
-			option.notAvailable = true
-			self:ELR_doMenuTooltip(part, option, "ELR_repairlightbar", requiredParts, requiredSkillLevel, targetCondition)
+	local allPartsPresent = true
+	for neededPart, numberNeeded in pairs(requiredParts) do
+		if inv:getNumberOfItem(neededPart, false, true) < numberNeeded then
+			allPartsPresent = false
+			break
 		end
 	end
 
-	-- Since the old version of this function may have set the context menu to not be visible we must handle the case where 
-	--   we have added an option to the menu and now have to make the menu visible.
-	if self.context.numOptions == 1 then
-		self.context:setVisible(false)
+	-- Set availability first so tooltip colors are correct
+	if currentCondition >= 100
+		or not allPartsPresent
+		or (self.chr:getPerkLevel(Perks.Electricity) < requiredSkillLevel)
+		or not inv:containsTag("Screwdriver") then
+		parent.notAvailable = true
 	else
+		parent.notAvailable = false
+	end
+
+	-- Attach our tooltip to the parent "Repair" option
+	self:ELR_doMenuTooltip(part, parent, "ELR_repairlightbar", requiredParts, requiredSkillLevel, targetCondition)
+
+	-- Replace handler with our start function; pass minimal parameters
+    parent.target   = playerObj
+    parent.onSelect = ISVehicleMechanics.ELR_onRepairLightbar
+    parent.param1   = part
+    parent.param2   = repairBlocksPossible
+    parent.param3   = requiredParts
+    parent.param4   = targetCondition
+    parent.param5   = requiredSkillLevel
+
+	if self.context and self.context.numOptions == 1 then
+		self.context:setVisible(false)
+	elseif self.context then
 		self.context:setVisible(true)
 	end
 
@@ -120,25 +117,20 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y, context)
 end
 
 function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, requiredSkillLevel, targetCondition)
-	local vehicle = part:getVehicle()
 	local tooltip = ISToolTip:new()
 	tooltip:initialise()
 	tooltip:setVisible(false)
 	tooltip.description = getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
 	option.toolTip = tooltip
-	local keyvalues = part:getTable(lua)
 
-	-- Repair lightbar tooltip
 	if lua == "ELR_repairlightbar" then
 		local rgb = " <RGB:0,1,0>"
-
 		if self.chr:getPerkLevel(Perks.Electricity) < requiredSkillLevel then
 			rgb = " <RGB:1,0,0>"
 		end
 		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Electricity") .. " " .. self.chr:getPerkLevel(Perks.Electricity) .. "/" .. requiredSkillLevel .. " <LINE>"
 		rgb = " <RGB:0,1,0>"
 
-        local scriptItem = ScriptManager.instance:getItem("Base.Screwdriver")
         local screwdriverItem = self.chr:getInventory():getFirstTagRecurse("Screwdriver")
         local displayName = screwdriverItem and screwdriverItem:getDisplayName() or "Screwdriver"
 		if not self.chr:getInventory():containsTag("Screwdriver") then
@@ -148,7 +140,7 @@ function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, 
 		end
 
 		for neededPart,numberNeeded in pairs(requiredParts) do
-			local scriptItem = ScriptManager.instance:getItem(neededPart)
+
 			local displayName = getItemDisplayName(neededPart)
 			local numberOfPart = self.chr:getInventory():getNumberOfItem(neededPart, false, true)
 
@@ -173,12 +165,6 @@ function ISVehicleMechanics.ELR_onRepairLightbar(playerObj, part, repairBlocks, 
 	if playerObj:getVehicle() then
 		ISVehicleMenu.onExit(playerObj)
 	end
-
-	local typeToItem = VehicleUtils.getItems(playerObj:getPlayerNum())
-	local screwdriverItems = typeToItem["Base.Screwdriver"]
-	local item = screwdriverItems and screwdriverItems[1] or nil
-
-	ISVehiclePartMenu.toPlayerInventory(playerObj, item)
 
 	-- Have the character walk to the vehicle's driver door
 	ISTimedActionQueue.add(ISPathFindAction:pathToVehicleArea(playerObj, part:getVehicle(), "SeatFrontLeft"))
@@ -240,14 +226,19 @@ function ISVehicleMechanics.ELR_onRepairLightbar(playerObj, part, repairBlocks, 
 	local timeToRepair = (repairBlocks * 100) - math.max(0, (20 * (playerObj:getPerkLevel(Perks.Electricity) - requiredSkillLevel)))
 
 	if (part:getVehicle():getLightbarLightsMode() ~= 0) or (part:getVehicle():getLightbarSirenMode() ~= 0) then
-		-- Turn off the lightbar from outside of the vehicle
 		ISTimedActionQueue.add(ELRTurnOffLightbar:new(playerObj, true, part:getVehicle():getId()))
 	end
+
+	-- Choose the item we’ll pass to the timed action: the screwdriver the player will actually use
 	local screwdriver = playerObj:getInventory():getFirstTagRecurse("Screwdriver")
 
--- Equip screwdriver in primary hand if not already equipped
-if playerObj:getPrimaryHandItem() ~= screwdriver then
-    ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, screwdriver, 50, true, false))
-end -- Queue our custom TimedAction to repair the lightbar
-	ISTimedActionQueue.add(ELRRepairLightbar:new(playerObj, part, item, timeToRepair, repairBlocks, requiredParts, targetCondition))
+	-- Ensure it’s in inventory and equipped (equip action is harmless if already equipped)
+	if screwdriver then
+		ISVehiclePartMenu.toPlayerInventory(playerObj, screwdriver)
+		if playerObj:getPrimaryHandItem() ~= screwdriver then
+			ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, screwdriver, 50, true, false))
+		end
+	end
+
+	ISTimedActionQueue.add(ELRRepairLightbar:new(playerObj, part, screwdriver, timeToRepair, repairBlocks, requiredParts, targetCondition))
 end

@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field, param-type-mismatch
 --***********************************************************
 --**                    Based on code by                   **
 --**                                                       **
@@ -26,7 +27,13 @@ function ELRRepairLightbar:update()
 end
 
 function ELRRepairLightbar:start()
-	self.item:setJobType(self.jobType)
+	-- Fallback if caller didn’t pass an item
+	if not self.item then
+		self.item = self.character:getPrimaryHandItem()
+	end
+	if self.item then
+		self.item:setJobType(self.jobType)
+	end
 
 	-- Todo? - Find a better animation for working on a raised object
 	self:setOverrideHandModels(self.character:getPrimaryHandItem(), nil)
@@ -39,9 +46,18 @@ function ELRRepairLightbar:stop()
 end
 
 function ELRRepairLightbar:perform()
-	self.item:setJobDelta(0)
+	if self.item then
+		self.item:setJobDelta(0)
+	end
 
-	sendClientCommand(self.character, 'ELR_vehicle', 'repairLightbar', { vehicle = self.part:getVehicle():getId(), part = self.part:getId(), repairBlocks = self.repairBlocks, targetCondition = self.targetCondition, repairParts = self.requiredParts })
+	-- Server-side lightbar condition update via command
+	sendClientCommand(self.character, 'ELR_vehicle', 'repairLightbar', {
+		vehicle        = self.part:getVehicle():getId(),
+		part           = self.part:getId(),
+		repairBlocks   = self.repairBlocks,
+		targetCondition= self.targetCondition,
+		repairParts    = self.requiredParts
+	})
 
 	-- Consume the required parts once the action is complete
     for itemType, count in pairs(self.requiredParts) do
@@ -59,18 +75,17 @@ function ELRRepairLightbar:new(character, part, item, timeToRepair, repairBlocks
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
-	o.character = character
-	o.vehicle = part:getVehicle()
-	o.part = part
-	o.item = item
-	o.maxTime = timeToRepair
 
-	o.repairBlocks = repairBlocks
-	o.requiredParts = requiredParts
+	o.character       = character
+	o.vehicle         = part:getVehicle()
+	o.part            = part
+	o.item            = item or (character and character:getPrimaryHandItem() or nil)
+	o.maxTime         = timeToRepair
+
+	o.repairBlocks    = repairBlocks
+	o.requiredParts   = requiredParts
 	o.targetCondition = targetCondition
 
 	o.jobType = getText("ContextMenu_Repair")..''..getText("IGUI_VehiclePartlightbar")
 	return o
 end
-
-
