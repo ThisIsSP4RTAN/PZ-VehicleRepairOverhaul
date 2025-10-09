@@ -255,7 +255,7 @@ local function injectAllFixingRequires()
         { "@CarSeat_All" }
     )
 
-    injectFixingRequire("VRO Fix Car seat 4",
+    injectFixingRequire("VRO Fix Car seat 3",
         { "@CarSeat_All" }
     )
 
@@ -319,16 +319,16 @@ local function injectAllFixingRequires()
         { "@MilitarySuspension_All" }
     )
 
-    injectFixingRequire("VRO Fix Muffler Small Welding",
-        { "@MufflerSmall_All" }
+    injectFixingRequire("VRO Fix Small Muffler Welding",
+        { "@SmallMuffler_All" }
     )
 
-    injectFixingRequire("VRO Fix Muffler Small",
-        { "@MufflerSmall_All" }
+    injectFixingRequire("VRO Fix Small Muffler",
+        { "@SmallMuffler_All" }
     )
 
-    injectFixingRequire("VRO Fix Muffler Small 1",
-        { "@MufflerSmall_All" }
+    injectFixingRequire("VRO Fix Small Muffler 1",
+        { "@SmallMuffler_All" }
     )
 
     injectFixingRequire("VRO Fix Muffler Welding",
@@ -400,6 +400,10 @@ local function injectAllFixingRequires()
     )
 
     injectFixingRequire("VRO Fix SoftTops 1",
+        { "@SoftTops_All" }
+    )
+
+    injectFixingRequire("VRO Fix SoftTops 2",
         { "@SoftTops_All" }
     )
 

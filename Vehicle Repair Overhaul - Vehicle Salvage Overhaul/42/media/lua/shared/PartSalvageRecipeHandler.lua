@@ -146,7 +146,7 @@ local function injectAllRecipeInputs()
 
   -- Contains normal and small mufflers
   injectRecipeInputs("Salvage Vehicle Mufflers",
-    { "@MufflerSmall_All", "@Muffler_All", "VRO.recipefiller" }
+    { "@SmallMuffler_All", "@Muffler_All", "VRO.recipefiller" }
   )
 
   -- Contains small, normal and military suspension
@@ -179,8 +179,8 @@ local function injectAllRecipeInputs()
 
   injectRecipeInputs("Salvage Vehicle Saddlebags or Misc Fabrics",
     { "Base.ATAMotoBagBMW1", "Base.ATAMotoBagBMW2", "Base.ATAMotoHarleyBag",
-      "Base.ATAMotoHarleyHolster", "Base.SS100topbag3",
-      "Base.90pierceArrowHoses", "Base.FireDeptHosesMedium", "VRO.recipefiller"
+      "Base.ATAMotoHarleyHolster", "Base.SS100topbag3", "Base.90pierceArrowHoses",
+      "Base.FireDeptHosesMedium", "VRO.recipefiller"
     }
   )
 

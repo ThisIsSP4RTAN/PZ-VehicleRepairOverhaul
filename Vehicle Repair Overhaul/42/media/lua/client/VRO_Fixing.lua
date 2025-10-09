@@ -11,27 +11,8 @@ require "VRO_DoFixAction"
 local VRO = rawget(_G, "VRO") or {}
 VRO.__index = VRO
 _G.VRO = VRO
-
-----------------------------------------------------------------
--- A) Recipes (edit these)
--- You can put defaults on the recipe itself:
---   equip = {
---     primary="Base.BlowTorch",  -- or primaryTag="BlowTorch"
---     secondary="Base.Hammer",   -- or secondaryTag="Hammer"
---     wearTag="WeldingMask"      -- or wear="Base.WelderMask"
---   }
---   anim  = "Welding"
---   sound = "BlowTorch"          -- loops during repair (if set)
---   successSound = "SomeEvent"   -- plays after a successful repair (optional)
---   time  = function(player, brokenItem) return 160 end  -- or a number
---
--- globalItem supports:
---   { item="<FullType>", uses=3, consume=true }
---   { tag ="<TagName>",  uses=3, consume=true }
--- If consume=false, the item is required but NOT consumed.
-----------------------------------------------------------------
 VRO.Recipes = {
---[[  (recipes may be injected via VRO_Recipes.lua)  ]]
+--[[  (recipes injected via VRO_Recipes.lua)  ]]
 }
 
 ----------------------------------------------------------------
@@ -53,7 +34,7 @@ local function VRO_UseVanillaFixingRecipes()
 end
 
 ----------------------------------------------------------------
--- B) Helpers
+-- A) Helpers
 ----------------------------------------------------------------
 -- Optional external recipe loader (keeps existing list; append from another file if present)
 local function _appendRecipesFrom(source)
@@ -334,7 +315,7 @@ local function resolveGlobalList(fixer, fixing)
 end
 
 ----------------------------------------------------------------
--- C) Perks + math
+-- B) Perks + math
 ----------------------------------------------------------------
 local function resolvePerk(perkName)
   if Perks then
@@ -382,7 +363,7 @@ local function condRepairedPercent(brokenItem, chr, fixing, fixer, hbr, fixerInd
 end
 
 ----------------------------------------------------------------
--- D) Path & facing
+-- C) Path & facing
 ----------------------------------------------------------------
 local function queuePathToPartArea(playerObj, part)
   local vehicle = part and part:getVehicle()
@@ -392,7 +373,7 @@ local function queuePathToPartArea(playerObj, part)
 end
 
 ----------------------------------------------------------------
--- E) Tooltip (dynamic color + icon)
+-- D) Tooltip (dynamic color + icon)
 ----------------------------------------------------------------
 local function interpColorTag(frac)
   local c = ColorInfo.new(0,0,0,1)
@@ -576,7 +557,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
 end
 
 ----------------------------------------------------------------
--- F) Context Menu Injection (attach to vanilla "Repair")
+-- E) Context Menu Injection (attach to vanilla "Repair")
 ----------------------------------------------------------------
 local function toPlayerInventory(playerObj, it)
   if not it then return end
@@ -912,7 +893,7 @@ end
 end
 
 ----------------------------------------------------------------
--- G) Inventory repairs (vanilla-style submenu; attach to existing)
+-- F) Inventory repairs (vanilla-style submenu; attach to existing)
 ----------------------------------------------------------------
 local function resolveInvItemFromContext(items)
   if not items or #items==0 then return nil end
@@ -1046,7 +1027,7 @@ if not _G.VRO_InvHooked then
 end
 
 ----------------------------------------------------------------
--- H) Public API
+-- G) Public API
 ----------------------------------------------------------------
 function VRO.addRecipe(recipe) table.insert(VRO.Recipes, recipe) end
 VRO.API = { addRecipe = VRO.addRecipe }

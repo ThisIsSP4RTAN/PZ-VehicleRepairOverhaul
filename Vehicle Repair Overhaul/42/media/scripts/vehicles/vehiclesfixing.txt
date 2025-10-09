@@ -813,7 +813,7 @@ module Base
         Fixer = Base.SheepLeather_Fur_Tan;Tailoring=1;Mechanics=1,
     }
 
-    fixing VRO Fix Car seat 4
+    fixing VRO Fix Car seat 3
     {
         GlobalItem = Base.NutsBolts=6,
         ConditionModifier = 0.6,
@@ -1112,7 +1112,7 @@ module Base
 
 /************************ Muffler ************************/
 
-    fixing VRO Fix Muffler Small Welding
+    fixing VRO Fix Small Muffler Welding
     {
         GlobalItem = Base.BlowTorch=2,
         ConditionModifier = 1.2,
@@ -1134,7 +1134,7 @@ module Base
         Fixer = Base.UnusableMetal=8;MetalWelding=2;Mechanics=2,
     }
 
-    fixing VRO Fix Muffler Small
+    fixing VRO Fix Small Muffler
     {
         GlobalItem = Base.NutsBolts=4,
         ConditionModifier = 0.8,
@@ -1156,7 +1156,7 @@ module Base
         Fixer = Base.UnusableMetal=4;Mechanics=2,
     }
 
-    fixing VRO Fix Muffler Small 1
+    fixing VRO Fix Small Muffler 1
     {
         ConditionModifier = 0.5,
 
@@ -1497,31 +1497,6 @@ module Base
 
     fixing VRO Fix SoftTops
     {
-        ConditionModifier = 0.5,
-
-        Fixer = Base.DuctTape=4;Tailoring=2;Mechanics=1,
-        Fixer = Base.Rope;Tailoring=2;Mechanics=1,
-        Fixer = Base.Twine=3;Tailoring=2;Mechanics=1,
-        Fixer = Base.Thread=8;Tailoring=2;Mechanics=1,
-        Fixer = Base.Glue=2;Tailoring=2;Mechanics=1,
-        Fixer = Base.Woodglue=3;Tailoring=2;Mechanics=1,
-        Fixer = Base.Epoxy;Tailoring=2;Mechanics=1,
-        Fixer = Base.FiberglassTape=2;Tailoring=2;Mechanics=1,
-        Fixer = Base.Sheet=2;Tailoring=2;Mechanics=1,
-        Fixer = Base.RippedSheets=4;Tailoring=2;Mechanics=1,
-        Fixer = Base.DenimStrips=4;Tailoring=2;Mechanics=1,
-        Fixer = Base.LeatherStrips=4;Tailoring=2;Mechanics=1,
-        Fixer = Base.PigletLeather_Black_Fur_Tan;Tailoring=2;Mechanics=1,
-        Fixer = Base.PigletLeather_Landrace_Fur_Tan;Tailoring=2;Mechanics=1,
-        Fixer = Base.LambLeather_Fur_Tan;Tailoring=2;Mechanics=1,
-        Fixer = Base.Leather_Crude_Small_Tan;Tailoring=2;Mechanics=1,
-        Fixer = Base.RabbitLeather_Fur_Tan;Tailoring=2;Mechanics=1,
-        Fixer = Base.RabbitLeather_Grey_Fur_Tan;Tailoring=2;Mechanics=1,
-        Fixer = Base.RaccoonLeather_Grey_Fur_Tan;Tailoring=2;Mechanics=1,
-    }
-
-    fixing VRO Fix SoftTops 1
-    {
         GlobalItem = Base.Glue=1,
         ConditionModifier = 1.2,
 
@@ -1538,6 +1513,36 @@ module Base
         Fixer = Base.Leather_Crude_Medium_Tan;Tailoring=2;Mechanics=1,
         Fixer = Base.SheepLeather_Fur_Tan;Tailoring=2;Mechanics=1,
         Fixer = Base.Tarp;Tailoring=2;Mechanics=1,
+    }
+
+	fixing VRO Fix SoftTops 1
+    {
+        ConditionModifier = 0.7,
+		GlobalItem = Base.Glue=1,
+
+        Fixer = Base.Sheet=2;Tailoring=2;Mechanics=1,
+        Fixer = Base.RippedSheets=4;Tailoring=2;Mechanics=1,
+        Fixer = Base.DenimStrips=4;Tailoring=2;Mechanics=1,
+        Fixer = Base.LeatherStrips=4;Tailoring=2;Mechanics=1,
+        Fixer = Base.PigletLeather_Black_Fur_Tan;Tailoring=2;Mechanics=1,
+        Fixer = Base.PigletLeather_Landrace_Fur_Tan;Tailoring=2;Mechanics=1,
+        Fixer = Base.LambLeather_Fur_Tan;Tailoring=2;Mechanics=1,
+        Fixer = Base.Leather_Crude_Small_Tan;Tailoring=2;Mechanics=1,
+        Fixer = Base.RabbitLeather_Fur_Tan;Tailoring=2;Mechanics=1,
+        Fixer = Base.RabbitLeather_Grey_Fur_Tan;Tailoring=2;Mechanics=1,
+        Fixer = Base.RaccoonLeather_Grey_Fur_Tan;Tailoring=2;Mechanics=1,
+    }
+
+	fixing VRO Fix SoftTops 2
+    {
+        ConditionModifier = 0.3,
+
+        Fixer = Base.DuctTape=4;Tailoring=1;Mechanics=1,
+        Fixer = Base.Rope;Tailoring=1;Mechanics=1,
+        Fixer = Base.Glue=2;Tailoring=1;Mechanics=1,
+        Fixer = Base.Woodglue=3;Tailoring=1;Mechanics=1,
+        Fixer = Base.Epoxy;Tailoring=1;Mechanics=1,
+        Fixer = Base.FiberglassTape=2;Tailoring=1;Mechanics=1,
     }
 
 /************************ Armour - see military hoods ************************/

@@ -141,7 +141,7 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.65bansheeWindshieldArmor","Base.65bansheeFrontWindowArmor","Base.65bansheeWindshieldRearArmor","Base.89defenderWindshieldArmor",
     "Base.89defenderFrontWindowArmor","Base.89defenderRearWindowArmor","Base.89defenderBackWindowArmor","Base.89defenderWindshieldRearArmor",
     "Base.98stageaWindshieldArmor","Base.98stageaFrontWindowArmor","Base.98stageaRearWindowArmor","Base.98stageaBackWindowArmor",
-    "Base.98stageaWindshieldRearArmor",
+    "Base.98stageaWindshieldRearArmor","Base.85gmBbodyWagonBackWindowArmorM",
   }
 
   VRO.PartLists.WoodParts_All = {
@@ -149,7 +149,7 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.89volvo240WindshieldArmorW","Base.89volvo240FrontWindowArmorW","Base.89volvo240RearWindowArmorW","Base.89volvo245WagonBackWindowArmorW",
     "Base.89volvo244SedanBackWindowArmorW","Base.89volvo240WindshieldRearArmorW","Base.91geoMetroWindshieldArmor","Base.91geoMetroFrontWindowArmor",
     "Base.91geoMetroRearWindowArmor","Base.91geoMetroWindshieldRearArmor","Base.91geoMetroRoofrack0","Base.M923FlatbedStakes1","Base.M35A2Stakes1",
-    "Base.M35A2Stakes3","Base.93chevySilveradoStakes2","Base.pzkTruckSideWoodboards2","Base.97BushRoofStorage0",
+    "Base.M35A2Stakes3","Base.93chevySilveradoStakes2","Base.pzkTruckSideWoodboards2","Base.97BushRoofStorage0","Base.85gmBbodyWagonBackWindowArmorW",
   }
 
   VRO.PartLists.SmallTrunk_All = {
@@ -217,7 +217,7 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.89volvo240SedanTrunkDoor1","Base.89volvo245WagonTrunkDoor1","Base.66pontiacLeMansTrunkDoor3","Base.87chevySuburbanTrunkDoor2",
     "Base.utilityBoxTrunkDoor2","Base.68firebirdTrunkDoor3","Base.77firebirdTrunkDoor3","Base.82firebirdTrunkDoor3","Base.73fordFalconTrunkDoor3",
     "Base.04vwTouranTrunkDoor1","Base.87fordF700RollTrunkDoor2","Base.91nissan240sxTrunkDoor3","Base.91fordRangerTrunkDoor2","Base.65bansheeTrunkDoor3",
-    "Base.89defenderTrunkDoor2","Base.89defenderTrunkLid2","Base.98stageaTrunkDoor3",
+    "Base.89defenderTrunkDoor2","Base.89defenderTrunkLid2","Base.98stageaTrunkDoor3","Base.85gmBbodyWagonTrunkDoor1",
   }
 
   VRO.PartLists.TrunkDoorMilitary_All = {
@@ -344,22 +344,22 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.VN125oldTire","Base.VN125normalTire","Base.VN125modernTire","Base.NivaTire1","Base.80sOffroadTireA","Base.Shubert38Tire1","Base.ShubertSedanTire1",
     "Base.49powerWagonTire","Base.BuggyTireFront3","Base.BuggyTireRear3","Base.LassiterTire1","Base.FuturaTire3","Base.CulverTire1","Base.PotomacTire1",
     "Base.CUDAtire3","Base.SS100oldTire","Base.SS100normalTire","Base.SS100modernTire","Base.ZNL50oldTire","Base.ZNL50normalTire","Base.ZNL50modernTire",
-    "Base.DeathMustangWheel3","Base.89trooperTire2","Base.93townCarTire1","Base.93townCarLimoTire1","Base.CivicTire1","Base.CytAstra89Wheel1",
-    "Base.90fordF350Tire2","Base.90fordF350DoubleTires2","Base.fordCVPITire1","Base.93fordCF8000Tire2","Base.93fordCF8000DoubleTires2","Base.113hTire1",
-    "Base.CytMercEvoWheel3","Base.fordCVPITire1","Base.91rangeTire2","Base.1992fiorinoWheel1","Base.1990spazio147Wheel1","Base.CamaroSStire3",
-    "Base.93mustangSSPTire1","Base.63vwStockTire1","Base.63beetleTireSlick1","Base.63beetleTireOffroad1","Base.1990traficWheel2","Base.91geoMetroTire1",
-    "Base.67gt500Tire3","Base.67gt500eTire3","Base.89dodgeCaravanTire","Base.89dodgeCaravanTireOffroad","Base.63Type2VanTireOffroad","Base.87toyotaMR2TireT13",
-    "Base.87toyotaMR2TireT23","Base.93fordF350Tire2","Base.93fordF350DoubleTires2","Base.1988fuegoTire3","Base.1970fiat600Tire1","Base.90bmwE30Tire3",
-    "Base.90bmwE30mTire3","Base.87fordB700Tire2","Base.87fordB700DoubleTires2","Base.93fordTaurusTire1","Base.93fordTaurusSHOTire1","Base.ForkLift_FrontTire1",
-    "Base.ForkLift_RearTire1","Base.1979rastrojeroTire2","Base.1978renault12Tire1","Base.93chevySuburbanTire1","Base.93chevySuburbanTire2",
-    "Base.93chevyK3500Tire2","Base.93chevyK3500DoubleTires2","Base.88toyotaHiluxTire2","Base.86chevyCUCVTire1","Base.86chevyCUCVTire2",
-    "Base.86chevyCUCVDoubleTires2","Base.85gmBbodyTire0","Base.85gmBbodyTire1","Base.85gmBbodyTire2","Base.85gmBbodyTire3","Base.85gmBbodyTire4",
-    "Base.85gmBbodyTire5","Base.85gmBbodyTire6","Base.76chevyKseriesTire2","Base.80chevyCKseriesTire2","Base.80chevyCKseriesTire1","Base.90chevyCKseriesTire2",
-    "Base.90chevyCKseriesTire1","Base.84jeepXJTire2","Base.92jeepYJTire2","Base.75grandPrixR215Tire1","Base.75grandPrixR217Tire3","Base.91fordLTDTire1",
-    "Base.87buickRegalTire1","Base.87buickRegalGNXTire3","Base.81deloreanDMC12Tire3","Base.89volvo200Tire0","Base.89volvo200Tire1","Base.89volvo200Tire2",
-    "Base.87chevySuburbanTire2","Base.76chevyKseriesDoubleTires2","Base.77firebirdTire3","Base.77firebirdTATire3","Base.82firebirdTire3",
-    "Base.73fordFalconTire3","Base.73fordFalconPSTire3","Base.04vwTouranTire1","Base.91nissan240sxOEM13","Base.91nissan240sxOEM23","Base.91nissan240sxG73",
-    "Base.91nissan240sxGT3","Base.91fordRangerTire2","Base.89defenderTire2","Base.89defenderDakarTire2","Base.98stageaTire3",
+    "Base.DeathMustangWheel3","Base.89trooperTire2","Base.93townCarTire1","Base.93townCarLimoTire1","Base.CivicTire1","Base.CytAstra89Wheel1","Base.90fordF350Tire2",
+    "Base.90fordF350DoubleTires2","Base.fordCVPITire1","Base.93fordCF8000Tire2","Base.93fordCF8000DoubleTires2","Base.113hTire1","Base.CytMercEvoWheel3",
+    "Base.91rangeTire2","Base.1992fiorinoWheel1","Base.1990spazio147Wheel1","Base.CamaroSStire3","Base.93mustangSSPTire1","Base.63vwStockTire1",
+    "Base.63beetleTireSlick1","Base.63beetleTireOffroad1","Base.1990traficWheel2","Base.91geoMetroTire1","Base.67gt500Tire3","Base.67gt500eTire3",
+    "Base.89dodgeCaravanTire","Base.89dodgeCaravanTireOffroad","Base.63Type2VanTireOffroad","Base.87toyotaMR2TireT13","Base.87toyotaMR2TireT23",
+    "Base.93fordF350Tire2","Base.93fordF350DoubleTires2","Base.1988fuegoTire3","Base.1970fiat600Tire1","Base.90bmwE30Tire3","Base.90bmwE30mTire3",
+    "Base.87fordB700Tire2","Base.87fordB700DoubleTires2","Base.93fordTaurusTire1","Base.93fordTaurusSHOTire1","Base.ForkLift_FrontTire1","Base.ForkLift_RearTire1",
+    "Base.1979rastrojeroTire2","Base.1978renault12Tire1","Base.93chevySuburbanTire1","Base.93chevySuburbanTire2","Base.93chevyK3500Tire2",
+    "Base.93chevyK3500DoubleTires2","Base.88toyotaHiluxTire2","Base.86chevyCUCVTire1","Base.86chevyCUCVTire2","Base.86chevyCUCVDoubleTires2","Base.85gmBbodyTire0",
+    "Base.85gmBbodyTire1","Base.85gmBbodyTire2","Base.85gmBbodyTire3","Base.85gmBbodyTire4","Base.85gmBbodyTire5","Base.85gmBbodyTire6","Base.76chevyKseriesTire2",
+    "Base.80chevyCKseriesTire2","Base.80chevyCKseriesTire1","Base.90chevyCKseriesTire2","Base.90chevyCKseriesTire1","Base.84jeepXJTire2","Base.92jeepYJTire2",
+    "Base.75grandPrixR215Tire1","Base.75grandPrixR217Tire3","Base.91fordLTDTire1","Base.87buickRegalTire1","Base.87buickRegalGNXTire3","Base.81deloreanDMC12Tire3",
+    "Base.89volvo200Tire0","Base.89volvo200Tire1","Base.89volvo200Tire2","Base.87chevySuburbanTire2","Base.76chevyKseriesDoubleTires2","Base.77firebirdTire3",
+    "Base.77firebirdTATire3","Base.82firebirdTire3","Base.73fordFalconTire3","Base.73fordFalconPSTire3","Base.04vwTouranTire1","Base.91nissan240sxOEM13",
+    "Base.91nissan240sxOEM23","Base.91nissan240sxG73","Base.91nissan240sxGT3","Base.91fordRangerTire2","Base.89defenderTire2","Base.89defenderDakarTire2",
+    "Base.98stageaTire3","Base.pontiacR115Tire1","Base.pontiacR117Tire3","Base.pontiac8L15Tire1","Base.pontiac8L17Tire3",
   }
 
   VRO.PartLists.MilitaryTire_All = {
@@ -408,7 +408,7 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.NormalM113Suspension2","Base.ModernM113Suspension2","Base.NormalM113Suspension3","Base.ModernM113Suspension3",
   }
 
-  VRO.PartLists.MufflerSmall_All = {
+  VRO.PartLists.SmallMuffler_All = {
     "Base.OldScooterMuffler","Base.NormalScooterMuffler","Base.ModernScooterMuffler","Base.OldCycleMuffler","Base.NormalCycleMuffler","Base.ModernCycleMuffler",
     "Base.OldCartMuffler","Base.NormalCartMuffler","Base.ModernCartMuffler","Base.ATAMotoBMWCustomMuffler","Base.ATAMotoBMWClassicMuffler",
     "Base.ATAMotoHarleyMuffler","Base.KZ1Kmuffler","Base.VN125muffler","Base.SS100muffler3","Base.ZNL50muffler","Base.73fordFalconPSMuffler3",
@@ -526,6 +526,7 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.87fordF700WindshieldRear2","Base.91nissan240sxWindshield3","Base.91nissan240sxRearWindshield3","Base.91fordRangerWindshield2",
     "Base.91fordRangerWindshieldRear2","Base.65bansheeWindshield3","Base.65bansheeRearWindshield3","Base.89defenderWindshield2",
     "Base.89defenderWindshieldRear2","Base.89defender130WindshieldRear2","Base.98stageaWindshield3","Base.98stageaRearWindshield3",
+    "Base.85gmBbodyCoupeRearSideWindow1","Base.85gmBbodyWagonBackSideWindow1","Base.85gmBbodyWagonRearWindshield1",
   }
 
   VRO.PartLists.MilitaryWindow_All = {
@@ -550,9 +551,9 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.91geoMetroRoofrack1","Base.67gt500Roofrack3","Base.63Type2VanRoofrackSmall1","Base.63Type2VanRoofrackLarge1","Base.89dodgeCaravanRoofrack0",
     "Base.87toyotaMR2Roofrack3","Base.90bmwE30Roofrack3","Base.87fordB700Roofrack2","Base.93fordTaurusRoofrack1","Base.93fordTaurusWagonRoofrack1",
     "Base.93chevySuburbanRoofrack2","Base.84jeepXJRoofrack2","Base.76chevyKseriesRoofrack2","Base.76chevyCseriesRoofrack2","Base.85gmBbodyRoofrack1",
-    "Base.OldSmallRoofrack3","Base.ModernSmallRoofrack3","Base.ModernLargeRoofrack3","Base.91fordLTDRoofrack1","Base.87buickRegalRoofrack3",
-    "Base.89volvo245WagonRoofrack1","Base.89volvo240Roofrack1","Base.87chevySuburbanRoofrack2","Base.80manKat1Roofrack2","Base.93townCarTrunkRack1",
-    "Base.89defenderRoofrackM2",
+    "Base.85gmBbodyWagonRoofrack1","Base.OldSmallRoofrack3","Base.ModernSmallRoofrack3","Base.ModernLargeRoofrack3","Base.91fordLTDRoofrack1",
+    "Base.87buickRegalRoofrack3","Base.89volvo245WagonRoofrack1","Base.89volvo240Roofrack1","Base.87chevySuburbanRoofrack2","Base.80manKat1Roofrack2",
+    "Base.93townCarTrunkRack1","Base.89defenderRoofrackM2",
   }
 
   VRO.PartLists.Bullbar_All = {
@@ -624,7 +625,7 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.91fordRangerBumperRear0","Base.91fordRangerRollbar2","Base.65bansheeBumperFront0","Base.65bansheeBumperFrontA","Base.65bansheeBumperRear0",
     "Base.65bansheeBumperRearA","Base.65bansheeRollbar3","Base.89defenderBumperFront0","Base.89defenderBullbarFrontA","Base.89defenderBumperRear0",
     "Base.89defender130Bumperettes0","Base.89defenderRollbarWithToolbox2","Base.98stageaBumperFront0","Base.98stageaBumperFrontA","Base.98stageaBullbarFrontA",
-    "Base.98stageaBumperRear0","Base.97BushBullbarSAS",
+    "Base.98stageaBumperRear0","Base.97BushBullbarSAS","Base.85gmBbodyWagonBumperRear1","Base.85gmBbodyWagonBumperRear2",
   }
 
   VRO.PartLists.SaddlebagsHard_All = {
@@ -638,7 +639,8 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.M35FrontSoftTop2","Base.63Type2VanTarpCover0","Base.93fordF350BedCover2","Base.DG70RTRoof0","Base.90bmwE30CabrioRoofLid3","Base.90bmwE30CabrioRoof3",
     "Base.86chevyCUCVBedTarp2","Base.85gmBbodyVinylRoofBlack","Base.85gmBbodyVinylRoofMaroon","Base.85gmBbodyVinylRoofWhite","Base.85gmBbodyVinylRoofBrown",
     "Base.85gmBbodyVinylRoofBlue","Base.KI5trailersTarp2","Base.66pontiacLeMansRoof0","Base.80manKat1Tarp2","Base.M1082Tarp2","Base.93chevySilveradoBedTarp2",
-    "Base.pzkTruckTarp2","Base.65bansheeVinylRoof3","Base.89defenderTarpCover2",
+    "Base.pzkTruckTarp2","Base.65bansheeVinylRoof3","Base.89defenderTarpCover2","Base.85gmBbodyVinylRoofQuarterBlack","Base.85gmBbodyVinylRoofQuarterMaroon",
+    "Base.85gmBbodyVinylRoofQuarterWhite","Base.85gmBbodyVinylRoofQuarterBrown","Base.85gmBbodyVinylRoofQuarterBlue",
   }
 
   VRO.PartLists.Panels_All = {
@@ -674,7 +676,7 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.87toyotaMR2Mudflaps3","Base.93fordF350Mudflaps2","Base.88toyotaHiluxMudflaps2","Base.86chevy1028Mudflaps2","Base.KI5trailersMudflaps2",
     "Base.89volvo240Mudflaps1","Base.76chevyKseriesFDMudflaps","Base.80manKat1Mudflaps2","Base.M1082Mudflaps2","Base.87fordF700MudflapsSmall2",
     "Base.87fordF700MudflapsLarge2","Base.91fordRangerMudflaps2","Base.76chevyKseriesFDMudflaps","Base.76chevyCseriesWreckerMudflaps","Base.93chevyK3500mudflaps2",
-    "Base.89defenderMudflaps2",
+    "Base.89defenderMudflaps2","Base.85chevyCapriceCabBarrier1","Base.85gmBbodyWagonRoofRails1",
   }
 
   VRO.PartLists.TankContainers_All = {
@@ -705,27 +707,27 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.VN125oldTire","Base.VN125normalTire","Base.VN125modernTire","Base.NivaTire1","Base.80sOffroadTireA","Base.Shubert38Tire1","Base.ShubertSedanTire1",
     "Base.49powerWagonTire","Base.BuggyTireFront3","Base.BuggyTireRear3","Base.LassiterTire1","Base.FuturaTire3","Base.CulverTire1","Base.PotomacTire1",
     "Base.CUDAtire3","Base.SS100oldTire","Base.SS100normalTire","Base.SS100modernTire","Base.ZNL50oldTire","Base.ZNL50normalTire","Base.ZNL50modernTire",
-    "Base.DeathMustangWheel3","Base.89trooperTire2","Base.93townCarTire1","Base.93townCarLimoTire1","Base.CivicTire1","Base.CytAstra89Wheel1",
-    "Base.90fordF350Tire2","Base.90fordF350DoubleTires2","Base.fordCVPITire1","Base.93fordCF8000Tire2","Base.93fordCF8000DoubleTires2","Base.113hTire1",
-    "Base.CytMercEvoWheel3","Base.fordCVPITire1","Base.91rangeTire2","Base.1992fiorinoWheel1","Base.1990spazio147Wheel1","Base.CamaroSStire3",
-    "Base.93mustangSSPTire1","Base.63vwStockTire1","Base.63beetleTireSlick1","Base.63beetleTireOffroad1","Base.1990traficWheel2","Base.91geoMetroTire1",
-    "Base.67gt500Tire3","Base.67gt500eTire3","Base.89dodgeCaravanTire","Base.89dodgeCaravanTireOffroad","Base.63Type2VanTireOffroad","Base.87toyotaMR2TireT13",
-    "Base.87toyotaMR2TireT23","Base.93fordF350Tire2","Base.93fordF350DoubleTires2","Base.1988fuegoTire3","Base.1970fiat600Tire1","Base.90bmwE30Tire3",
-    "Base.90bmwE30mTire3","Base.87fordB700Tire2","Base.87fordB700DoubleTires2","Base.93fordTaurusTire1","Base.93fordTaurusSHOTire1","Base.ForkLift_FrontTire1",
-    "Base.ForkLift_RearTire1","Base.1979rastrojeroTire2","Base.1978renault12Tire1","Base.93chevySuburbanTire1","Base.93chevySuburbanTire2",
-    "Base.93chevyK3500Tire2","Base.93chevyK3500DoubleTires2","Base.88toyotaHiluxTire2","Base.86chevyCUCVTire1","Base.86chevyCUCVTire2",
-    "Base.86chevyCUCVDoubleTires2","Base.85gmBbodyTire0","Base.85gmBbodyTire1","Base.85gmBbodyTire2","Base.85gmBbodyTire3","Base.85gmBbodyTire4",
-    "Base.85gmBbodyTire5","Base.85gmBbodyTire6","Base.76chevyKseriesTire2","Base.80chevyCKseriesTire2","Base.80chevyCKseriesTire1","Base.90chevyCKseriesTire2",
-    "Base.90chevyCKseriesTire1","Base.84jeepXJTire2","Base.92jeepYJTire2","Base.75grandPrixR215Tire1","Base.75grandPrixR217Tire3","Base.91fordLTDTire1",
-    "Base.87buickRegalTire1","Base.87buickRegalGNXTire3","Base.81deloreanDMC12Tire3","Base.89volvo200Tire0","Base.89volvo200Tire1","Base.89volvo200Tire2",
-    "Base.87chevySuburbanTire2","Base.76chevyKseriesDoubleTires2","Base.77firebirdTire3","Base.77firebirdTATire3","Base.82firebirdTire3",
-    "Base.73fordFalconTire3","Base.73fordFalconPSTire3","Base.04vwTouranTire1","Base.91nissan240sxOEM13","Base.91nissan240sxOEM23","Base.91nissan240sxG73",
-    "Base.91nissan240sxGT3","Base.91fordRangerTire2","Base.89defenderTire2","Base.89defenderDakarTire2","Base.98stageaTire3","Base.V100Tire1","Base.V100Tire2",
-    "Base.V100Tire3","Base.V100Tires2","Base.V100Axle2","Base.V100AxleSmall2","Base.V101Tire2","Base.V102Tire2","Base.V103Tire2","Base.V103Axle2",
-    "Base.M113Tire8","Base.ECTO1tire1_Item","Base.M12Tire2","Base.BRDM2Tire","Base.M923Axle2","Base.DoubleOldTire2","Base.DoubleNormalTire2",
-    "Base.DoubleModernTire2","Base.AxleOldTire2","Base.AxleNormalTire2","Base.AxleModernTire2","Base.U1550LWheel2","Base.M12CTire2","Base.BushmasterTire",
-    "Base.49powerWagonApocalypseTire","Base.90pierceArrowTire2","Base.90pierceArrowDoubleTires2","USMIL.LargeTire","USMIL.Large2TireAxle",
-    "USMIL.LargeDoubleTires","USMIL.Large4TireAxle","USMIL.MediumTire","USMIL.Medium4TireAxle","USMIL.SmallTire","USMIL.ModernTire",
+    "Base.DeathMustangWheel3","Base.89trooperTire2","Base.93townCarTire1","Base.93townCarLimoTire1","Base.CivicTire1","Base.CytAstra89Wheel1","Base.90fordF350Tire2",
+    "Base.90fordF350DoubleTires2","Base.fordCVPITire1","Base.93fordCF8000Tire2","Base.93fordCF8000DoubleTires2","Base.113hTire1","Base.CytMercEvoWheel3",
+    "Base.91rangeTire2","Base.1992fiorinoWheel1","Base.1990spazio147Wheel1","Base.CamaroSStire3","Base.93mustangSSPTire1","Base.63vwStockTire1",
+    "Base.63beetleTireSlick1","Base.63beetleTireOffroad1","Base.1990traficWheel2","Base.91geoMetroTire1","Base.67gt500Tire3","Base.67gt500eTire3",
+    "Base.89dodgeCaravanTire","Base.89dodgeCaravanTireOffroad","Base.63Type2VanTireOffroad","Base.87toyotaMR2TireT13","Base.87toyotaMR2TireT23",
+    "Base.93fordF350Tire2","Base.93fordF350DoubleTires2","Base.1988fuegoTire3","Base.1970fiat600Tire1","Base.90bmwE30Tire3","Base.90bmwE30mTire3",
+    "Base.87fordB700Tire2","Base.87fordB700DoubleTires2","Base.93fordTaurusTire1","Base.93fordTaurusSHOTire1","Base.ForkLift_FrontTire1","Base.ForkLift_RearTire1",
+    "Base.1979rastrojeroTire2","Base.1978renault12Tire1","Base.93chevySuburbanTire1","Base.93chevySuburbanTire2","Base.93chevyK3500Tire2",
+    "Base.93chevyK3500DoubleTires2","Base.88toyotaHiluxTire2","Base.86chevyCUCVTire1","Base.86chevyCUCVTire2","Base.86chevyCUCVDoubleTires2","Base.85gmBbodyTire0",
+    "Base.85gmBbodyTire1","Base.85gmBbodyTire2","Base.85gmBbodyTire3","Base.85gmBbodyTire4","Base.85gmBbodyTire5","Base.85gmBbodyTire6","Base.76chevyKseriesTire2",
+    "Base.80chevyCKseriesTire2","Base.80chevyCKseriesTire1","Base.90chevyCKseriesTire2","Base.90chevyCKseriesTire1","Base.84jeepXJTire2","Base.92jeepYJTire2",
+    "Base.75grandPrixR215Tire1","Base.75grandPrixR217Tire3","Base.91fordLTDTire1","Base.87buickRegalTire1","Base.87buickRegalGNXTire3","Base.81deloreanDMC12Tire3",
+    "Base.89volvo200Tire0","Base.89volvo200Tire1","Base.89volvo200Tire2","Base.87chevySuburbanTire2","Base.76chevyKseriesDoubleTires2","Base.77firebirdTire3",
+    "Base.77firebirdTATire3","Base.82firebirdTire3","Base.73fordFalconTire3","Base.73fordFalconPSTire3","Base.04vwTouranTire1","Base.91nissan240sxOEM13",
+    "Base.91nissan240sxOEM23","Base.91nissan240sxG73","Base.91nissan240sxGT3","Base.91fordRangerTire2","Base.89defenderTire2","Base.89defenderDakarTire2",
+    "Base.98stageaTire3","Base.V100Tire1","Base.V100Tire2","Base.V100Tire3","Base.V100Tires2","Base.V100Axle2","Base.V100AxleSmall2","Base.V101Tire2",
+    "Base.V102Tire2","Base.V103Tire2","Base.V103Axle2","Base.M113Tire8","Base.ECTO1tire1_Item","Base.M12Tire2","Base.BRDM2Tire","Base.M923Axle2",
+    "Base.DoubleOldTire2","Base.DoubleNormalTire2","Base.DoubleModernTire2","Base.AxleOldTire2","Base.AxleNormalTire2","Base.AxleModernTire2","Base.U1550LWheel2",
+    "Base.M12CTire2","Base.BushmasterTire","Base.49powerWagonApocalypseTire","Base.90pierceArrowTire2","Base.90pierceArrowDoubleTires2","USMIL.LargeTire",
+    "USMIL.Large2TireAxle","USMIL.LargeDoubleTires","USMIL.Large4TireAxle","USMIL.MediumTire","USMIL.Medium4TireAxle","USMIL.SmallTire","USMIL.ModernTire",
+    "Base.pontiacR115Tire1","Base.pontiacR117Tire3","Base.pontiac8L15Tire1","Base.pontiac8L17Tire3",
   }
 
 return VRO.PartLists
