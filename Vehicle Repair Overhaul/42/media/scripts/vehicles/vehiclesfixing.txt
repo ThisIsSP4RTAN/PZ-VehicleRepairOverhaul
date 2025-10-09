@@ -484,6 +484,7 @@ module Base
 
     fixing VRO Fix Trunk Door Welding
     {
+        GlobalItem = Base.BlowTorch=3,
         ConditionModifier = 0.8,
 
         Fixer = Base.SheetMetal=1;MetalWelding=2;Mechanics=2,

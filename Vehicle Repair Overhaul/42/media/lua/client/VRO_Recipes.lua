@@ -38,6 +38,7 @@ return {
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 220,
+
       fixers = {
         { item = "Base.SheetMetal",        uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
         { item = "Base.SmallSheetMetal",   uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -55,6 +56,7 @@ return {
         { item = "Base.UnusableMetal",     uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
       },
     },
+
     {
       name = "Fix Gas Tank",
       require = "@GasTank_All",
@@ -62,6 +64,7 @@ return {
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
       time  = 120,
+
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 3 } },
         { item = "Base.Glue",           uses = 4, skills = { Mechanics = 3 } },
@@ -71,6 +74,7 @@ return {
         { item = "Base.Gum",            uses = 4, skills = { Mechanics = 3 } },
       },
     },
+
     {
       name = "Fix Gas Tank Small Welding",
       require = "@GasTankSmall_All",
@@ -80,6 +84,7 @@ return {
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 220,
+
       fixers = {
         { item = "Base.SheetMetal",        uses = 1, skills = { MetalWelding = 3, Mechanics = 2 } },
         { item = "Base.SmallSheetMetal",   uses = 2, skills = { MetalWelding = 3, Mechanics = 2 } },
@@ -97,6 +102,7 @@ return {
         { item = "Base.UnusableMetal",     uses = 8, skills = { MetalWelding = 3, Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Gas Tank Small",
       require = "@GasTankSmall_All",
@@ -104,6 +110,7 @@ return {
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
       time  = 120,
+
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
         { item = "Base.Glue",           uses = 2, skills = { Mechanics = 2 } },
@@ -113,6 +120,7 @@ return {
         { item = "Base.Zipties",        uses = 2, skills = { Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Trailer Welding",
       require = "@Trailer_All",
@@ -122,6 +130,7 @@ return {
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 220,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
         { item = "Base.SmallSheetMetal",  uses = 4, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -142,6 +151,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
       },
     },
+
     {
       name = "Fix Trailer",
       require = "@Trailer_All",
@@ -150,6 +160,7 @@ return {
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
       time  = 160,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { Mechanics = 3 } },
         { item = "Base.SmallSheetMetal",  uses = 4, skills = { Mechanics = 3 } },
@@ -161,7 +172,9 @@ return {
         { item = "Base.MetalPipe",        uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 3 } },
-        { item = "Base.Plank",            uses = 4, skills = { Woodwork = 3, Mechanics = 3 }, equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", globalItem = { item = "Base.Nails", uses = 5, consume = true }, },
+        { item = "Base.Plank",            uses = 4, skills = { Woodwork = 3, Mechanics = 3 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true }, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.CopperScrap",      uses = 8, skills = { Mechanics = 3 } },
@@ -171,6 +184,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 8, skills = { Mechanics = 3 } },
       },
     },
+
     {
       name = "Fix Trailer 1",
       require = "@Trailer_All",
@@ -178,6 +192,7 @@ return {
       conditionModifier = 0.3,
       anim  = "VehicleWorkOnMid",
       time  = 120,
+
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
         { item = "Base.Glue",           uses = 4, skills = { Mechanics = 2 } },
@@ -186,6 +201,7 @@ return {
         { item = "Base.Zipties",        uses = 4, skills = { Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Trailer Lids Welding",
       require = "@TrailerLids_All",
@@ -195,6 +211,7 @@ return {
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 220,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
         { item = "Base.SmallSheetMetal",  uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -215,6 +232,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
       },
     },
+
     {
       name = "Fix Trailer Lids",
       require = "@TrailerLids_All",
@@ -223,6 +241,7 @@ return {
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
       time  = 160,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.SmallSheetMetal",  uses = 2, skills = { Mechanics = 3 } },
@@ -234,7 +253,9 @@ return {
         { item = "Base.MetalPipe",        uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 3 } },
-        { item = "Base.Plank",            uses = 2, skills = { Woodwork = 3, Mechanics = 3 }, equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", globalItem = { item = "Base.Nails", uses = 5, consume = true }, },
+        { item = "Base.Plank",            uses = 2, skills = { Woodwork = 3, Mechanics = 3 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true }, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.CopperScrap",      uses = 8, skills = { Mechanics = 3 } },
@@ -244,6 +265,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 8, skills = { Mechanics = 3 } },
       },
     },
+
     {
       name = "Fix Trailer Lids 1",
       require = "@TrailerLids_All",
@@ -251,6 +273,7 @@ return {
       conditionModifier = 0.3,
       anim  = "VehicleWorkOnMid",
       time  = 120,
+
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
         { item = "Base.Glue",           uses = 4, skills = { Mechanics = 2 } },
@@ -259,6 +282,7 @@ return {
         { item = "Base.Zipties",        uses = 4, skills = { Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Hood Welding",
       require = "@Hood_All",
@@ -268,6 +292,7 @@ return {
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 220,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
         { item = "Base.SmallSheetMetal",  uses = 4, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -288,6 +313,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
       },
     },
+
     {
       name = "Fix Hood",
       require = "@Hood_All",
@@ -296,6 +322,7 @@ return {
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
       time  = 160,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { Mechanics = 3 } },
         { item = "Base.SmallSheetMetal",  uses = 4, skills = { Mechanics = 3 } },
@@ -307,7 +334,9 @@ return {
         { item = "Base.MetalPipe",        uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 3 } },
-        { item = "Base.Plank",            uses = 4, skills = { Woodwork = 3, Mechanics = 3 }, equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", globalItem = { item = "Base.Nails", uses = 5, consume = true }, },
+        { item = "Base.Plank",            uses = 4, skills = { Woodwork = 3, Mechanics = 3 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true }, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.CopperScrap",      uses = 8, skills = { Mechanics = 3 } },
@@ -317,6 +346,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 8, skills = { Mechanics = 3 } },
       },
     },
+
     {
       name = "Fix Military Hood Welding",
       require = "@MilitaryHood_All",
@@ -326,6 +356,7 @@ return {
       anim  = "Welding",
       sound = "BlowTorch",
       time  = 220,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 3,  skills = { MetalWelding = 4, Mechanics = 4 } },
         { item = "Base.SmallSheetMetal",  uses = 6,  skills = { MetalWelding = 4, Mechanics = 4 } },
@@ -346,6 +377,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 12, skills = { MetalWelding = 4, Mechanics = 4 } },
       },
     },
+
     {
       name = "Fix Military Hood",
       require = "@MilitaryHood_All",
@@ -354,6 +386,7 @@ return {
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
       time  = 160,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 3,  skills = { Mechanics = 4 } },
         { item = "Base.SmallSheetMetal",  uses = 6,  skills = { Mechanics = 4 } },
@@ -365,7 +398,9 @@ return {
         { item = "Base.MetalPipe",        uses = 2,  skills = { Mechanics = 4 } },
         { item = "Base.MetalBar",         uses = 2,  skills = { Mechanics = 4 } },
         { item = "Base.LeadPipe",         uses = 4,  skills = { Mechanics = 4 } },
-        { item = "Base.Plank",            uses = 6,  skills = { Woodwork = 4, Mechanics = 4 }, equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", globalItem = { item = "Base.Nails", uses = 5, consume = true }, },
+        { item = "Base.Plank",            uses = 6,  skills = { Woodwork = 4, Mechanics = 4 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true }, },
         { item = "Base.AluminumScrap",    uses = 12, skills = { Mechanics = 4 } },
         { item = "Base.BrassScrap",       uses = 12, skills = { Mechanics = 4 } },
         { item = "Base.CopperScrap",      uses = 12, skills = { Mechanics = 4 } },
@@ -375,6 +410,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 12, skills = { Mechanics = 4 } },
       },
     },
+
     {
       name = "Fix KI5 Wood Parts",
       require = "@WoodParts_All",
@@ -382,6 +418,7 @@ return {
       conditionModifier = 0.7,
       anim  = "VehicleWorkOnMid",
       time = 120,
+
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 4 } },
         { item = "Base.Glue",           uses = 4, skills = { Mechanics = 4 } },
@@ -391,6 +428,7 @@ return {
         { item = "Base.Zipties",        uses = 4, skills = { Mechanics = 4 } },
       },
     },
+
     {
       name = "Fix Small Trunk Welding",
       require = "@SmallTrunk_All",
@@ -400,6 +438,7 @@ return {
       anim  = "Welding",
       sound = "BlowTorch",
       time = 220,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
         { item = "Base.SmallSheetMetal",  uses = 2, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -420,6 +459,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 6, skills = { MetalWelding = 2, Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Small Trunk",
       require = "@SmallTrunk_All",
@@ -428,6 +468,7 @@ return {
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
       time = 160,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.SmallSheetMetal",  uses = 2, skills = { Mechanics = 2 } },
@@ -439,7 +480,9 @@ return {
         { item = "Base.MetalPipe",        uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
-        { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 }, equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", globalItem = { item = "Base.Nails", uses = 5, consume = true } },
+        { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true } },
         { item = "Base.AluminumScrap",    uses = 6, skills = { Mechanics = 2 } },
         { item = "Base.BrassScrap",       uses = 6, skills = { Mechanics = 2 } },
         { item = "Base.CopperScrap",      uses = 6, skills = { Mechanics = 2 } },
@@ -449,6 +492,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 6, skills = { Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Small Trunk 1",
       require = "@SmallTrunk_All",
@@ -456,6 +500,7 @@ return {
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
       time = 120,
+
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
         { item = "Base.Glue",           uses = 4, skills = { Mechanics = 2 } },
@@ -464,6 +509,7 @@ return {
         { item = "Base.Zipties",        uses = 4, skills = { Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Trunk Welding",
       require = "@Trunk_All",
@@ -473,6 +519,7 @@ return {
       anim  = "Welding",
       sound = "BlowTorch",
       time = 220,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { MetalWelding = 2, Mechanics = 2 } },
         { item = "Base.SmallSheetMetal",  uses = 4, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -493,6 +540,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 8, skills = { MetalWelding = 2, Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Trunk",
       require = "@Trunk_All",
@@ -501,6 +549,7 @@ return {
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
       time = 160,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { Mechanics = 2 } },
         { item = "Base.SmallSheetMetal",  uses = 4, skills = { Mechanics = 2 } },
@@ -512,7 +561,9 @@ return {
         { item = "Base.MetalPipe",        uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
-        { item = "Base.Plank",            uses = 4, skills = { Woodwork = 2, Mechanics = 2 }, equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", globalItem = { item = "Base.Nails", uses = 5, consume = true } },
+        { item = "Base.Plank",            uses = 4, skills = { Woodwork = 2, Mechanics = 2 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true } },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 2 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 2 } },
         { item = "Base.CopperScrap",      uses = 8, skills = { Mechanics = 2 } },
@@ -522,6 +573,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 8, skills = { Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Trunk 1",
       require = "@Trunk_All",
@@ -529,6 +581,7 @@ return {
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
       time = 120,
+
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
         { item = "Base.Glue",           uses = 4, skills = { Mechanics = 2 } },
@@ -537,6 +590,7 @@ return {
         { item = "Base.Zipties",        uses = 4, skills = { Mechanics = 2 } },
       },
     },
+
     {
       name = "Fix Trunk Welding Military",
       require = "@TrunkMilitary_All",
@@ -546,6 +600,7 @@ return {
       anim  = "Welding",
       sound = "BlowTorch",
       time = 220,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 3, skills = { MetalWelding = 3, Mechanics = 3 } },
         { item = "Base.SmallSheetMetal",  uses = 6, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -566,6 +621,7 @@ return {
         { item = "Base.UnusableMetal",    uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
       },
     },
+
     {
       name = "Fix Trunk Military",
       require = "@TrunkMilitary_All",
@@ -574,6 +630,7 @@ return {
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
       time = 160,
+
       fixers = {
         { item = "Base.SheetMetal",       uses = 3, skills = { Mechanics = 3 } },
         { item = "Base.SmallSheetMetal",  uses = 6, skills = { Mechanics = 3 } },
@@ -585,7 +642,9 @@ return {
         { item = "Base.MetalPipe",        uses = 2, skills = { Mechanics = 3 } },
         { item = "Base.MetalBar",         uses = 2, skills = { Mechanics = 3 } },
         { item = "Base.LeadPipe",         uses = 3, skills = { Mechanics = 3 } },
-        { item = "Base.Plank",            uses = 6, skills = { Woodwork = 3, Mechanics = 3 }, equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", globalItem = { item = "Base.Nails", uses = 5, consume = true } },
+        { item = "Base.Plank",            uses = 6, skills = { Woodwork = 3, Mechanics = 3 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true } },
         { item = "Base.AluminumScrap",    uses = 10, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 10, skills = { Mechanics = 3 } },
         { item = "Base.CopperScrap",      uses = 10, skills = { Mechanics = 3 } },
@@ -593,6 +652,461 @@ return {
         { item = "Base.ScrapMetal",       uses = 10, skills = { Mechanics = 3 } },
         { item = "Base.SteelScrap",       uses = 10, skills = { Mechanics = 3 } },
         { item = "Base.UnusableMetal",    uses = 10, skills = { Mechanics = 3 } },
+      },
+    },
+
+    {
+      name = "Fix Trunk Door Welding",
+      require = "@TrunkDoor_All",
+      globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
+      conditionModifier = 0.8,
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
+      anim  = "Welding",
+      sound = "BlowTorch",
+      time = 220,
+
+      fixers = {
+        { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.SmallSheetMetal",  uses = 2, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.CopperSheet",      uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.SmallCopperSheet", uses = 2, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.GoldSheet",        uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.SilverSheet",      uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.SmallArmorPlate",  uses = 2, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.MetalPipe",        uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.MetalBar",         uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.LeadPipe",         uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.AluminumScrap",    uses = 8, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.BrassScrap",       uses = 8, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.CopperScrap",      uses = 8, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.IronScrap",        uses = 8, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.ScrapMetal",       uses = 8, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.SteelScrap",       uses = 8, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.UnusableMetal",    uses = 8, skills = { MetalWelding = 2, Mechanics = 2 } },
+      },
+    },
+
+    {
+      name = "Fix Trunk Door",
+      require = "@TrunkDoor_All",
+      globalItem = { item = "Base.Screws", uses = 10, consume = true },
+      conditionModifier = 0.4,
+      equip = { primaryTag = "Screwdriver", showModel = false },
+      anim = "VehicleWorkOnMid",
+      time = 160,
+
+      fixers = {
+        { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SmallSheetMetal",  uses = 2, skills = { Mechanics = 2 } },
+        { item = "Base.CopperSheet",      uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SmallCopperSheet", uses = 2, skills = { Mechanics = 2 } },
+        { item = "Base.GoldSheet",        uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SilverSheet",      uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SmallArmorPlate",  uses = 2, skills = { Mechanics = 2 } },
+        { item = "Base.MetalPipe",        uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true } },
+        { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.CopperScrap",      uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.IronScrap",        uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.ScrapMetal",       uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.SteelScrap",       uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.UnusableMetal",    uses = 8, skills = { Mechanics = 2 } },
+      },
+    },
+
+    {
+      name = "Fix Trunk Door Welding Military",
+      require = "@TrunkDoorMilitary_All",
+      globalItem = { item = "Base.BlowTorch", uses = 4, consume = true },
+      conditionModifier = 1.0,
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
+      anim  = "Welding",
+      sound = "BlowTorch",
+      time = 220,
+
+      fixers = {
+        { item = "Base.SheetMetal",       uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SmallSheetMetal",  uses = 4, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.CopperSheet",      uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SmallCopperSheet", uses = 4, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.GoldSheet",        uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SilverSheet",      uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SmallArmorPlate",  uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.MetalPipe",        uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.MetalBar",         uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.LeadPipe",         uses = 3, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.AluminumScrap",    uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.BrassScrap",       uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.CopperScrap",      uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.IronScrap",        uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.ScrapMetal",       uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SteelScrap",       uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.UnusableMetal",    uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
+      },
+    },
+
+    {
+      name = "Fix Trunk Door Military",
+      require = "@TrunkDoorMilitary_All",
+      globalItem = { item = "Base.Screws", uses = 16, consume = true },
+      conditionModifier = 0.5,
+      equip = { primaryTag = "Screwdriver", showModel = false },
+      anim = "VehicleWorkOnMid",
+      time = 160,
+
+      fixers = {
+        { item = "Base.SheetMetal",       uses = 2, skills = { Mechanics = 3 } },
+        { item = "Base.SmallSheetMetal",  uses = 4, skills = { Mechanics = 3 } },
+        { item = "Base.CopperSheet",      uses = 2, skills = { Mechanics = 3 } },
+        { item = "Base.SmallCopperSheet", uses = 4, skills = { Mechanics = 3 } },
+        { item = "Base.GoldSheet",        uses = 1, skills = { Mechanics = 3 } },
+        { item = "Base.SilverSheet",      uses = 1, skills = { Mechanics = 3 } },
+        { item = "Base.SmallArmorPlate",  uses = 4, skills = { Mechanics = 3 } },
+        { item = "Base.MetalPipe",        uses = 2, skills = { Mechanics = 3 } },
+        { item = "Base.MetalBar",         uses = 2, skills = { Mechanics = 3 } },
+        { item = "Base.LeadPipe",         uses = 3, skills = { Mechanics = 3 } },
+        { item = "Base.Plank",            uses = 4, skills = { Woodwork = 2, Mechanics = 3 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true } },
+        { item = "Base.AluminumScrap",    uses = 10, skills = { Mechanics = 3 } },
+        { item = "Base.BrassScrap",       uses = 10, skills = { Mechanics = 3 } },
+        { item = "Base.CopperScrap",      uses = 10, skills = { Mechanics = 3 } },
+        { item = "Base.IronScrap",        uses = 10, skills = { Mechanics = 3 } },
+        { item = "Base.ScrapMetal",       uses = 10, skills = { Mechanics = 3 } },
+        { item = "Base.SteelScrap",       uses = 10, skills = { Mechanics = 3 } },
+        { item = "Base.UnusableMetal",    uses = 10, skills = { Mechanics = 3 } },
+      },
+    },
+
+    {
+      name = "Fix Door Welding",
+      require = "@Door_All",
+      globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
+      conditionModifier = 0.8,
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
+      anim  = "Welding",
+      sound = "BlowTorch",
+      time = 220,
+
+      fixers = {
+        { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SmallSheetMetal",  uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.CopperSheet",      uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SmallCopperSheet", uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.GoldSheet",        uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SilverSheet",      uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SmallArmorPlate",  uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.MetalPipe",        uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.MetalBar",         uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.LeadPipe",         uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.Hinge",            uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.AluminumScrap",    uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.BrassScrap",       uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.CopperScrap",      uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.IronScrap",        uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.ScrapMetal",       uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.SteelScrap",       uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
+        { item = "Base.UnusableMetal",    uses = 8, skills = { MetalWelding = 3, Mechanics = 3 } },
+      },
+    },
+
+    {
+      name = "Fix Door",
+      require = "@Door_All",
+      globalItem = { item = "Base.Screws", uses = 10, consume = true },
+      conditionModifier = 0.4,
+      equip = { primaryTag = "Screwdriver", showModel = false },
+      anim = "VehicleWorkOnMid",
+      time = 160,
+
+      fixers = {
+        { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SmallSheetMetal",  uses = 2, skills = { Mechanics = 2 } },
+        { item = "Base.CopperSheet",      uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SmallCopperSheet", uses = 2, skills = { Mechanics = 2 } },
+        { item = "Base.GoldSheet",        uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SilverSheet",      uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SmallArmorPlate",  uses = 2, skills = { Mechanics = 2 } },
+        { item = "Base.MetalPipe",        uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true } },
+        { item = "Base.Hinge",            uses = 2, skills = { Mechanics = 2 } },
+        { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.CopperScrap",      uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.IronScrap",        uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.ScrapMetal",       uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.SteelScrap",       uses = 8, skills = { Mechanics = 2 } },
+        { item = "Base.UnusableMetal",    uses = 8, skills = { Mechanics = 2 } },
+      },
+    },
+
+    {
+      name = "Fix Door 1",
+      require = "@Door_All",
+      globalItem = nil,
+      conditionModifier = 0.2,
+      anim = "VehicleWorkOnMid",
+      time = 120,
+
+      fixers = {
+        { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
+        { item = "Base.DuctTape",       uses = 4, skills = { Mechanics = 2 }, successSound = "FixWithTape" },
+        { item = "Base.FiberglassTape", uses = 2, skills = { Mechanics = 2 }, successSound = "FixWithTape" },
+        { item = "Base.Zipties",        uses = 4, skills = { Mechanics = 2 } },
+      },
+    },
+
+    {
+      name = "Fix Door Welding Military",
+      require = "@DoorMilitary_All",
+      globalItem = { item = "Base.BlowTorch", uses = 4, consume = true },
+      conditionModifier = 1.0,
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
+      anim  = "Welding",
+      sound = "BlowTorch",
+      time = 220,
+
+      fixers = {
+        { item = "Base.SheetMetal",       uses = 3, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.SmallSheetMetal",  uses = 6, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.CopperSheet",      uses = 3, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.SmallCopperSheet", uses = 6, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.GoldSheet",        uses = 2, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.SilverSheet",      uses = 2, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.SmallArmorPlate",  uses = 4, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.MetalPipe",        uses = 2, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.MetalBar",         uses = 2, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.LeadPipe",         uses = 4, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.Hinge",            uses = 3, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.AluminumScrap",    uses = 12, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.BrassScrap",       uses = 12, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.CopperScrap",      uses = 12, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.IronScrap",        uses = 12, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.ScrapMetal",       uses = 12, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.SteelScrap",       uses = 12, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.UnusableMetal",    uses = 12, skills = { MetalWelding = 4, Mechanics = 4 } },
+      },
+    },
+
+    {
+      name = "Fix Door Military",
+      require = "@DoorMilitary_All",
+      globalItem = { item = "Base.Screws", uses = 16, consume = true },
+      conditionModifier = 0.5,
+      equip = { primaryTag = "Screwdriver", showModel = false },
+      anim = "VehicleWorkOnMid",
+      time = 160,
+
+      fixers = {
+        { item = "Base.SheetMetal",       uses = 3, skills = { Mechanics = 4 } },
+        { item = "Base.SmallSheetMetal",  uses = 6, skills = { Mechanics = 4 } },
+        { item = "Base.CopperSheet",      uses = 3, skills = { Mechanics = 4 } },
+        { item = "Base.SmallCopperSheet", uses = 6, skills = { Mechanics = 4 } },
+        { item = "Base.GoldSheet",        uses = 2, skills = { Mechanics = 4 } },
+        { item = "Base.SilverSheet",      uses = 2, skills = { Mechanics = 4 } },
+        { item = "Base.SmallArmorPlate",  uses = 4, skills = { Mechanics = 4 } },
+        { item = "Base.MetalPipe",        uses = 2, skills = { Mechanics = 4 } },
+        { item = "Base.MetalBar",         uses = 2, skills = { Mechanics = 4 } },
+        { item = "Base.LeadPipe",         uses = 4, skills = { Mechanics = 4 } },
+        { item = "Base.Plank",            uses = 6, skills = { Woodwork = 4, Mechanics = 4 },
+          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build",
+          globalItem = { item = "Base.Nails", uses = 5, consume = true } },
+        { item = "Base.Hinge",            uses = 3, skills = { MetalWelding = 4, Mechanics = 4 } },
+        { item = "Base.AluminumScrap",    uses = 12, skills = { Mechanics = 4 } },
+        { item = "Base.BrassScrap",       uses = 12, skills = { Mechanics = 4 } },
+        { item = "Base.CopperScrap",      uses = 12, skills = { Mechanics = 4 } },
+        { item = "Base.IronScrap",        uses = 12, skills = { Mechanics = 4 } },
+        { item = "Base.ScrapMetal",       uses = 12, skills = { Mechanics = 4 } },
+        { item = "Base.SteelScrap",       uses = 12, skills = { Mechanics = 4 } },
+        { item = "Base.UnusableMetal",    uses = 12, skills = { Mechanics = 4 } },
+      },
+    },
+
+    {
+      name = "Fix Glove Box",
+      require = "@GloveBox_All",
+      globalItem = { item = "Base.Screws", uses = 4, consume = true },
+      conditionModifier = 0.8,
+      equip = { primaryTag = "Screwdriver", showModel = false },
+      anim = "VehicleWorkOnMid",
+      time = 160,
+
+      fixers = {
+        { item = "Base.SmallSheetMetal",  uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SmallCopperSheet", uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.SmallArmorPlate",  uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.Hinge",            uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.AluminumScrap",    uses = 4, skills = { Mechanics = 2 } },
+        { item = "Base.BrassScrap",       uses = 4, skills = { Mechanics = 2 } },
+        { item = "Base.CopperScrap",      uses = 4, skills = { Mechanics = 2 } },
+        { item = "Base.IronScrap",        uses = 4, skills = { Mechanics = 2 } },
+        { item = "Base.ScrapMetal",       uses = 4, skills = { Mechanics = 2 } },
+        { item = "Base.SteelScrap",       uses = 4, skills = { Mechanics = 2 } },
+        { item = "Base.UnusableMetal",    uses = 4, skills = { Mechanics = 2 } },
+      },
+    },
+
+    {
+      name = "Fix Glove Box 1",
+      require = "@GloveBox_All",
+      globalItem = nil,
+      conditionModifier = 0.4,
+      anim = "VehicleWorkOnMid",
+      time = 120,
+
+      fixers = {
+        { item = "Base.Glue",           uses = 2, skills = { Mechanics = 2 } },
+        { item = "Base.Epoxy",          uses = 1, skills = { Mechanics = 2 } },
+        { item = "Base.DuctTape",       uses = 2, skills = { Mechanics = 2 }, successSound = "FixWithTape" },
+        { item = "Base.FiberglassTape", uses = 1, skills = { Mechanics = 2 }, successSound = "FixWithTape" },
+        { item = "Base.Zipties",        uses = 2, skills = { Mechanics = 2 } },
+      },
+    },
+
+    {
+      name = "Fix Glove Box Welding",
+      require = "@GloveBox_All",
+      globalItem = { item = "Base.BlowTorch", uses = 1, consume = true },
+      conditionModifier = 1.4,
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
+      anim  = "Welding",
+      sound = "BlowTorch",
+      time = 220,
+
+      fixers = {
+        { item = "Base.SmallSheetMetal",  uses = 1, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.SmallCopperSheet", uses = 1, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.SmallArmorPlate",  uses = 1, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.Hinge",            uses = 1, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.AluminumScrap",    uses = 4, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.BrassScrap",       uses = 4, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.CopperScrap",      uses = 4, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.IronScrap",        uses = 4, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.ScrapMetal",       uses = 4, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.SteelScrap",       uses = 4, skills = { MetalWelding = 1, Mechanics = 2 } },
+        { item = "Base.UnusableMetal",    uses = 4, skills = { MetalWelding = 1, Mechanics = 2 } },
+      },
+    },
+    {
+      name = "Fix Car seat",
+      require = "@CarSeat_All",
+      globalItem = nil,
+      conditionModifier = 0.5,
+      anim = "VehicleWorkOnMid",
+      time = 120,
+
+      fixers = {
+        { item = "Base.DuctTape",       uses = 4, skills = { Tailoring = 1, Mechanics = 1 }, successSound = "FixWithTape" },
+        { item = "Base.Glue",           uses = 3, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.Epoxy",          uses = 2, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.FiberglassTape", uses = 2, skills = { Tailoring = 1, Mechanics = 1 }, successSound = "FixWithTape" },
+        { item = "Base.Zipties",        uses = 4, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.Rope",           uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+      },
+    },
+
+    {
+      name = "Fix Car seat 1",
+      require = "@CarSeat_All",
+      globalItems = {
+        { tag = "Scissors", consume = false },
+        { tag = "Thread", uses = 3, consume = true },
+      },
+      conditionModifier = 0.7,
+      equip = { primaryTag = "SewingNeedle", showModel = false },
+      anim  = "SewingCloth",
+      sound = "Sewing",
+      time = 400,
+
+      fixers = {
+        { item = "Base.Sheet",                          uses = 2, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.RippedSheets",                   uses = 4, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.DenimStrips",                    uses = 4, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.LeatherStrips",                  uses = 4, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.PigletLeather_Black_Fur",        uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.PigletLeather_Black_Fur_Tan",    uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.PigletLeather_Landrace_Fur",     uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.PigletLeather_Landrace_Fur_Tan", uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.LambLeather_Fur",                uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.LambLeather_Fur_Tan",            uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.Leather_Crude_Small",            uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.Leather_Crude_Small_Tan",        uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.RabbitLeather_Fur",              uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.RabbitLeather_Fur_Tan",          uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.RabbitLeather_Grey_Fur",         uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.RabbitLeather_Grey_Fur_Tan",     uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.RaccoonLeather_Grey_Fur",        uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.RaccoonLeather_Grey_Fur_Tan",    uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+      },
+    },
+
+    {
+      name = "Fix Car seat 2",
+      require = "@CarSeat_All",
+      globalItems = {
+        { tag = "Scissors", consume = false },
+        { tag = "Thread", uses = 3, consume = true },
+      },
+      conditionModifier = 1.2,
+      equip = { primaryTag = "SewingNeedle", showModel = false },
+      anim  = "SewingCloth",
+      sound = "Sewing",
+      time = 400,
+
+      fixers = {
+        { item = "Base.CalfLeather_Angus_Fur",        uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CalfLeather_Angus_Fur_Tan",    uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CowLeather_Angus_Fur",         uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CowLeather_Angus_Fur_Tan",     uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CalfLeather_Holstein_Fur",     uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CalfLeather_Holstein_Fur_Tan", uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CowLeather_Holstein_Fur",      uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CowLeather_Holstein_Fur_Tan",  uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CalfLeather_Simmental_Fur",    uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CalfLeather_Simmental_Fur_Tan",uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CowLeather_Simmental_Fur",     uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.CowLeather_Simmental_Fur_Tan", uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.PigLeather_Black_Fur",         uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.PigLeather_Black_Fur_Tan",     uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.PigLeather_Landrace_Fur",      uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.PigLeather_Landrace_Fur_Tan",  uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.DeerLeather_Fur",              uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.DeerLeather_Fur_Tan",          uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.Leather_Crude_Large",          uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.Leather_Crude_Large_Tan",      uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.Leather_Crude_Medium",         uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.Leather_Crude_Medium_Tan",     uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.SheepLeather_Fur",             uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.SheepLeather_Fur_Tan",         uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+      },
+    },
+
+    {
+      name = "Fix Car seat 3",
+      require = "@CarSeat_All",
+      globalItem = { item = "Base.NutsBolts", uses = 6, consume = true },
+      conditionModifier = 0.6,
+      equip = { primaryTag = "Wrench", showModel = false },
+      anim = "VehicleWorkOnMid",
+      time = 160,
+
+      fixers = {
+        { item = "Base.AluminumScrap", uses = 4, skills = { Mechanics = 1 } },
+        { item = "Base.BrassScrap",    uses = 4, skills = { Mechanics = 1 } },
+        { item = "Base.CopperScrap",   uses = 4, skills = { Mechanics = 1 } },
+        { item = "Base.IronScrap",     uses = 4, skills = { Mechanics = 1 } },
+        { item = "Base.ScrapMetal",    uses = 4, skills = { Mechanics = 1 } },
+        { item = "Base.SteelScrap",    uses = 4, skills = { Mechanics = 1 } },
+        { item = "Base.UnusableMetal", uses = 4, skills = { Mechanics = 1 } },
       },
     },
   }

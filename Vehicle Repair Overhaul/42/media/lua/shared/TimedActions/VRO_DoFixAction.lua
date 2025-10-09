@@ -76,7 +76,7 @@ local function perkLevel(chr, perkName)
   return chr:getPerkLevel(perk)
 end
 
-local function chanceOfFail( chr, fixer, hbr)
+local function chanceOfFail(chr, fixer, hbr)
   local fail = 3.0
   if fixer and fixer.skills then
     for name,req in pairs(fixer.skills) do
@@ -92,7 +92,7 @@ local function chanceOfFail( chr, fixer, hbr)
   return fail
 end
 
-local function condRepairedPercent( chr, fixing, fixer, hbr, fixerIndex)
+local function condRepairedPercent(chr, fixing, fixer, hbr, fixerIndex)
   local base = (fixerIndex == 1) and 50.0 or ((fixerIndex == 2) and 20.0 or 10.0)
   base = base * (1.0 / (hbr + 1))
   if fixer and fixer.skills then

@@ -99,10 +99,9 @@ function EHRRepairHeater:new(character, part, blowtorch, mask, timeToRepair, req
 	if character:isTimedActionInstant() then
         o.maxTime = 1;
     end
-	
+
 	o.requiredParts = requiredParts
 	o.targetCondition = targetCondition
-	
 	o.stopOnWalk = true;
 	o.stopOnRun = true;
 	o.sound = nil
