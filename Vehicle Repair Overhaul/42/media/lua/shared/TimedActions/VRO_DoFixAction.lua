@@ -7,15 +7,13 @@ _G.VRO = VRO
 ----------------------------------------------------------------
 -- Minimal helpers the action relies on
 ----------------------------------------------------------------
-local function isDrainable(it)
-  return it and instanceof(it,"DrainableComboItem")
-end
+local function isDrainable(it) return it and instanceof(it, "DrainableComboItem") end
 
 local function drainableUses(it)
   if not it then return 0 end
   if isDrainable(it) then
     if it.getDrainableUsesInt then return it:getDrainableUsesInt() end
-    if it.getCurrentUses     then return it:getCurrentUses() end
+    if it.getCurrentUses then return it:getCurrentUses() end
     if it.getUsedDelta and it.getUseDelta then
       local used, step = it:getUsedDelta(), it:getUseDelta()
       if step and step > 0 then return math.max(0, math.floor((1.0 - used) / step + 0.0001)) end
@@ -32,7 +30,7 @@ local function consumeItems(character, bundles)
     if it and take > 0 then
       if isDrainable(it) then
         if it.Use then
-          for i=1,take do if drainableUses(it) <= 0 then break end; it:Use() end
+          for _=1,take do if drainableUses(it) <= 0 then break end; it:Use() end
         elseif it.getUseDelta and it.getUsedDelta and it.setUsedDelta then
           local step = it:getUseDelta()
           it:setUsedDelta(math.min(1.0, it:getUsedDelta() + step * take))
@@ -115,6 +113,105 @@ local function defaultAnimForPart(part)
   return "VehicleWorkOnMid"
 end
 
+-- Build a job label like: "Repair Car Seat"
+local function buildJobType(part, brokenItem)
+  local label = getText("ContextMenu_Repair")
+  local name
+  if brokenItem and brokenItem.getDisplayName then
+    name = brokenItem:getDisplayName()
+  elseif part and part.getInventoryItem and part:getInventoryItem() then
+    local inv = part:getInventoryItem()
+    if inv and inv.getDisplayName then name = inv:getDisplayName() end
+  end
+  if name and name ~= "" then
+    return label .. "" .. name
+  end
+  return label
+end
+
+----------------------------------------------------------------
+-- Progress helpers: show bars on every used item
+----------------------------------------------------------------
+local function collectProgressItems(self)
+  -- Dedup across bundles/tools/subject and extra refs we’ll resolve here.
+  local list, seen = {}, {}
+  local function add(it)
+    if it and it.setJobDelta and not seen[it] then
+      seen[it] = true
+      table.insert(list, it)
+    end
+  end
+  local function addBundle(bundle)
+    if not bundle then return end
+    for _,b in ipairs(bundle) do add(b.item) end
+  end
+
+  -- Bundles (consumed fixer/global items)
+  addBundle(self.fixerBundle)
+  addBundle(self.globalBundle)
+
+  -- tools we equipped
+  add(self.expectedPrimary)
+  add(self.expectedSecondary)
+
+  -- the broken loose item (inventory repair)
+  add(self.brokenItem)
+
+  -- Also include WEAR item (recipe/fixer equip) + NON-CONSUMED globalItems
+  local inv = self.character and self.character:getInventory() or nil
+  if inv then
+    local function findByTag(tag)
+      if inv.getFirstTagRecurse then return inv:getFirstTagRecurse(tag) end
+      return nil
+    end
+    local function findByAnyTag(tags)
+      if type(tags) == "table" then
+        for _,tg in ipairs(tags) do
+          local it = findByTag(tg)
+          if it then return it end
+        end
+      elseif type(tags) == "string" then
+        return findByTag(tags)
+      end
+      return nil
+    end
+    local function findByType(ft)
+      if inv.getFirstTypeRecurse then return inv:getFirstTypeRecurse(ft) end
+      return nil
+    end
+
+    -- Merge equip (recipe defaults, then fixer overrides)
+    local eq = {}
+    if self.fixing and self.fixing.equip then for k,v in pairs(self.fixing.equip) do eq[k]=v end end
+    if self.fixer  and self.fixer.equip  then for k,v in pairs(self.fixer.equip)  do eq[k]=v end end
+    if eq.wearTag then add(findByTag(eq.wearTag)) end
+    if eq.wear    then add(findByType(eq.wear))  end
+
+    -- Non-consumed global items (support single or list, on recipe or fixer),
+    -- now with multi-tag support via gi.tags = { "TagA","TagB",... }.
+    local function pushGI(gi)
+      if gi and gi.consume == false then
+        if gi.tags then
+          add(findByAnyTag(gi.tags))
+        elseif gi.tag then
+          add(findByTag(gi.tag))
+        elseif gi.item then
+          add(findByType(gi.item))
+        end
+      end
+    end
+    if self.fixing then
+      if self.fixing.globalItems then
+        for _,gi in ipairs(self.fixing.globalItems) do pushGI(gi) end
+      end
+      if self.fixing.globalItem then pushGI(self.fixing.globalItem) end
+    end
+    if self.fixer and self.fixer.globalItem then pushGI(self.fixer.globalItem) end
+  end
+
+  return list
+end
+
 ----------------------------------------------------------------
 -- Timed Action (shared)
 ----------------------------------------------------------------
@@ -135,6 +232,15 @@ end
 function VRO.DoFixAction:update()
   local veh = self.part and self.part:getVehicle()
   if veh then self.character:faceThisObject(veh) end
+
+  -- Drive all progress bars
+  if self._progressItems then
+    local jd = self:getJobDelta()
+    for _,it in ipairs(self._progressItems) do
+      if it and it.setJobDelta then it:setJobDelta(jd) end
+    end
+  end
+
   if self.setMetabolicTarget then
     self.character:setMetabolicTarget(Metabolics.LightWork)
   end
@@ -155,12 +261,26 @@ function VRO.DoFixAction:start()
     self._didOverride = true
   end
 
+  -- Set up all items to show progress bars + text
+  self._progressItems = collectProgressItems(self)
+  local job = self.jobType or buildJobType(self.part, self.brokenItem)
+  for _,it in ipairs(self._progressItems) do
+    if it.setJobType then it:setJobType(job) end
+    if it.setJobDelta then it:setJobDelta(0) end
+  end
+
   if self.fxSound then
     self._soundHandle = self.character:getEmitter():playSound(self.fxSound)
   end
 end
 
 function VRO.DoFixAction:stop()
+  if self._progressItems then
+    for _,it in ipairs(self._progressItems) do
+      if it and it.setJobDelta then it:setJobDelta(0) end
+    end
+  end
+
   if self._soundHandle then
     self.character:getEmitter():stopSound(self._soundHandle)
     self._soundHandle = nil
@@ -176,9 +296,9 @@ function VRO.DoFixAction:perform()
   local part   = self.part
   local broken = self.brokenItem
   local hbr    = getHBR(part, broken)
-  local fail    = chanceOfFail(self.character, self.fixer, hbr)
-  local success = ZombRand(100) >= fail
-  local pct     = condRepairedPercent(self.character, self.fixing, self.fixer, hbr, self.fixerIndex)
+  local failPct   = chanceOfFail(self.character, self.fixer, hbr)
+  local success   = ZombRand(100) >= failPct
+  local pctRepair = condRepairedPercent(self.character, self.fixing, self.fixer, hbr, self.fixerIndex)
 
   -- Target condition (installed part or loose item)
   local targetMax, targetCur
@@ -192,7 +312,7 @@ function VRO.DoFixAction:perform()
 
   if success then
     local missing = math.max(0, targetMax - targetCur)
-    local gain    = math.floor((missing * (pct / 100.0)) + 0.5)
+    local gain    = math.floor((missing * (pctRepair / 100.0)) + 0.5)
     if gain < 1 then gain = 1 end
 
     if part then
@@ -241,6 +361,13 @@ function VRO.DoFixAction:perform()
   consumeItems(self.character, self.fixerBundle)
   if self.globalBundle then consumeItems(self.character, self.globalBundle) end
 
+  -- Clear all progress bars
+  if self._progressItems then
+    for _,it in ipairs(self._progressItems) do
+      if it and it.setJobDelta then it:setJobDelta(0) end
+    end
+  end
+
   if self._soundHandle then self.character:getEmitter():stopSound(self._soundHandle) end
   if self._didOverride and self.setOverrideHandModels then
     self:setOverrideHandModels(nil,nil)
@@ -248,7 +375,6 @@ function VRO.DoFixAction:perform()
   end
   ISBaseTimedAction.perform(self)
 end
-
 
 function VRO.DoFixAction:new(args)
   local o = ISBaseTimedAction.new(self, args.character)
@@ -269,6 +395,8 @@ function VRO.DoFixAction:new(args)
   o.showModel    = (args.showModel ~= false) -- default true
   o.expectedPrimary   = args.expectedPrimary
   o.expectedSecondary = args.expectedSecondary
+  -- Job label used for the inventory progress bar text
+  o.jobType = args.jobType or buildJobType(args.part, args.brokenItem)
   return o
 end
 

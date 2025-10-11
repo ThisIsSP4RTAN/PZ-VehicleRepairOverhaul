@@ -37,7 +37,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time  = 220,
+      time  = 280,
 
       fixers = {
         { item = "Base.SheetMetal",        uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -63,7 +63,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
-      time  = 120,
+      time  = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 3 } },
@@ -83,7 +83,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time  = 220,
+      time  = 280,
 
       fixers = {
         { item = "Base.SheetMetal",        uses = 1, skills = { MetalWelding = 3, Mechanics = 2 } },
@@ -109,7 +109,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
-      time  = 120,
+      time  = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
@@ -129,7 +129,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time  = 220,
+      time  = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -159,7 +159,7 @@ return {
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
-      time  = 160,
+      time  = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { Mechanics = 3 } },
@@ -191,7 +191,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.3,
       anim  = "VehicleWorkOnMid",
-      time  = 120,
+      time  = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
@@ -210,7 +210,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time  = 220,
+      time  = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -240,7 +240,7 @@ return {
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
-      time  = 160,
+      time  = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 3 } },
@@ -272,7 +272,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.3,
       anim  = "VehicleWorkOnMid",
-      time  = 120,
+      time  = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
@@ -291,7 +291,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time  = 220,
+      time  = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -321,7 +321,7 @@ return {
       conditionModifier = 0.5,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
-      time  = 160,
+      time  = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { Mechanics = 3 } },
@@ -355,7 +355,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time  = 220,
+      time  = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 3,  skills = { MetalWelding = 4, Mechanics = 4 } },
@@ -385,7 +385,7 @@ return {
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim  = "VehicleWorkOnMid",
-      time  = 160,
+      time  = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 3,  skills = { Mechanics = 4 } },
@@ -417,7 +417,7 @@ return {
       globalItem = { item = "Base.Plank", uses = 3, consume = true },
       conditionModifier = 0.7,
       anim  = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 4 } },
@@ -437,7 +437,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -467,7 +467,7 @@ return {
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 2 } },
@@ -499,7 +499,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
@@ -518,7 +518,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -548,7 +548,7 @@ return {
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { Mechanics = 2 } },
@@ -580,7 +580,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
@@ -599,7 +599,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 3, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -629,7 +629,7 @@ return {
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 3, skills = { Mechanics = 3 } },
@@ -663,7 +663,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -693,7 +693,7 @@ return {
       conditionModifier = 0.4,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 2 } },
@@ -727,7 +727,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -757,7 +757,7 @@ return {
       conditionModifier = 0.5,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { Mechanics = 3 } },
@@ -791,7 +791,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -822,7 +822,7 @@ return {
       conditionModifier = 0.4,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 2 } },
@@ -855,7 +855,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.2,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
@@ -873,7 +873,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 3, skills = { MetalWelding = 4, Mechanics = 4 } },
@@ -904,7 +904,7 @@ return {
       conditionModifier = 0.5,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 3, skills = { Mechanics = 4 } },
@@ -938,7 +938,7 @@ return {
       conditionModifier = 0.8,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SmallSheetMetal",  uses = 1, skills = { Mechanics = 2 } },
@@ -961,7 +961,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.4,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Glue",           uses = 2, skills = { Mechanics = 2 } },
@@ -980,7 +980,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SmallSheetMetal",  uses = 1, skills = { MetalWelding = 1, Mechanics = 2 } },
@@ -1003,7 +1003,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.5,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.DuctTape",       uses = 4, skills = { Tailoring = 1, Mechanics = 1 }, successSound = "FixWithTape" },
@@ -1019,7 +1019,7 @@ return {
       name = "Fix Car seat 1",
       require = { "@CarSeat_All", "Base.ATAMotoBagBMW1", "Base.ATAMotoBagBMW2", "Base.ATAMotoHarleyBag", "Base.ATAMotoHarleyHolster", "Base.SS100topbag3", "Base.90pierceArrowHoses", "Base.FireDeptHosesMedium" },
       globalItems = {
-        { tag = "Scissors", consume = false },
+        { tags = { "Scissors", "SharpKnife" }, consume = false },
         { tag = "Thread", uses = 3, consume = true },
       },
       conditionModifier = 0.7,
@@ -1054,7 +1054,7 @@ return {
       name = "Fix Car seat 2",
       require = "@CarSeat_All",
       globalItems = {
-        { tag = "Scissors", consume = false },
+        { tags = { "Scissors", "SharpKnife" }, consume = false },
         { tag = "Thread", uses = 4, consume = true },
       },
       conditionModifier = 1.2,
@@ -1098,7 +1098,7 @@ return {
       conditionModifier = 0.6,
       equip = { primaryTag = "Wrench", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.AluminumScrap", uses = 4, skills = { Mechanics = 1 } },
@@ -1117,7 +1117,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.3,
       anim = "VehicleWorkOnTire",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Glue",           uses = 3, skills = { Mechanics = 2 } },
@@ -1134,7 +1134,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.5,
       anim = "VehicleWorkOnTire",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.Glue",           uses = 5, skills = { Mechanics = 3 } },
@@ -1152,7 +1152,7 @@ return {
       conditionModifier = 0.4,
       equip = { primaryTag = "Wrench", showModel = false },
       anim = "VehicleWorkOnTire",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SmallCopperSheet", uses = 1, skills = { Mechanics = 2 } },
@@ -1177,7 +1177,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "BlowTorchFloor",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SmallCopperSheet", uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -1200,7 +1200,7 @@ return {
       conditionModifier = 0.4,
       equip = { primaryTag = "Wrench", showModel = false },
       anim = "VehicleWorkOnTire",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SmallCopperSheet", uses = 1, skills = { Mechanics = 3 } },
@@ -1225,7 +1225,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "BlowTorchFloor",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SmallCopperSheet", uses = 1, skills = { MetalWelding = 2, Mechanics = 3 } },
@@ -1249,7 +1249,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "BlowTorchFloor",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SmallCopperSheet", uses = 1, skills = { MetalWelding = 3, Mechanics = 4 } },
@@ -1271,7 +1271,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.8,
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.ElectronicsScrap", uses = 3,  skills = { Mechanics = 2, Electricity = 2 } },
@@ -1293,7 +1293,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.8,
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.ElectronicsScrap", uses = 6,  skills = { Mechanics = 2, Electricity = 3 } },
@@ -1317,7 +1317,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "BlowTorchFloor",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SteelBarHalf",     uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -1342,7 +1342,7 @@ return {
       conditionModifier = 0.6,
       equip = { primaryTag = "Wrench", showModel = false },
       anim = "VehicleWorkOnTire",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SteelBarHalf",     uses = 1, skills = { Mechanics = 2 } },
@@ -1368,7 +1368,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "BlowTorchFloor",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.IronBar",          uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -1398,7 +1398,7 @@ return {
       conditionModifier = 0.6,
       equip = { primaryTag = "Wrench", showModel = false },
       anim = "VehicleWorkOnTire",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.IronBar",          uses = 1, skills = { Mechanics = 3 } },
@@ -1429,7 +1429,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "BlowTorchFloor",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.IronBar",          uses = 2, skills = { MetalWelding = 4, Mechanics = 4 } },
@@ -1459,7 +1459,7 @@ return {
       conditionModifier = 0.6,
       equip = { primaryTag = "Wrench", showModel = false },
       anim = "VehicleWorkOnTire",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.IronBar",          uses = 2, skills = { Mechanics = 4 } },
@@ -1490,7 +1490,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.MetalPipe",        uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -1518,7 +1518,7 @@ return {
       conditionModifier = 0.8,
       equip = { primaryTag = "Wrench", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.MetalPipe",        uses = 1, skills = { Mechanics = 2 } },
@@ -1545,7 +1545,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.5,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
@@ -1563,7 +1563,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.MetalPipe",        uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -1591,7 +1591,7 @@ return {
       conditionModifier = 0.8,
       equip = { primaryTag = "Wrench", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.MetalPipe",        uses = 1, skills = { Mechanics = 3 } },
@@ -1618,7 +1618,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.5,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 3 } },
@@ -1636,7 +1636,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -1666,7 +1666,7 @@ return {
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 2 } },
@@ -1700,7 +1700,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.4,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 1 } },
@@ -1721,7 +1721,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -1750,7 +1750,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.8,
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.GlassPanel",       uses = 1, skills = { Electricity = 2, Mechanics = 1 } },
@@ -1772,7 +1772,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -1802,7 +1802,7 @@ return {
       conditionModifier = 0.8,
       equip = { primaryTag = "Wrench", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 1, skills = { Mechanics = 2 } },
@@ -1835,7 +1835,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.5,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Wire",            uses = 5, skills = { Mechanics = 1 } },
@@ -1864,7 +1864,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SmallSheetMetal",  uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -1892,7 +1892,7 @@ return {
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SmallSheetMetal",  uses = 2, skills = { Mechanics = 3 } },
@@ -1921,7 +1921,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Wire",            uses = 5, skills = { Mechanics = 1 } },
@@ -1946,7 +1946,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.6,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 1, skills = { Mechanics = 2 } },
@@ -1964,7 +1964,7 @@ return {
       conditionModifier = 1.0,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SmallSheetMetal",  uses = 1, skills = { Mechanics = 2 } },
@@ -1989,14 +1989,14 @@ return {
       name = "Fix SoftTops",
       require = "@SoftTops_All",
       globalItems = {
-        { tag = "Scissors", consume = false },
+        { tags = { "Scissors", "SharpKnife" }, consume = false },
         { tag = "Thread", uses = 4, consume = true },
       },
       conditionModifier = 1.2,
       equip = { primaryTag = "SewingNeedle", showModel = false },
       anim  = "SewingCloth",
       sound = "Sewing",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.CalfLeather_Angus_Fur_Tan",     uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
@@ -2019,14 +2019,14 @@ return {
       name = "Fix SoftTops 1",
       require = "@SoftTops_All",
       globalItems = {
-        { tag = "Scissors", consume = false },
+        { tags = { "Scissors", "SharpKnife" }, consume = false },
         { tag = "Thread", uses = 3, consume = true },
       },
       conditionModifier = 0.7,
       equip = { primaryTag = "SewingNeedle", showModel = false },
       anim  = "SewingCloth",
       sound = "Sewing",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.Sheet",                          uses = 2, skills = { Tailoring = 2, Mechanics = 1 } },
@@ -2049,7 +2049,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.DuctTape",       uses = 4, skills = { Tailoring = 1, Mechanics = 1 }, successSound = "FixWithTape" },
@@ -2069,7 +2069,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SmallSheetMetal",  uses = 2, skills = { MetalWelding = 2, Mechanics = 2 } },
@@ -2089,7 +2089,7 @@ return {
       conditionModifier = 0.6,
       equip = { primaryTag = "Screwdriver", showModel = false },
       anim = "VehicleWorkOnMid",
-      time = 160,
+      time = 200,
 
       fixers = {
         { item = "Base.SmallSheetMetal",  uses = 2, skills = { Mechanics = 2 } },
@@ -2111,7 +2111,7 @@ return {
       globalItem = nil,
       conditionModifier = 0.4,
       anim = "VehicleWorkOnMid",
-      time = 120,
+      time = 160,
 
       fixers = {
         { item = "Base.Epoxy",          uses = 2, skills = { Mechanics = 2 } },
@@ -2125,13 +2125,13 @@ return {
 
     {
       name = "Fix Tank Containers",
-      require = "@TankContainer_All",
+      require = "@TankContainers_All",
       globalItem = { item = "Base.BlowTorch", uses = 4, consume = true },
       conditionModifier = 1.0,
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2,  skills = { MetalWelding = 3, Mechanics = 3 } },
@@ -2159,7 +2159,7 @@ return {
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
       anim  = "Welding",
       sound = "BlowTorch",
-      time = 220,
+      time = 280,
 
       fixers = {
         { item = "Base.SheetMetal",       uses = 2, skills = { MetalWelding = 3, Mechanics = 3 } },
