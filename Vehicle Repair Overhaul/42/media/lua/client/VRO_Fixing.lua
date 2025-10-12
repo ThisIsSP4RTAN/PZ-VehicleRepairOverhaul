@@ -493,6 +493,13 @@ local function resolveTime(fixer, fixing, player, broken)
   return 160
 end
 
+local function resolveInvAnim(fixer, fixing)
+  -- Per-fixer beats per-recipe; if neither is set, fall back to the base anim.
+  return (fixer and fixer.invAnim)
+      or (fixing and fixing.invAnim)
+      or resolveAnim(fixer, fixing)
+end
+
 -- Replaces the existing addFixerTooltip
 local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, brokenItem)
   tip:initialise(); tip:setVisible(false)
@@ -1114,7 +1121,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
           option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB, gItem)
             local chosenP, chosenS = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), gItem)
             local tm    = resolveTime(fixr, fixg, p, brk)
-            local anim  = resolveAnim(fixr, fixg)
+            local anim  = resolveInvAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
             local sfxOK = resolveSuccessSound(fixr, fixg)
             local showM = resolveShowModel(fixr, fixg)

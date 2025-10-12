@@ -242,7 +242,7 @@ function VRO.DoFixAction:update()
   end
 
   if self.setMetabolicTarget then
-    self.character:setMetabolicTarget(Metabolics.LightWork)
+    self.character:setMetabolicTarget(Metabolics.UsingTools)
   end
 end
 
@@ -395,6 +395,7 @@ function VRO.DoFixAction:new(args)
   o.showModel    = (args.showModel ~= false) -- default true
   o.expectedPrimary   = args.expectedPrimary
   o.expectedSecondary = args.expectedSecondary
+  o.caloriesModifier = 4;
   -- Job label used for the inventory progress bar text
   o.jobType = args.jobType or buildJobType(args.part, args.brokenItem)
   return o
