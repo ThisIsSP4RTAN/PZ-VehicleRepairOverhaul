@@ -51,7 +51,7 @@ local function _flattenTokens(tokens)
             end
           end
         else
-          print(("[VRO] [Fixing] Missing part list @%s (skipped)"):format(listName))
+          --print(("[VRO] [Fixing] Missing part list @%s (skipped)"):format(listName))
         end
       else
         -- single fullType
@@ -59,7 +59,7 @@ local function _flattenTokens(tokens)
           excludeSet[tok] = true
         else
           if _existsFullType(tok) then _add(tok) else
-            print(("[VRO] [Fixing] Missing item (skipped): %s"):format(tok))
+            --print(("[VRO] [Fixing] Missing item (skipped): %s"):format(tok))
           end
         end
       end
@@ -78,7 +78,7 @@ end
 local function injectFixingRequire(fixingName, itemListOrToken)
   local fixing = ScriptManager.instance:getFixing(fixingName)
   if not fixing then
-    print("[VRO] Fixing not found:", fixingName)
+    --print("[VRO] Fixing not found:", fixingName)
     return
   end
 
@@ -95,9 +95,9 @@ local function injectFixingRequire(fixingName, itemListOrToken)
     -- Fixing.Load accepts a single script-like string chunk with Require entries (; delimited)
     local inputString = "{ Require = " .. table.concat(validItems, ";") .. ", }"
     fixing:Load(fixingName, inputString)
-    print("[VRO] [Fixing] Injected Require list for:", fixingName)
+    --print("[VRO] [Fixing] Injected Require list for:", fixingName)
   else
-    print(("[VRO] [Fixing] No valid items for '%s'; leaving recipe unchanged."):format(fixingName))
+    --print(("[VRO] [Fixing] No valid items for '%s'; leaving recipe unchanged."):format(fixingName))
   end
 end
 

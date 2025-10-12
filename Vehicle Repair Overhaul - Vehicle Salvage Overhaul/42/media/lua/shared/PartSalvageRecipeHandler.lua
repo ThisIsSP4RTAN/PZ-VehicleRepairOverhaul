@@ -71,14 +71,14 @@ local function _flattenTokens(tokens)
             end
           end
         else
-          print(("[VRO] [Salvage] Missing part list @%s (skipped)"):format(listName))
+          --print(("[VRO] [Salvage] Missing part list @%s (skipped)"):format(listName))
         end
       else
         if negative then
           excludeSet[tok] = true
         else
           if _existsFullType(tok) then _add(tok) else
-            print(("[VRO] [Salvage] Missing item (skipped): %s"):format(tok))
+            --print(("[VRO] [Salvage] Missing item (skipped): %s"):format(tok))
           end
         end
       end
@@ -96,7 +96,7 @@ end
 local function injectRecipeInputs(recipeName, itemListOrToken)
   local recipe = ScriptManager.instance:getCraftRecipe(recipeName)
   if not recipe then
-    print("[VRO] Recipe not found", recipeName)
+    --print("[VRO] Recipe not found", recipeName)
     return
   end
 
@@ -106,9 +106,9 @@ local function injectRecipeInputs(recipeName, itemListOrToken)
   if #validItems > 0 then
     local inputString = "{ inputs { item 1 [" .. table.concat(validItems, ";") .. "] mode:destroy, } }"
     recipe:Load(recipeName, inputString)
-    print("[VRO] Injected craftRecipe input for:", recipeName)
+    --print("[VRO] Injected craftRecipe input for:", recipeName)
   else
-    print("[VRO] No valid inputs found, recipe unchanged.")
+    --print("[VRO] No valid inputs found, recipe unchanged.")
   end
 end
 
