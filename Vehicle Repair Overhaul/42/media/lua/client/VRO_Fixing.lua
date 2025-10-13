@@ -466,41 +466,13 @@ local function _scriptDispName(si)
   return ft or "?"
 end
 
--- Build a "One of:" block for one-or-more tags, showing have/need per candidate.
--- `need` is how many uses/items are required (default 1).
+-- Build a "One of:" block for the given tags, showing the true need amount.
 local function _appendOneOfTagsList(desc, inv, tags, need)
-  need = math.max(1, tonumber(need) or 1)
-
   local added = {}   -- fullType -> true (avoid dupes across tags)
   local lines = {}
+  local needStr = tostring(math.max(1, tonumber(need) or 1)) .. "/"
 
-  -- Max usable amount we can get from inventory for a given fullType:
-  -- - drainables: max uses on any single item of that type
-  -- - non-drainables: count of items (capped by `need`)
-  local function _maxUsableForFullType(ft)
-    local arr = ArrayList.new()
-    inv:getAllTypeRecurse(ft, arr)
-    if arr:isEmpty() then return 0 end
-
-    local maxUses, count = 0, 0
-    for i = 1, arr:size() do
-      local it = arr:get(i-1)
-      if isDrainable(it) then
-        local u = drainableUses(it)
-        if u > maxUses then maxUses = u end
-      else
-        count = count + 1
-      end
-    end
-
-    if maxUses > 0 then
-      return math.min(maxUses, need)
-    else
-      return math.min(count, need)
-    end
-  end
-
-  for _, tag in ipairs(tags or {}) do
+  for _, tag in ipairs(tags) do
     local arr = _getScriptsForTag(tag)
     if arr and arr.size and arr:size() > 0 then
       for i = 1, arr:size() do
@@ -508,16 +480,13 @@ local function _appendOneOfTagsList(desc, inv, tags, need)
         local ft = _scriptFullType(si)
         if ft and not added[ft] then
           added[ft] = true
-          local have = _maxUsableForFullType(ft)
-          local rgb  = (have >= need) and "0,1,0" or "1,0,0"
+          local have = (countTypeRecurse(inv, ft) > 0)
+          local rgb  = have and "0,1,0" or "1,0,0"
           local nm   = _scriptDispName(si)
-          table.insert(
-            lines,
-            string.format(
-              " <INDENT:20> <RGB:%s>%s %d/%d <LINE> <INDENT:0> ",
-              rgb, nm, have, need
-            )
-          )
+          -- show "x/need" where x is 1 if we have at least one, else 0
+          local haveStr = (have and "1" or "0") .. "/" .. tostring(math.max(1, tonumber(need) or 1))
+          table.insert(lines,
+            string.format(" <INDENT:20> <RGB:%s>%s %s <LINE> <INDENT:0> ", rgb, nm, haveStr))
         end
       end
     end
@@ -690,8 +659,6 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
               pushReq("0,1,0", nm, 1, 1)
               if it and it.getFullType then markSeenItemFT(it:getFullType()) end
             else
-              -- single tag: keep the base “Welding Mask 0/1” + OneOf like vanilla
-              pushReq("1,0,0", fallbackNameForTag(gi.tag), 0, 1)
               local need = gi.uses or 1
               pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need))
             end
@@ -725,7 +692,6 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
               if have >= need then markSeenItemFT(it:getFullType()) end
             else
               -- keep vanilla style for single-tag
-              pushReq("1,0,0", fallbackNameForTag(gi.tag), 0, need)
               pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need))
             end
           elseif gi.item then
@@ -751,7 +717,6 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
         if it and it.getFullType then markSeenItemFT(it:getFullType()) end
       else
         -- keep a single “Welding Mask 0/1” + OneOf block (single tag)
-        pushReq("1,0,0", fallbackNameForTag(eq.wearTag), 0, 1)
         pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1))
       end
     elseif eq.wear then
@@ -784,7 +749,6 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
         pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1)
         markSeenItemFT(it:getFullType())
       else
-        pushReq("1,0,0", fallbackNameForTag(tag), 0, 1)
         -- (optional) show OneOf for equip tags; keep your previous behavior
         pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1))
       end
@@ -1201,7 +1165,7 @@ local function invRepairLabel(item)
   local nm = (getItemNameFromFullType and getItemNameFromFullType(item:getFullType()))
            or (item.getDisplayName and item:getDisplayName())
            or (item.getType and item:getType()) or "Item"
-  return getText("ContextMenu_Repair") .. " " .. nm
+  return getText("ContextMenu_Repair") .. nm
 end
 
 local function addInventoryFixOptions(playerObj, context, broken)
