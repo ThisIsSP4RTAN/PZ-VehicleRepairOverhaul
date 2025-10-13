@@ -327,7 +327,7 @@ local function setTooltipIconFromFullType(tip, fullType)
 end
 
 local function fallbackNameForTag(tag)
-  if tag == "WeldingMask" then return "Welding Mask" end
+  if tag == "WeldingMask" then return "Welder Mask" end
   return tag
 end
 
@@ -440,6 +440,96 @@ local function condRepairedPercent(brokenItem, chr, fixing, fixer, hbr, fixerInd
   return base
 end
 
+local function _getScriptsForTag(tag)
+  local sm = ScriptManager and ScriptManager.instance
+  if not sm then return nil end
+  -- PZ exposes one of these depending on build; try both gracefully
+  if sm.getItemsTag then
+    return sm:getItemsTag(tag)              -- ArrayList<ScriptItem>
+  elseif sm.getAllItemsWithTag then
+    return sm:getAllItemsWithTag(tag)       -- ArrayList<ScriptItem>
+  end
+  return nil
+end
+
+local function _scriptFullType(si)
+  return (si and si.getFullName) and si:getFullName() or nil
+end
+
+local function _scriptDispName(si)
+  local ft = _scriptFullType(si)
+  if ft and getItemNameFromFullType then
+    return getItemNameFromFullType(ft)
+  end
+  if si and si.getDisplayName then return si:getDisplayName() end
+  if si and si.getName then return si:getName() end
+  return ft or "?"
+end
+
+-- Build a "One of:" block for one-or-more tags, showing have/need per candidate.
+-- `need` is how many uses/items are required (default 1).
+local function _appendOneOfTagsList(desc, inv, tags, need)
+  need = math.max(1, tonumber(need) or 1)
+
+  local added = {}   -- fullType -> true (avoid dupes across tags)
+  local lines = {}
+
+  -- Max usable amount we can get from inventory for a given fullType:
+  -- - drainables: max uses on any single item of that type
+  -- - non-drainables: count of items (capped by `need`)
+  local function _maxUsableForFullType(ft)
+    local arr = ArrayList.new()
+    inv:getAllTypeRecurse(ft, arr)
+    if arr:isEmpty() then return 0 end
+
+    local maxUses, count = 0, 0
+    for i = 1, arr:size() do
+      local it = arr:get(i-1)
+      if isDrainable(it) then
+        local u = drainableUses(it)
+        if u > maxUses then maxUses = u end
+      else
+        count = count + 1
+      end
+    end
+
+    if maxUses > 0 then
+      return math.min(maxUses, need)
+    else
+      return math.min(count, need)
+    end
+  end
+
+  for _, tag in ipairs(tags or {}) do
+    local arr = _getScriptsForTag(tag)
+    if arr and arr.size and arr:size() > 0 then
+      for i = 1, arr:size() do
+        local si = arr:get(i-1)
+        local ft = _scriptFullType(si)
+        if ft and not added[ft] then
+          added[ft] = true
+          local have = _maxUsableForFullType(ft)
+          local rgb  = (have >= need) and "0,1,0" or "1,0,0"
+          local nm   = _scriptDispName(si)
+          table.insert(
+            lines,
+            string.format(
+              " <INDENT:20> <RGB:%s>%s %d/%d <LINE> <INDENT:0> ",
+              rgb, nm, have, need
+            )
+          )
+        end
+      end
+    end
+  end
+
+  if #lines > 0 then
+    desc = desc .. " " .. getText("IGUI_CraftUI_OneOf") .. " <LINE> "
+    for _, L in ipairs(lines) do desc = desc .. L end
+  end
+  return desc
+end
+
 ----------------------------------------------------------------
 -- C) Path & facing
 ----------------------------------------------------------------
@@ -513,13 +603,35 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   local c1 = interpColorTag((pot or 0)/100)
   local c2 = interpColorTag((success or 0)/100)
 
-  local desc = ""
-  desc = desc .. " " .. c1 .. " " .. getText("Tooltip_potentialRepair") .. " " .. (pot or 0) .. "%"
-  desc = desc .. " <LINE> " .. c2 .. " " .. getText("Tooltip_chanceSuccess") .. " " .. (success or 0) .. "%"
-  desc = desc .. " <LINE> <LINE> <RGB:1,1,1> " .. getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
+  -- We’ll build 3 buckets, then concatenate in order:
+  --  1) reqLines: all “normal” lines (appear first)
+  --  2) oneOfBlocks: any “One of:” expansions (only when player lacks a multi-tag item)
+  --  3) skillLines: perk lines (always last)
+  local reqLines, oneOfBlocks, skillLines = {}, {}, {}
 
-  -- local helper: how many "uses"/units we currently have for a given fullType
-  local function invHaveForFullType(inv, fullType, capTo)
+  local function lineStr(rgb, name, have, need)
+    return string.format(" <RGB:%s>%s %d/%d <LINE> ", rgb, name, have, need)
+  end
+
+  local function pushReq(rgb, name, have, need)
+    reqLines[#reqLines+1] = lineStr(rgb, name, have, need)
+  end
+  local function pushSkill(rgb, name, have, need)
+    skillLines[#skillLines+1] = lineStr(rgb, name, have, need)
+  end
+  local function pushOneOfBlock(textBlock)
+    if textBlock and textBlock ~= "" then oneOfBlocks[#oneOfBlocks+1] = textBlock end
+  end
+
+  -- De-dup across globals/equip (e.g., BlowTorch both places)
+  local seenFull = {}   -- fullType set
+  local function markSeenItemFT(ft) if ft then seenFull[ft] = true end end
+  local function wasSeenFT(ft) return ft and seenFull[ft] == true end
+
+  local inv = player:getInventory()
+
+  -- Helper: count total “uses” we own for a fullType, capping at need (handles drainables)
+  local function invHaveForFullType(fullType, capTo)
     local bagged = ArrayList.new()
     inv:getAllTypeRecurse(fullType, bagged)
     if bagged:isEmpty() then return 0 end
@@ -535,122 +647,174 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     return have
   end
 
-  -- 1) Fixer item itself (like vanilla)
+  -- Header
+  local desc = ""
+  desc = desc .. " " .. c1 .. " " .. getText("Tooltip_potentialRepair") .. " " .. (pot or 0) .. "%"
+  desc = desc .. " <LINE> " .. c2 .. " " .. getText("Tooltip_chanceSuccess") .. " " .. (success or 0) .. "%"
+  desc = desc .. " <LINE> <LINE> <RGB:1,1,1> " .. getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
+
+  -- 1) Fixer item (like vanilla)
   do
     local need = fixer.uses or 1
-    local have = invHaveForFullType(player:getInventory(), fixer.item, need)
+    local have = invHaveForFullType(fixer.item, need)
     local nm   = displayNameFromFullType(fixer.item)
     local rgb  = (have >= need) and "0,1,0" or "1,0,0"
-    desc = addNeedsLine(desc, rgb, nm, have, need)
+    pushReq(rgb, nm, have, need)
+    if have > 0 and (have >= need) then markSeenItemFT(fixer.item) end
   end
 
-  -- Track "seen" so later lines (globals/equip) don’t duplicate the same item/tag
-  local seen = {}
-  seen["item:"..tostring(fixer.item)] = true
+  -- 2) Global items (consumed or not), multi-tag aware, and de-duped
+  do
+    local effGlobals = resolveGlobalList(fixer, fixing)
+    if effGlobals and #effGlobals > 0 then
+      for _,gi in ipairs(effGlobals) do
+        local tags = normalizeTagsField(gi)
+        -- NOT CONSUMED
+        if gi.consume == false then
+          if tags then
+            -- If any matching item exists, show a single normal line for the *chosen* item; else only the “One of:” block (no combined Scissors/SharpKnife line).
+            local chosen = findBestByTags(inv, tags, 1)
+            if chosen then
+              local nm = chosen:getDisplayName() or displayNameForTags(inv, tags)
+              pushReq("0,1,0", nm, 1, 1)
+              markSeenItemFT(chosen:getFullType())
+            else
+              local need = gi.uses or 1
+              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need))
+            end
+          elseif gi.tag then
+            local present = hasTag(inv, gi.tag)
+            if present then
+              local it  = firstTagItem(inv, gi.tag)
+              local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag)
+              pushReq("0,1,0", nm, 1, 1)
+              if it and it.getFullType then markSeenItemFT(it:getFullType()) end
+            else
+              -- single tag: keep the base “Welding Mask 0/1” + OneOf like vanilla
+              pushReq("1,0,0", fallbackNameForTag(gi.tag), 0, 1)
+              local need = gi.uses or 1
+              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need))
+            end
+          elseif gi.item then
+            local present = countTypeRecurse(inv, gi.item) > 0
+            local nm  = displayNameFromFullType(gi.item)
+            pushReq(present and "0,1,0" or "1,0,0", nm, present and 1 or 0, 1)
+            if present then markSeenItemFT(gi.item) end
+          end
 
-  -- 2) Global items (consumed or not) with multi-tag awareness
-  local effGlobals = resolveGlobalList(fixer, fixing)
-  if effGlobals and #effGlobals > 0 then
-    for _,gi in ipairs(effGlobals) do
-      local tags = normalizeTagsField(gi)
-      if gi.consume == false then
-        if tags then
-          local present = invHasAnyTag(player:getInventory(), tags)
-          local nm  = displayNameForTags(player:getInventory(), tags)
-          local rgb = present and "0,1,0" or "1,0,0"
-          desc = addNeedsLine(desc, rgb, nm, present and 1 or 0, 1)
-          seen["tags:"..table.concat(tags,",")] = true
-        elseif gi.tag then
-          local present = hasTag(player:getInventory(), gi.tag)
-          local nm  = displayNameForTag(player:getInventory(), gi.tag)
-          local rgb = present and "0,1,0" or "1,0,0"
-          desc = addNeedsLine(desc, rgb, nm, present and 1 or 0, 1)
-          seen["tag:"..tostring(gi.tag)] = true
+        -- CONSUMED
         else
-          local present = countTypeRecurse(player:getInventory(), gi.item) > 0
-          local nm  = displayNameFromFullType(gi.item)
-          local rgb = present and "0,1,0" or "1,0,0"
-          desc = addNeedsLine(desc, rgb, nm, present and 1 or 0, 1)
-          seen["item:"..tostring(gi.item)] = true
-        end
-      else
-        local need = gi.uses or 1
-        if tags then
-          local it  = findBestByTags(player:getInventory(), tags, need)
-          local have = (it and (isDrainable(it) and math.min(drainableUses(it), need) or 1)) or 0
-          local nm  = displayNameForTags(player:getInventory(), tags)
-          local rgb = (have >= need) and "0,1,0" or "1,0,0"
-          desc = addNeedsLine(desc, rgb, nm, have, need)
-          seen["tags:"..table.concat(tags,",")] = true
-        elseif gi.tag then
-          local it  = findBestByTag(player:getInventory(), gi.tag, need)
-          local have = (it and (isDrainable(it) and math.min(drainableUses(it), need) or 1)) or 0
-          local nm  = displayNameForTag(player:getInventory(), gi.tag)
-          local rgb = (have >= need) and "0,1,0" or "1,0,0"
-          desc = addNeedsLine(desc, rgb, nm, have, need)
-          seen["tag:"..tostring(gi.tag)] = true
-        else
-          local have = invHaveForFullType(player:getInventory(), gi.item, need)
-          local nm  = displayNameFromFullType(gi.item)
-          local rgb = (have >= need) and "0,1,0" or "1,0,0"
-          desc = addNeedsLine(desc, rgb, nm, have, need)
-          seen["item:"..tostring(gi.item)] = true
+          local need = gi.uses or 1
+          if tags then
+            local it   = findBestByTags(inv, tags, need)
+            if it then
+              local have = isDrainable(it) and math.min(drainableUses(it), need) or 1
+              local nm   = it:getDisplayName() or displayNameForTags(inv, tags)
+              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need)
+              if have >= need then markSeenItemFT(it:getFullType()) end
+            else
+              -- No base “Scissors/SharpKnife 0/1” line; only the OneOf block
+              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need))
+            end
+          elseif gi.tag then
+            local it   = findBestByTag(inv, gi.tag, need)
+            if it then
+              local have = isDrainable(it) and math.min(drainableUses(it), need) or 1
+              local nm   = it:getDisplayName() or displayNameForTag(inv, gi.tag)
+              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need)
+              if have >= need then markSeenItemFT(it:getFullType()) end
+            else
+              -- keep vanilla style for single-tag
+              pushReq("1,0,0", fallbackNameForTag(gi.tag), 0, need)
+              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need))
+            end
+          elseif gi.item then
+            local have = invHaveForFullType(gi.item, need)
+            local nm   = displayNameFromFullType(gi.item)
+            pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need)
+            if have >= need then markSeenItemFT(gi.item) end
+          end
         end
       end
     end
   end
 
-  -- 3) Wear requirement (not consumed)
-  local eq = mergeEquip(fixer.equip, fixing.equip)
-  if eq.wearTag then
-    local ok  = hasTag(player:getInventory(), eq.wearTag)
-    local it  = firstTagItem(player:getInventory(), eq.wearTag)
-    local name = it and it:getDisplayName() or fallbackNameForTag(eq.wearTag)
-    if not seen["tag:"..tostring(eq.wearTag)] then
-      desc = addNeedsLine(desc, ok and "0,1,0" or "1,0,0", name, ok and 1 or 0, 1)
-    end
-  elseif eq.wear then
-    if not seen["item:"..tostring(eq.wear)] then
-      local it = findFirstTypeRecurse(player:getInventory(), eq.wear)
-      local nm = (it and it.getDisplayName) and it:getDisplayName() or displayNameFromFullType(eq.wear)
-      desc = addNeedsLine(desc, it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1)
+  -- 3) Wear requirement (not consumed); for multi-tag wear only show OneOf block when missing
+  do
+    local eq = mergeEquip(fixer.equip, fixing.equip)
+    if eq.wearTag then
+      local present = hasTag(inv, eq.wearTag)
+      if present then
+        local it  = firstTagItem(inv, eq.wearTag)
+        local nm  = (it and it.getDisplayName and it:getDisplayName()) or fallbackNameForTag(eq.wearTag)
+        pushReq("0,1,0", nm, 1, 1)
+        if it and it.getFullType then markSeenItemFT(it:getFullType()) end
+      else
+        -- keep a single “Welding Mask 0/1” + OneOf block (single tag)
+        pushReq("1,0,0", fallbackNameForTag(eq.wearTag), 0, 1)
+        pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1))
+      end
+    elseif eq.wear then
+      local it  = findFirstTypeRecurse(inv, eq.wear)
+      local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(eq.wear)
+      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1)
+      if it and it.getFullType then markSeenItemFT(it:getFullType()) end
     end
   end
 
-  -- 4) Primary / Secondary (not consumed) with de-dup
-  local function showEquipLineByItem(fullType)
-    local key = "item:"..tostring(fullType)
-    if seen[key] then return end
-    local present = countTypeRecurse(player:getInventory(), fullType) > 0
-    local nm  = displayNameFromFullType(fullType)
-    local rgb = present and "0,1,0" or "1,0,0"
-    desc = addNeedsLine(desc, rgb, nm, present and 1 or 0, 1)
-    seen[key] = true
-  end
-  local function showEquipLineByTag(tag)
-    local key = "tag:"..tostring(tag)
-    if seen[key] then return end
-    local present = hasTag(player:getInventory(), tag)
-    local nm  = displayNameForTag(player:getInventory(), tag)
-    local rgb = present and "0,1,0" or "1,0,0"
-    desc = addNeedsLine(desc, rgb, nm, present and 1 or 0, 1)
-    seen[key] = true
-  end
-  if eq.primaryTag then showEquipLineByTag(eq.primaryTag)
-  elseif eq.primary then showEquipLineByItem(eq.primary) end
-  if eq.secondaryTag then showEquipLineByTag(eq.secondaryTag)
-  elseif eq.secondary and eq.secondary ~= eq.primary then showEquipLineByItem(eq.secondary) end
+  -- 4) Primary / Secondary (not consumed) — skip if we already showed the same item (de-dup vs globals)
+  do
+    local eq = mergeEquip(fixer.equip, fixing.equip)
 
-  -- 5) Skills
+    local function showEquipByItem(fullType)
+      if not fullType then return end
+      if wasSeenFT(fullType) then return end
+      local present = countTypeRecurse(inv, fullType) > 0
+      local nm  = displayNameFromFullType(fullType)
+      pushReq(present and "0,1,0" or "1,0,0", nm, present and 1 or 0, 1)
+      if present then markSeenItemFT(fullType) end
+    end
+
+    local function showEquipByTag(tag)
+      if not tag then return end
+      -- try to resolve the chosen item for de-dup
+      local it = findBestByTag(inv, tag, 1)
+      if it and wasSeenFT(it:getFullType()) then return end
+      if it then
+        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1)
+        markSeenItemFT(it:getFullType())
+      else
+        pushReq("1,0,0", fallbackNameForTag(tag), 0, 1)
+        -- (optional) show OneOf for equip tags; keep your previous behavior
+        pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1))
+      end
+    end
+
+    if eq.primary   then showEquipByItem(eq.primary)
+    elseif eq.primaryTag then showEquipByTag(eq.primaryTag) end
+
+    if eq.secondary and eq.secondary ~= eq.primary then showEquipByItem(eq.secondary)
+    elseif eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then showEquipByTag(eq.secondaryTag) end
+  end
+
+  -- 5) Skills (always last)
   if fixer.skills then
     for name,req in pairs(fixer.skills) do
       local lvl = perkLevel(player, name)
       local ok  = lvl >= req
       local perkLabel = (getText and getText("IGUI_perks_" .. name)) or name
       if perkLabel == ("IGUI_perks_" .. name) then perkLabel = name end
-      desc = addNeedsLine(desc, ok and "0,1,0" or "1,0,0", perkLabel, lvl, req)
+      pushSkill(ok and "0,1,0" or "1,0,0", perkLabel, lvl, req)
     end
   end
+
+  -- Stitch all sections together
+  desc = desc .. table.concat(reqLines)
+  if #oneOfBlocks > 0 then
+    -- Each _appendOneOfTagsList() already includes “One of:” header + lines.
+    for _,blk in ipairs(oneOfBlocks) do desc = desc .. " " .. blk end
+  end
+  desc = desc .. table.concat(skillLines)
 
   tip.description = desc
 end
@@ -1037,7 +1201,7 @@ local function invRepairLabel(item)
   local nm = (getItemNameFromFullType and getItemNameFromFullType(item:getFullType()))
            or (item.getDisplayName and item:getDisplayName())
            or (item.getType and item:getType()) or "Item"
-  return getText("ContextMenu_Repair") .. nm
+  return getText("ContextMenu_Repair") .. " " .. nm
 end
 
 local function addInventoryFixOptions(playerObj, context, broken)
