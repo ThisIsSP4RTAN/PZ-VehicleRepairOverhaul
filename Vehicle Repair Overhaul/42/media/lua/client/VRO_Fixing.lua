@@ -392,6 +392,26 @@ local function resolveGlobalList(fixer, fixing)
   return nil
 end
 
+-- True only if any declared primary/secondary (by fullType or tag) are present.
+local function equipRequirementsOK(inv, eq)
+  if not eq then return true end
+  local ok = true
+
+  if eq.primaryTag then
+    ok = ok and hasTag(inv, eq.primaryTag)
+  elseif eq.primary then
+    ok = ok and (findFirstTypeRecurse(inv, eq.primary) ~= nil)
+  end
+
+  if eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
+    ok = ok and hasTag(inv, eq.secondaryTag)
+  elseif eq.secondary and eq.secondary ~= eq.primary then
+    ok = ok and (findFirstTypeRecurse(inv, eq.secondary) ~= nil)
+  end
+
+  return ok
+end
+
 ----------------------------------------------------------------
 -- B) Perks + math
 ----------------------------------------------------------------
@@ -467,10 +487,16 @@ local function _scriptDispName(si)
 end
 
 -- Build a "One of:" block for the given tags, showing the true need amount.
-local function _appendOneOfTagsList(desc, inv, tags, need)
+-- Header color is green if the inventory has any matching item, red otherwise.
+local function _appendOneOfTagsList(desc, inv, tags, need, hasAny)
+  need = math.max(1, tonumber(need) or 1)
+
+  -- allow caller to pass whether we have any; otherwise detect
+  if hasAny == nil then hasAny = invHasAnyTag(inv, tags) end
+  local headerRGB = hasAny and "0,1,0" or "1,0,0"
+
   local added = {}   -- fullType -> true (avoid dupes across tags)
   local lines = {}
-  local needStr = tostring(math.max(1, tonumber(need) or 1)) .. "/"
 
   for _, tag in ipairs(tags) do
     local arr = _getScriptsForTag(tag)
@@ -483,21 +509,21 @@ local function _appendOneOfTagsList(desc, inv, tags, need)
           local have = (countTypeRecurse(inv, ft) > 0)
           local rgb  = have and "0,1,0" or "1,0,0"
           local nm   = _scriptDispName(si)
-          -- show "x/need" where x is 1 if we have at least one, else 0
-          local haveStr = (have and "1" or "0") .. "/" .. tostring(math.max(1, tonumber(need) or 1))
-          table.insert(lines,
-            string.format(" <INDENT:20> <RGB:%s>%s %s <LINE> <INDENT:0> ", rgb, nm, haveStr))
+          local haveStr = (have and "1" or "0") .. "/" .. tostring(need)
+          table.insert(lines, string.format(
+            " <INDENT:20> <RGB:%s>%s %s <LINE> <INDENT:0> ", rgb, nm, haveStr))
         end
       end
     end
   end
 
   if #lines > 0 then
-    desc = desc .. " " .. getText("IGUI_CraftUI_OneOf") .. " <LINE> "
+    desc = desc .. string.format(" <RGB:%s>%s <LINE> ", headerRGB, getText("IGUI_CraftUI_OneOf"))
     for _, L in ipairs(lines) do desc = desc .. L end
   end
   return desc
 end
+
 
 ----------------------------------------------------------------
 -- C) Path & facing
@@ -1097,7 +1123,8 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           wearOK = (findFirstTypeRecurse(playerObj:getInventory(), eq.wear) ~= nil)
         end
 
-        local haveAll = fxBundle and glOK and skillsOK and wearOK
+        local equipOK = equipRequirementsOK(playerObj:getInventory(), eq)
+        local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK
         local raw   = displayNameFromFullType(fixer.item)
         local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
 
@@ -1173,10 +1200,10 @@ local function addInventoryFixOptions(playerObj, context, broken)
   if not isRepairableFromInventory(broken) then return end
   local ft = broken:getFullType(); if not ft then return end
 
-  local any=false
-  for _,fx in ipairs(VRO.Recipes) do
+  local any = false
+  for _, fx in ipairs(VRO.Recipes) do
     local set = resolveRequireSet(fx)
-    if set[ft] then any=true break end
+    if set[ft] then any = true; break end
   end
   if not any then return end
 
@@ -1185,67 +1212,150 @@ local function addInventoryFixOptions(playerObj, context, broken)
   if not parent then parent = context:addOption(expectedLabel, nil, nil) end
   local sub = ensureSubMenu(context, parent); if not sub then return end
 
+  local function _normalizeGlobals(fixr, fixg)
+    local giList = (fixr and fixr.globalItems) or (fixg and fixg.globalItems)
+    if giList and type(giList) == "table" then
+      if giList[1] then return giList else return { giList } end
+    end
+    local single = (fixr and fixr.globalItem) or (fixg and fixg.globalItem)
+    if single then return { single } end
+    return nil
+  end
+
+  local function _gatherMultiGlobals(inv, list)
+    if not list then return true, nil end
+    if type(list) == "table" and not list[1] and (list.item or list.tag or list.tags) then
+      list = { list }
+    end
+    if type(list) ~= "table" or #list == 0 then return true, nil end
+
+    local allOK, flat = true, {}
+    for i = 1, #list do
+      local gi = list[i]; if type(gi) ~= "table" then allOK=false; break end
+      local tags = normalizeTagsField(gi)
+
+      if gi.consume == false then
+        if tags then
+          if not invHasAnyTag(inv, tags) then allOK=false; break end
+        elseif gi.tag then
+          if not hasTag(inv, gi.tag) then allOK=false; break end
+        elseif gi.item then
+          if countTypeRecurse(inv, gi.item) <= 0 then allOK=false; break end
+        else
+          allOK=false; break
+        end
+      else
+        local need = gi.uses or 1
+        if tags then
+          local it = findBestByTags(inv, tags, need)
+          if it and (not isDrainable(it) or drainableUses(it) >= need) then
+            flat[#flat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
+          else allOK=false; break end
+        elseif gi.tag then
+          local it = findBestByTag(inv, gi.tag, need)
+          if it and (not isDrainable(it) or drainableUses(it) >= need) then
+            flat[#flat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
+          else allOK=false; break end
+        elseif gi.item then
+          local b = gatherRequiredItems(inv, gi.item, need)
+          if b then for _,e in ipairs(b) do flat[#flat+1] = e end else allOK=false; break end
+        else
+          allOK=false; break
+        end
+      end
+    end
+    if #flat == 0 then flat = nil end
+    return allOK, flat
+  end
+
+  local function _equipRequirementsOK(inv, eq)
+    if not eq then return true end
+    local ok = true
+    if eq.primaryTag then
+      ok = ok and hasTag(inv, eq.primaryTag)
+    elseif eq.primary then
+      ok = ok and (findFirstTypeRecurse(inv, eq.primary) ~= nil)
+    end
+    if eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
+      ok = ok and hasTag(inv, eq.secondaryTag)
+    elseif eq.secondary and eq.secondary ~= eq.primary then
+      ok = ok and (findFirstTypeRecurse(inv, eq.secondary) ~= nil)
+    end
+    return ok
+  end
+
   local rendered = false
-  for _,fixing in ipairs(VRO.Recipes) do
+  for _, fixing in ipairs(VRO.Recipes) do
     local applies = resolveRequireSet(fixing)[ft] == true
     if applies then
       for idx, fixer in ipairs(fixing.fixers or {}) do
-        local fxBundle  = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
+        local inv = playerObj:getInventory()
 
-        local effGlobal = fixer.globalItem or fixing.globalItem
+        -- fixer item bundle
+        local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
+        -- global items (list or single), multi-tag aware
+        local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle = true, nil
-        if effGlobal then
-          local gi = effGlobal
-          local tags = normalizeTagsField(gi)
-          if gi.consume == false then
-            if tags then
-              glOK = invHasAnyTag(playerObj:getInventory(), tags)
-            elseif gi.tag then
-              glOK = hasTag(playerObj:getInventory(), gi.tag)
-            else
-              glOK = countTypeRecurse(playerObj:getInventory(), gi.item) > 0
-            end
-          else
-            local need = gi.uses or 1
-            if tags then
-              local it = findBestByTags(playerObj:getInventory(), tags, need)
-              if it and (not isDrainable(it) or drainableUses(it) >= need) then
-                glBundle = { { item = it, takeUses = isDrainable(it) and need or 1 } }
-                glOK = true
+        if multiList then
+          glOK, glBundle = _gatherMultiGlobals(inv, multiList)
+        else
+          local gi = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
+          if gi then
+            local tags, need = normalizeTagsField(gi), (gi.uses or 1)
+            if gi.consume == false then
+              if tags then
+                glOK = invHasAnyTag(inv, tags)
+              elseif gi.tag then
+                glOK = hasTag(inv, gi.tag)
               else
-                glOK = false
-              end
-            elseif gi.tag then
-              local it = findBestByTag(playerObj:getInventory(), gi.tag, need)
-              if it and (not isDrainable(it) or drainableUses(it) >= need) then
-                glBundle = { { item = it, takeUses = isDrainable(it) and need or 1 } }
-                glOK = true
-              else
-                glOK = false
+                glOK = countTypeRecurse(inv, gi.item) > 0
               end
             else
-              glBundle = gatherRequiredItems(playerObj:getInventory(), gi.item, need)
-              glOK = (glBundle ~= nil)
+              if tags then
+                local it = findBestByTags(inv, tags, need)
+                if it and (not isDrainable(it) or drainableUses(it) >= need) then
+                  glBundle = { { item = it, takeUses = isDrainable(it) and need or 1 } }
+                  glOK = true
+                else glOK = false end
+              elseif gi.tag then
+                local it = findBestByTag(inv, gi.tag, need)
+                if it and (not isDrainable(it) or drainableUses(it) >= need) then
+                  glBundle = { { item = it, takeUses = isDrainable(it) and need or 1 } }
+                  glOK = true
+                else glOK = false end
+              else
+                glBundle = gatherRequiredItems(inv, gi.item, need)
+                glOK = (glBundle ~= nil)
+              end
             end
           end
         end
 
         local skillsOK = true
         if fixer.skills then
-          for name,req in pairs(fixer.skills) do if perkLevel(playerObj,name) < req then skillsOK=false break end end
+          for name, req in pairs(fixer.skills) do
+            if perkLevel(playerObj, name) < req then skillsOK = false; break end
+          end
         end
+
         local eq = mergeEquip(fixer.equip, fixing.equip)
         local wearOK = true
-        if eq.wearTag then wearOK = hasTag(playerObj:getInventory(), eq.wearTag)
-        elseif eq.wear then wearOK = (findFirstTypeRecurse(playerObj:getInventory(), eq.wear) ~= nil) end
+        if eq.wearTag then
+          wearOK = hasTag(inv, eq.wearTag)
+        elseif eq.wear then
+          wearOK = (findFirstTypeRecurse(inv, eq.wear) ~= nil)
+        end
 
-        local haveAll = fxBundle and glOK and skillsOK and wearOK
-        local raw = displayNameFromFullType(fixer.item)
+        local equipOK = _equipRequirementsOK(inv, eq)
+        local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK
+        local raw   = displayNameFromFullType(fixer.item)
         local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
 
         local option
         if haveAll then
-          rendered=true
+          rendered = true
+
+          local effGlobal = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
           option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB, gItem)
             local chosenP, chosenS = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), gItem)
             local tm    = resolveTime(fixr, fixg, p, brk)
@@ -1263,7 +1373,10 @@ local function addInventoryFixOptions(playerObj, context, broken)
         else
           option = sub:addOption(label, nil, nil); option.notAvailable = true
         end
-        local tip = ISToolTip:new(); addFixerTooltip(tip, playerObj, nil, fixing, fixer, idx, broken); option.toolTip = tip
+
+        local tip = ISToolTip:new()
+        addFixerTooltip(tip, playerObj, nil, fixing, fixer, idx, broken)
+        option.toolTip = tip
       end
     end
   end
