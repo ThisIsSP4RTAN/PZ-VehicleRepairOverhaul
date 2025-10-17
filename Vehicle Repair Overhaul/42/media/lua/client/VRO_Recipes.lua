@@ -2,33 +2,72 @@
 -- Recipe Key
 --
 -- You can put defaults on the recipe itself:
---   require = { 
---      Base.Item1,Base.Item2 }   -- or { "@All_Hoods", Base.Item1 }
+--   require = {
+--     Base.Item1, Base.Item2
+--     -- or { "@All_Hoods", Base.Item1 }    -- supports part lists and one-offs
+--   }
 --
 --   equip = {
---     primary = "Base.BlowTorch",  -- or primaryTag = "BlowTorch"
---     secondary = "Base.Hammer",   -- or secondaryTag = "Hammer"
---     wearTag = "WeldingMask"      -- or wear = "Base.WelderMask"
---     showModel = true,            -- controls hand model visibility during action
+--     -- Accepts a string fullType OR a table with item/tag(s) and optional flags
+--     -- String (no flags):  primary = "Base.BlowTorch"
+--     -- Table (with flags): primary = { tag = "BlowTorch", flags = { "IsNotDull","MayDegradeLight" } }
+--     -- Multi-tag:          secondary = { tags = { "Wrench","Ratchet" }, flags = { "MayDegrade" } }
+--     -- Wear item:          wear = { tag = "WeldingMask", flags = { "MayDegradeVeryLight" } }
+--     -- (You can still use primaryTag / secondaryTag / wearTag as shorthand if no flags are needed.)
+--     -- NOTE: Flags on equip items are applied after the action (tools may degrade).
+--     primary   = "Base.BlowTorch",   -- or { item="Base.BlowTorch", flags={...} } / { tag="X", flags={...} } / { tags={...}, flags={...} }
+--     secondary = "Base.Hammer",      -- same shapes as primary
+--     wear      = "Base.WelderMask",  -- same shapes as primary
+--     showModel = true,               -- controls hand model visibility during action
 --   }
+--
 --   anim = "Welding"
---   sound = "BlowTorch"          -- loops during repair (if set)
---   successSound = "SomeEvent"   -- plays after a successful repair (optional)
+--   sound = "BlowTorch"               -- loops during repair (if set)
+--   successSound = "SomeEvent"        -- plays after a successful repair (optional)
 --   time = function(player, brokenItem) return 160 end  -- or a number
 --
--- globalItem supports:                                  -- or globalItems = { -- multiple global items
---   { item = "<FullType>", uses = 3, consume = true }           { item = "<FullType>", uses = 3, consume = true },     
---   { tag = "<TagName>",  uses = 3, consume = false }           { tag = "<TagName>", consume = false }, },
---   If consume = false, the item is required but NOT consumed. 
+-- Global items (per-recipe). Use one OR many:
+--   globalItem  = { item="<FullType>", uses=3, consume=true }
+--   -- OR
+--   globalItems = {
+--     { item="Base.Thread", uses=3, consume=true },
+--     { tag="Scissors",     consume=false, flags={ "IsNotDull","MayDegradeLight" } },
+--     { tags={ "SharpKnife","Scissors" }, consume=false, flags={ "SharpnessCheck" } },
+--   }
+--   If consume=false, the item is required but NOT consumed and can receive flag-based wear (see Flags below).
+--   If consume=true, the item is actually consumed (or drainable uses removed) and flags are ignored.
 --
 -- Per-fixer overrides:
---   fixer.equip       -- overrides recipe equip for that fixer
---   fixer.globalItem  -- overrides recipe-level globalItem for that fixer
+--   fixer.equip        -- overrides recipe equip for that fixer (same shapes & flags as above)
+--   fixer.globalItem   -- overrides recipe/globalItems for that fixer (same shapes & flags as above)
+--
+-- FLAGS (vanilla-style tool condition & sharpness logic):
+--   Where you can put flags:
+--     • On any NON-CONSUMED global item entry:   { item/ tag/ tags = ..., consume=false, flags={ ... } }
+--     • On any EQUIP entry (primary/secondary/wear):  equip = { primary = { ..., flags={ ... } }, ... }
+--     • Flags on CONSUMED globals are ignored.
+--
+--   Supported flags (match vanilla semantics):
+--     "MayDegradeHeavy"      -- highest wear chance for kept tool
+--     "MayDegrade"           -- medium wear chance
+--     "MayDegradeLight"      -- light wear chance
+--     "MayDegradeVeryLight"  -- very light wear chance
+--     "SharpnessCheck"       -- if the tool has sharpness, run a sharpness roll; if not, apply light wear
+--     "IsNotDull"            -- REQUIRE a non-dull tool to be used; option is unavailable if only dull tools exist
+--
+--   Notes:
+--     • For tag / tags entries, the system picks a concrete matching item from the inventory.
+--       With "IsNotDull", it prefers non-dull; if none exists, the repair option is blocked.
+--     • Degrade/Sharpness flags are applied when the action completes, using vanilla-like math
+--       (skill + Maintenance modifiers are factored in).
+--     • Multi-tag entries behave like “one of” requirements in tooltips. The list is only shown
+--       if you don’t have any matching item; otherwise only the chosen item is shown.
 --
 -- EXTRA NOTE:
---    Any recipe/fixer that uses a "Build" animation should take a minimum of 37 ticks and be doubled 
---    each time if you increase it. (37 x 2 x 2 ect.) otherwise the hammering sound will not sync up
+--   Any recipe/fixer that uses a "Build" animation should take a minimum of 37 ticks and be doubled
+--   each time if you increase it. (37 x 2 x 2, etc.) Otherwise the hammering sound will not sync up.
 ----------------------------------------------------------------
+
 
 return {
   recipes = {
@@ -164,7 +203,7 @@ return {
       require = "@Trailer_All",
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.7,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -180,7 +219,7 @@ return {
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.Plank",            uses = 4, skills = { Woodwork = 3, Mechanics = 3 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 3 } },
@@ -246,7 +285,7 @@ return {
       require = "@TrailerLids_All",
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.7,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -262,7 +301,7 @@ return {
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.Plank",            uses = 2, skills = { Woodwork = 3, Mechanics = 3 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 3 } },
@@ -328,7 +367,7 @@ return {
       require = "@Hood_All",
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.5,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -344,7 +383,7 @@ return {
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.Plank",            uses = 4, skills = { Woodwork = 3, Mechanics = 3 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 3 } },
@@ -393,7 +432,7 @@ return {
       require = "@MilitaryHood_All",
       globalItem = { item = "Base.Screws", uses = 16, consume = true },
       conditionModifier = 0.7,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -409,7 +448,7 @@ return {
         { item = "Base.MetalBar",         uses = 2,  skills = { Mechanics = 4 } },
         { item = "Base.LeadPipe",         uses = 4,  skills = { Mechanics = 4 } },
         { item = "Base.Plank",            uses = 6,  skills = { Woodwork = 4, Mechanics = 4 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 12, skills = { Mechanics = 4 } },
         { item = "Base.BrassScrap",       uses = 12, skills = { Mechanics = 4 } },
@@ -476,7 +515,7 @@ return {
       require = "@SmallTrunk_All",
       globalItem = { item = "Base.Screws", uses = 8, consume = true },
       conditionModifier = 0.7,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -492,7 +531,7 @@ return {
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 6, skills = { Mechanics = 2 } },
         { item = "Base.BrassScrap",       uses = 6, skills = { Mechanics = 2 } },
@@ -558,7 +597,7 @@ return {
       require = "@Trunk_All",
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.7,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -574,7 +613,7 @@ return {
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Plank",            uses = 4, skills = { Woodwork = 2, Mechanics = 2 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 2 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 2 } },
@@ -640,7 +679,7 @@ return {
       require = "@TrunkMilitary_All",
       globalItem = { item = "Base.Screws", uses = 16, consume = true },
       conditionModifier = 0.7,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -656,7 +695,7 @@ return {
         { item = "Base.MetalBar",         uses = 2, skills = { Mechanics = 3 } },
         { item = "Base.LeadPipe",         uses = 3, skills = { Mechanics = 3 } },
         { item = "Base.Plank",            uses = 6, skills = { Woodwork = 3, Mechanics = 3 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 10, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 10, skills = { Mechanics = 3 } },
@@ -705,7 +744,7 @@ return {
       require = "@TrunkDoor_All",
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.4,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -721,7 +760,7 @@ return {
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 2 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 2 } },
@@ -770,7 +809,7 @@ return {
       require = "@TrunkDoorMilitary_All",
       globalItem = { item = "Base.Screws", uses = 16, consume = true },
       conditionModifier = 0.5,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -786,7 +825,7 @@ return {
         { item = "Base.MetalBar",         uses = 2, skills = { Mechanics = 3 } },
         { item = "Base.LeadPipe",         uses = 3, skills = { Mechanics = 3 } },
         { item = "Base.Plank",            uses = 4, skills = { Woodwork = 2, Mechanics = 3 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 10, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 10, skills = { Mechanics = 3 } },
@@ -836,7 +875,7 @@ return {
       require = "@Door_All",
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.4,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -852,7 +891,7 @@ return {
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.Hinge",            uses = 2, skills = { Mechanics = 2 } },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 2 } },
@@ -919,7 +958,7 @@ return {
       require = "@DoorMilitary_All",
       globalItem = { item = "Base.Screws", uses = 16, consume = true },
       conditionModifier = 0.5,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -935,7 +974,7 @@ return {
         { item = "Base.MetalBar",         uses = 2, skills = { Mechanics = 4 } },
         { item = "Base.LeadPipe",         uses = 4, skills = { Mechanics = 4 } },
         { item = "Base.Plank",            uses = 6, skills = { Woodwork = 4, Mechanics = 4 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.Hinge",            uses = 3, skills = { MetalWelding = 4, Mechanics = 4 } },
         { item = "Base.AluminumScrap",    uses = 12, skills = { Mechanics = 4 } },
@@ -953,7 +992,7 @@ return {
       require = "@GloveBox_All",
       globalItem = { item = "Base.Screws", uses = 4, consume = true },
       conditionModifier = 0.8,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -1037,11 +1076,11 @@ return {
       name = "Fix Car seat 1",
       require = { "@CarSeat_All", "Base.ATAMotoBagBMW1", "Base.ATAMotoBagBMW2", "Base.ATAMotoHarleyBag", "Base.ATAMotoHarleyHolster", "Base.SS100topbag3", "Base.90pierceArrowHoses", "Base.FireDeptHosesMedium" },
       globalItems = {
-        { tags = { "Scissors", "SharpKnife" }, consume = false },
+        { tags = { "Scissors", "SharpKnife" }, consume = false, flags = { "IsNotDull", "MayDegradeLight" } },
         { tag = "Thread", uses = 3, consume = true },
       },
       conditionModifier = 0.7,
-      equip = { primaryTag = "SewingNeedle", showModel = false },
+      equip = { primaryTag = "SewingNeedle", flags = { "MayDegradeLight" }, showModel = false },
       anim  = "SewingCloth",
       sound = "Sewing",
       time = 400,
@@ -1065,6 +1104,8 @@ return {
         { item = "Base.RabbitLeather_Grey_Fur_Tan",     uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
         { item = "Base.RaccoonLeather_Grey_Fur",        uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
         { item = "Base.RaccoonLeather_Grey_Fur_Tan",    uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.FawnLeather_Fur",                uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
+        { item = "Base.FawnLeather_Fur_Tan",            uses = 1, skills = { Tailoring = 1, Mechanics = 1 } },
       },
     },
 
@@ -1072,11 +1113,11 @@ return {
       name = "Fix Car seat 2",
       require = "@CarSeat_All",
       globalItems = {
-        { tags = { "Scissors", "SharpKnife" }, consume = false },
+        { tags = { "Scissors", "SharpKnife" }, consume = false, flags = { "IsNotDull", "MayDegradeLight" } },
         { tag = "Thread", uses = 4, consume = true },
       },
       conditionModifier = 1.2,
-      equip = { primaryTag = "SewingNeedle", showModel = false },
+      equip = { primaryTag = "SewingNeedle", flags = { "MayDegradeLight" }, showModel = false },
       anim  = "SewingCloth",
       sound = "Sewing",
       time = 400,
@@ -1114,7 +1155,7 @@ return {
       require = "@CarSeat_All",
       globalItem = { item = "Base.NutsBolts", uses = 6, consume = true },
       conditionModifier = 0.6,
-      equip = { primaryTag = "Wrench", showModel = false },
+      equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
       anim = "VehicleWorkOnMid",
       time = 200,
 
@@ -1168,7 +1209,7 @@ return {
       require = "@SmallBrake_All",
       globalItem = { item = "Base.NutsBolts", uses = 4, consume = true },
       conditionModifier = 0.4,
-      equip = { primaryTag = "Wrench", showModel = false },
+      equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
       anim = "VehicleWorkOnTire",
       time = 200,
 
@@ -1216,7 +1257,7 @@ return {
       require = "@Brake_All",
       globalItem = { item = "Base.NutsBolts", uses = 6, consume = true },
       conditionModifier = 0.4,
-      equip = { primaryTag = "Wrench", showModel = false },
+      equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
       anim = "VehicleWorkOnTire",
       time = 200,
 
@@ -1358,7 +1399,7 @@ return {
       require = "@SmallSuspension_All",
       globalItem = { item = "Base.NutsBolts", uses = 6, consume = true },
       conditionModifier = 0.6,
-      equip = { primaryTag = "Wrench", showModel = false },
+      equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
       anim = "VehicleWorkOnTire",
       time = 200,
 
@@ -1414,7 +1455,7 @@ return {
       require = "@Suspension_All",
       globalItem = { item = "Base.NutsBolts", uses = 8, consume = true },
       conditionModifier = 0.6,
-      equip = { primaryTag = "Wrench", showModel = false },
+      equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
       anim = "VehicleWorkOnTire",
       time = 200,
 
@@ -1475,7 +1516,7 @@ return {
       require = "@MilitarySuspension_All",
       globalItem = { item = "Base.NutsBolts", uses = 10, consume = true },
       conditionModifier = 0.6,
-      equip = { primaryTag = "Wrench", showModel = false },
+      equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
       anim = "VehicleWorkOnTire",
       time = 200,
 
@@ -1535,7 +1576,7 @@ return {
       require = "@SmallMuffler_All",
       globalItem = { item = "Base.NutsBolts", uses = 4, consume = true },
       conditionModifier = 0.8,
-      equip = { primaryTag = "Wrench", showModel = false },
+      equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
       anim = "VehicleWorkOnMid",
       time = 200,
 
@@ -1609,7 +1650,7 @@ return {
       require = "@Muffler_All",
       globalItem = { item = "Base.NutsBolts", uses = 8, consume = true },
       conditionModifier = 0.8,
-      equip = { primaryTag = "Wrench", showModel = false },
+      equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
       anim = "VehicleWorkOnMid",
       time = 200,
 
@@ -1685,7 +1726,7 @@ return {
       require = "@Window_All",
       globalItem = { item = "Base.Screws", uses = 8, consume = true },
       conditionModifier = 0.7,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -1701,7 +1742,7 @@ return {
         { item = "Base.MetalBar",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.GlassPanel",       uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.BrokenGlass",      uses = 4, skills = { Mechanics = 2 } },
@@ -1823,7 +1864,7 @@ return {
       require = "@RoofRack_All",
       globalItem = { item = "Base.NutsBolts", uses = 6, consume = true },
       conditionModifier = 0.8,
-      equip = { primaryTag = "Wrench", showModel = false },
+      equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
       anim = "VehicleWorkOnMid",
       time = 200,
 
@@ -1840,7 +1881,7 @@ return {
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Pipe",             uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 2 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 2 } },
@@ -1914,7 +1955,7 @@ return {
                   "Base.ShermanDriveSprocket2", "Base.ShermanRearSprocket2", "Base.ShermanHatch2" },
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.7,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -1927,7 +1968,7 @@ return {
         { item = "Base.LeadPipe",         uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.Pipe",             uses = 1, skills = { Mechanics = 3 } },
         { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 3 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.AluminumScrap",    uses = 8, skills = { Mechanics = 3 } },
         { item = "Base.BrassScrap",       uses = 8, skills = { Mechanics = 3 } },
@@ -1986,7 +2027,7 @@ return {
       require = "@SaddlebagsHard_All",
       globalItem = { item = "Base.Screws", uses = 4, consume = true },
       conditionModifier = 1.0,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -1996,7 +2037,7 @@ return {
         { item = "Base.SmallArmorPlate",  uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Pipe",             uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Plank",            uses = 1, skills = { Woodwork = 2, Mechanics = 2 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.Hinge",            uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.AluminumScrap",    uses = 4, skills = { Mechanics = 2 } },
@@ -2013,16 +2054,17 @@ return {
       name = "Fix SoftTops",
       require = "@SoftTops_All",
       globalItems = {
-        { tags = { "Scissors", "SharpKnife" }, consume = false },
+        { tags = { "Scissors", "SharpKnife" }, consume = false, flags = { "IsNotDull", "MayDegradeLight" } },
         { tag = "Thread", uses = 4, consume = true },
       },
       conditionModifier = 1.2,
-      equip = { primaryTag = "SewingNeedle", showModel = false },
+      equip = { primaryTag = "SewingNeedle", flags = { "MayDegradeLight" }, showModel = false },
       anim  = "SewingCloth",
       sound = "Sewing",
       time = 200,
 
       fixers = {
+        { item = "Base.Tarp",                          uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
         { item = "Base.CalfLeather_Angus_Fur_Tan",     uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
         { item = "Base.CowLeather_Angus_Fur_Tan",      uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
         { item = "Base.CalfLeather_Holstein_Fur_Tan",  uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
@@ -2035,7 +2077,6 @@ return {
         { item = "Base.Leather_Crude_Large_Tan",       uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
         { item = "Base.Leather_Crude_Medium_Tan",      uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
         { item = "Base.SheepLeather_Fur_Tan",          uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
-        { item = "Base.Tarp",                          uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
       },
     },
 
@@ -2043,11 +2084,11 @@ return {
       name = "Fix SoftTops 1",
       require = "@SoftTops_All",
       globalItems = {
-        { tags = { "Scissors", "SharpKnife" }, consume = false },
+        { tags = { "Scissors", "SharpKnife" }, consume = false, flags = { "IsNotDull", "MayDegradeLight" } },
         { tag = "Thread", uses = 3, consume = true },
       },
       conditionModifier = 0.7,
-      equip = { primaryTag = "SewingNeedle", showModel = false },
+      equip = { primaryTag = "SewingNeedle", flags = { "MayDegradeLight" }, showModel = false },
       anim  = "SewingCloth",
       sound = "Sewing",
       time = 200,
@@ -2064,6 +2105,7 @@ return {
         { item = "Base.RabbitLeather_Fur_Tan",          uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
         { item = "Base.RabbitLeather_Grey_Fur_Tan",     uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
         { item = "Base.RaccoonLeather_Grey_Fur_Tan",    uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
+        { item = "Base.FawnLeather_Fur_Tan",            uses = 1, skills = { Tailoring = 2, Mechanics = 1 } },
       },
     },
 
@@ -2112,7 +2154,7 @@ return {
       require = "@Panels_All",
       globalItem = { item = "Base.Screws", uses = 5, consume = true },
       conditionModifier = 0.6,
-      equip = { primaryTag = "Screwdriver", showModel = true },
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
       anim = "disassembleElectrical",
       time = 200,
 
@@ -2123,7 +2165,7 @@ return {
         { item = "Base.SteelBarHalf",     uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.IronBarHalf",      uses = 1, skills = { Mechanics = 2 } },
         { item = "Base.Plank",            uses = 2, skills = { Woodwork = 2, Mechanics = 2 },
-          equip = { primaryTag = "Hammer", showModel = true }, anim = "Build", invAnim = "BuildLow",
+          equip = { primaryTag = "Hammer", flags = { "MayDegradeVeryLight" }, showModel = true }, anim = "Build", invAnim = "BuildLow",
           globalItem = { item = "Base.Nails", uses = 5, consume = true, }, time = 296, },
         { item = "Base.SteelScrap",       uses = 6, skills = { Mechanics = 2 } },
         { item = "Base.ScrapMetal",       uses = 6, skills = { Mechanics = 2 } },

@@ -36,19 +36,58 @@ end
 ----------------------------------------------------------------
 -- A) Helpers
 ----------------------------------------------------------------
+-- Does this fullType exist in ScriptManager?
+local function isScriptedItem(fullType)
+  if not fullType then return false end
+  local sm = ScriptManager and ScriptManager.instance
+  if not sm then return false end
+  if sm.FindItem then return sm:FindItem(fullType) ~= nil end
+  if sm.getItem  then return sm:getItem(fullType)  ~= nil end
+  return false
+end
+
+-- Remove any fixer entries whose 'item' isn't a real scripted item.
+local function VRO_PruneMissingFixers()
+  for ri = 1, #VRO.Recipes do
+    local fixing = VRO.Recipes[ri]
+    local fxr = fixing and fixing.fixers
+    if type(fxr) == "table" and #fxr > 0 then
+      local kept = {}
+      for i = 1, #fxr do
+        local f = fxr[i]
+        -- keep only valid fixer entries
+        if f and f.item and isScriptedItem(f.item) then
+          kept[#kept + 1] = f
+        end
+      end
+      fixing.fixers = kept
+    end
+  end
+end
+
 -- Optional external recipe loader (keeps existing list; append from another file if present)
 local function _appendRecipesFrom(source)
+  local out = VRO.Recipes
+
   if type(source) == "table" then
-    if source.recipes and type(source.recipes) == "table" then
-      for _, r in ipairs(source.recipes) do table.insert(VRO.Recipes, r) end
-    elseif source[1] then
-      for _, r in ipairs(source) do table.insert(VRO.Recipes, r) end
-    elseif source.name then
-      table.insert(VRO.Recipes, source)
+    local list = source.recipes
+    if type(list) == "table" and list[1] ~= nil then
+      for i = 1, #list do
+        out[#out + 1] = list[i]
+      end
+    elseif source[1] ~= nil then
+      for i = 1, #source do
+        out[#out + 1] = source[i]
+      end
+    elseif source.name ~= nil then
+      out[#out + 1] = source
     end
+
   elseif type(source) == "function" then
     local ok, tbl = pcall(source)
-    if ok and type(tbl) == "table" then _appendRecipesFrom(tbl) end
+    if ok and type(tbl) == "table" then
+      _appendRecipesFrom(tbl)
+    end
   end
 end
 
@@ -68,14 +107,9 @@ local function VRO_LoadPartLists()
   if ok and type(mod) == "table" then
     for k,v in pairs(mod) do VRO.PartLists[k] = v end
   end
-  if _G.VRO_PartLists and type(_G.VRO_PartLists)=="table" then
-    for k,v in pairs(_G.VRO_PartLists) do VRO.PartLists[k] = v end
-  end
-  if _G.VRO_PART_LISTS and type(_G.VRO_PART_LISTS)=="table" then
-    for k,v in pairs(_G.VRO_PART_LISTS) do VRO.PartLists[k] = v end
-  end
 end
 VRO_LoadPartLists()
+VRO_PruneMissingFixers()
 
 -- Expand a single "require" entry into a set of full types.
 -- Supports:
@@ -268,19 +302,6 @@ local function findBestByTags(inv, tags, needUses)
   return nil
 end
 
-local function invHasAnyTag(inv, tags)
-  if inv.getFirstEvalRecurse then
-    local it = inv:getFirstEvalRecurse(function(item)
-      return item and item.hasTag and itemHasAnyTag(item, tags)
-    end)
-    return it ~= nil
-  end
-  for _,t in ipairs(tags) do
-    if inv:containsTag(t) then return true end
-  end
-  return false
-end
-
 local function displayNameFromFullType(fullType)
   if getItemNameFromFullType then
     local nm = getItemNameFromFullType(fullType)
@@ -392,24 +413,114 @@ local function resolveGlobalList(fixer, fixing)
   return nil
 end
 
--- True only if any declared primary/secondary (by fullType or tag) are present.
-local function equipRequirementsOK(inv, eq)
-  if not eq then return true end
-  local ok = true
+-- Keep-flag helpers (robust, no next/ipairs/pairs shadow issues)
+local function normalizeFlags(f)
+  if f == nil then return nil end
 
-  if eq.primaryTag then
-    ok = ok and hasTag(inv, eq.primaryTag)
-  elseif eq.primary then
-    ok = ok and (findFirstTypeRecurse(inv, eq.primary) ~= nil)
+  -- Quick helper: true iff table has at least one truthy value
+  local function tableHasAnyTruth(t)
+    -- iterate using the global pairs explicitly fetched once
+    local _pairs = _G.pairs or pairs
+    for _, v in _pairs(t) do
+      if v then return true end
+    end
+    return false
   end
 
-  if eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
-    ok = ok and hasTag(inv, eq.secondaryTag)
-  elseif eq.secondary and eq.secondary ~= eq.primary then
-    ok = ok and (findFirstTypeRecurse(inv, eq.secondary) ~= nil)
+  -- Case 2: array style table  e.g. { "MayDegradeLight", "IsNotDull" }
+  if type(f) == "table" and f[1] ~= nil then
+    local m = {}
+    local _ipairs = _G.ipairs or ipairs
+    for _, k in _ipairs(f) do
+      if type(k) == "string" then m[k] = true end
+    end
+    return tableHasAnyTruth(m) and m or nil
   end
 
-  return ok
+  return nil
+end
+
+local function hasFlag(flags, name)
+  return flags and flags[name] == true
+end
+
+-- Always prefer direct API; fall back to sharpness values
+local function isItemDull(it)
+  if not it then return false end
+
+  -- Preferred: direct API
+  if it.isDull then
+    local ok, res = pcall(function() return it:isDull() end)
+    if ok then return res == true end
+  end
+
+  -- Fallback: infer from sharpness values
+  local getS = it.getSharpness
+  local getM = it.getMaxSharpness
+  if getS then
+    local s = 0
+    local okS, valS = pcall(function() return it:getSharpness() end)
+    if okS then s = tonumber(valS) or 0 end
+
+    if getM then
+      local okM, maxS = pcall(function() return it:getMaxSharpness() end)
+      if okM and tonumber(maxS) and tonumber(maxS) > 0 then
+        return s <= 0
+      end
+    end
+    -- If max is unavailable, zero still means dull
+    return s <= 0
+  end
+
+  -- Items with no sharpness concept aren’t “dull”
+  return false
+end
+
+-- Always exclude dull items when picking by tags
+local function findBestByTagsNotDull(inv, tags, need)
+  local it = findBestByTags(inv, tags, need)
+  if it and not isItemDull(it) then return it end
+  -- Try tag-by-tag for the first non-dull candidate
+  for _, t in ipairs(tags) do
+    local cand = findBestByTag(inv, t, need)
+    if cand and not isItemDull(cand) then return cand end
+  end
+  return nil
+end
+
+-- For NOT-consumed globals (actual tools): only exclude dull items
+-- when the flags include IsNotDull. Final post-check guarantees correctness.
+local function _pickNonConsumedChoice(inv, gi)
+  if not gi then return nil, nil end
+  local flags = normalizeFlags(gi.flags)
+  local need  = gi.uses or 1
+  local tags  = normalizeTagsField(gi)
+  local enforceNotDull = hasFlag(flags, "IsNotDull")
+
+  local chosen = nil
+
+  if tags then
+    chosen = enforceNotDull and findBestByTagsNotDull(inv, tags, need) or findBestByTags(inv, tags, need)
+
+  elseif gi.tag then
+    chosen = findBestByTag(inv, gi.tag, need)
+    if enforceNotDull and chosen and isItemDull(chosen) then
+      chosen = nil
+    end
+
+  elseif gi.item then
+    chosen = findFirstTypeRecurse(inv, gi.item)
+    if enforceNotDull and chosen and isItemDull(chosen) then
+      chosen = nil
+    end
+  end
+
+  -- Final safety: if the flag demands it, never allow dull
+  if chosen and enforceNotDull and isItemDull(chosen) then
+    chosen = nil
+  end
+
+  return chosen, flags
 end
 
 ----------------------------------------------------------------
@@ -487,16 +598,28 @@ local function _scriptDispName(si)
 end
 
 -- Build a "One of:" block for the given tags, showing the true need amount.
--- Header color is green if the inventory has any matching item, red otherwise.
-local function _appendOneOfTagsList(desc, inv, tags, need, hasAny)
+-- Header color:
+--   GREEN  = we have at least one eligible non-dull item
+--   YELLOW = we have items but all of them are dull
+--   RED    = we have none
+-- Each line shows "(Dull)" after the "X/Y" count when applicable.
+local dullTooltip = getText("Tooltip_dull")
+local function _appendOneOfTagsList(desc, inv, tags, need, _unused_forceHeader)
   need = math.max(1, tonumber(need) or 1)
 
-  -- allow caller to pass whether we have any; otherwise detect
-  if hasAny == nil then hasAny = invHasAnyTag(inv, tags) end
-  local headerRGB = hasAny and "0,1,0" or "1,0,0"
+  local added        = {}   -- fullType -> true (avoid dupes across tags)
+  local lines        = {}
+  local anyHave      = false
+  local anyEligible  = false
 
-  local added = {}   -- fullType -> true (avoid dupes across tags)
-  local lines = {}
+  local function _disp(si)
+    local ft = _scriptFullType(si)
+    if ft and getItemNameFromFullType then
+      local nm = getItemNameFromFullType(ft)
+      if nm and nm ~= "" then return nm end
+    end
+    return _scriptDispName(si)
+  end
 
   for _, tag in ipairs(tags) do
     local arr = _getScriptsForTag(tag)
@@ -506,24 +629,33 @@ local function _appendOneOfTagsList(desc, inv, tags, need, hasAny)
         local ft = _scriptFullType(si)
         if ft and not added[ft] then
           added[ft] = true
-          local have = (countTypeRecurse(inv, ft) > 0)
-          local rgb  = have and "0,1,0" or "1,0,0"
-          local nm   = _scriptDispName(si)
+          local have = countTypeRecurse(inv, ft) > 0
+          local item = have and findFirstTypeRecurse(inv, ft) or nil
+          local dull = item and isItemDull(item) or false
+
+          anyHave     = anyHave     or have
+          anyEligible = anyEligible or (have and not dull)
+
+          local rgb = (have and (dull and "1,1,0" or "0,1,0")) or "1,0,0"
+          local name = _disp(si)
           local haveStr = (have and "1" or "0") .. "/" .. tostring(need)
-          table.insert(lines, string.format(
-            " <INDENT:20> <RGB:%s>%s %s <LINE> <INDENT:0> ", rgb, nm, haveStr))
+          local suffix  = dull and (" (" .. dullTooltip .. ")") or ""
+
+          table.insert(lines,
+            string.format(" <INDENT:20> <RGB:%s>%s %s%s <LINE> <INDENT:0> ",
+              rgb, name, haveStr, suffix))
         end
       end
     end
   end
 
   if #lines > 0 then
+    local headerRGB = anyEligible and "0,1,0" or (anyHave and "1,1,0" or "1,0,0")
     desc = desc .. string.format(" <RGB:%s>%s <LINE> ", headerRGB, getText("IGUI_CraftUI_OneOf"))
     for _, L in ipairs(lines) do desc = desc .. L end
   end
   return desc
 end
-
 
 ----------------------------------------------------------------
 -- C) Path & facing
@@ -542,10 +674,6 @@ local function interpColorTag(frac)
   local c = ColorInfo.new(0,0,0,1)
   getCore():getBadHighlitedColor():interp(getCore():getGoodHighlitedColor(), math.max(0, math.min(1, frac or 0)), c)
   return string.format("<RGB:%s,%s,%s>", c:getR(), c:getG(), c:getB())
-end
-
-local function addNeedsLine(desc, rgb, name, have, need)
-  return desc .. string.format(" <RGB:%s>%s %d/%d <LINE> ", rgb, name, have, need)
 end
 
 -- Merge helpers: fixer overrides recipe
@@ -585,7 +713,6 @@ local function resolveInvAnim(fixer, fixing)
       or resolveAnim(fixer, fixing)
 end
 
--- Replaces the existing addFixerTooltip
 local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, brokenItem)
   tip:initialise(); tip:setVisible(false)
   setTooltipIconFromFullType(tip, fixer.item)
@@ -598,34 +725,33 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   local c1 = interpColorTag((pot or 0)/100)
   local c2 = interpColorTag((success or 0)/100)
 
-  -- We’ll build 3 buckets, then concatenate in order:
-  --  1) reqLines: all “normal” lines (appear first)
-  --  2) oneOfBlocks: any “One of:” expansions (only when player lacks a multi-tag item)
-  --  3) skillLines: perk lines (always last)
+  -- Buckets we stitch together at the end
   local reqLines, oneOfBlocks, skillLines = {}, {}, {}
 
-  local function lineStr(rgb, name, have, need)
-    return string.format(" <RGB:%s>%s %d/%d <LINE> ", rgb, name, have, need)
+  -- NOTE: now supports an optional trailing suffix (e.g., "(Dull Tool)") AFTER the X/Y count.
+  local function lineStr(rgb, name, have, need, suffix)
+    local s = string.format(" <RGB:%s>%s %d/%d", rgb, name, have, need)
+    if suffix and suffix ~= "" then s = s .. " " .. suffix end
+    return s .. " <LINE> "
+  end
+  local function pushReq(rgb, name, have, need, suffix)   reqLines[#reqLines+1]    = lineStr(rgb, name, have, need, suffix) end
+  local function pushSkill(rgb, name, have, need)         skillLines[#skillLines+1] = lineStr(rgb, name, have, need) end
+  local function pushOneOfBlock(block) if block and block ~= "" then oneOfBlocks[#oneOfBlocks+1] = block end end
+
+  local YELLOW, GREEN, RED = "1,1,0", "0,1,0", "1,0,0"
+  local function rgbPresent(present, dull)
+    if not present then return RED end
+    return dull and YELLOW or GREEN
   end
 
-  local function pushReq(rgb, name, have, need)
-    reqLines[#reqLines+1] = lineStr(rgb, name, have, need)
-  end
-  local function pushSkill(rgb, name, have, need)
-    skillLines[#skillLines+1] = lineStr(rgb, name, have, need)
-  end
-  local function pushOneOfBlock(textBlock)
-    if textBlock and textBlock ~= "" then oneOfBlocks[#oneOfBlocks+1] = textBlock end
-  end
-
-  -- De-dup across globals/equip (e.g., BlowTorch both places)
-  local seenFull = {}   -- fullType set
+  -- de-dup across globals/equip
+  local seenFull = {}
   local function markSeenItemFT(ft) if ft then seenFull[ft] = true end end
   local function wasSeenFT(ft) return ft and seenFull[ft] == true end
 
   local inv = player:getInventory()
 
-  -- Helper: count total “uses” we own for a fullType, capping at need (handles drainables)
+  -- count total "uses" for a fullType (cap at need)
   local function invHaveForFullType(fullType, capTo)
     local bagged = ArrayList.new()
     inv:getAllTypeRecurse(fullType, bagged)
@@ -635,7 +761,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
       local it = bagged:get(i-1)
       local u  = drainableUses(it)
       if u > 0 then
-        if isDrainable(it) then have = have + u else have = have + 1 end
+        have = have + (isDrainable(it) and u or 1)
         if have >= cap then break end
       end
     end
@@ -648,82 +774,76 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   desc = desc .. " <LINE> " .. c2 .. " " .. getText("Tooltip_chanceSuccess") .. " " .. (success or 0) .. "%"
   desc = desc .. " <LINE> <LINE> <RGB:1,1,1> " .. getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
 
-  -- 1) Fixer item (like vanilla)
+  -- 1) Fixer item (consumed)
   do
     local need = fixer.uses or 1
     local have = invHaveForFullType(fixer.item, need)
     local nm   = displayNameFromFullType(fixer.item)
-    local rgb  = (have >= need) and "0,1,0" or "1,0,0"
-    pushReq(rgb, nm, have, need)
-    if have > 0 and (have >= need) then markSeenItemFT(fixer.item) end
+    pushReq((have >= need) and GREEN or RED, nm, have, need)
+    if have >= need then markSeenItemFT(fixer.item) end
   end
 
   -- 2) Global items (consumed or not), multi-tag aware, and de-duped
   do
     local effGlobals = resolveGlobalList(fixer, fixing)
     if effGlobals and #effGlobals > 0 then
-      for _,gi in ipairs(effGlobals) do
+      for _, gi in ipairs(effGlobals) do
         local tags = normalizeTagsField(gi)
-        -- NOT CONSUMED
-        if gi.consume == false then
-          if tags then
-            -- If any matching item exists, show a single normal line for the *chosen* item; else only the “One of:” block (no combined Scissors/SharpKnife line).
-            local chosen = findBestByTags(inv, tags, 1)
-            if chosen then
-              local nm = chosen:getDisplayName() or displayNameForTags(inv, tags)
-              pushReq("0,1,0", nm, 1, 1)
-              markSeenItemFT(chosen:getFullType())
-            else
-              local need = gi.uses or 1
-              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need))
-            end
-          elseif gi.tag then
-            local present = hasTag(inv, gi.tag)
-            if present then
-              local it  = firstTagItem(inv, gi.tag)
-              local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag)
-              pushReq("0,1,0", nm, 1, 1)
-              if it and it.getFullType then markSeenItemFT(it:getFullType()) end
-            else
-              local need = gi.uses or 1
-              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need))
-            end
-          elseif gi.item then
-            local present = countTypeRecurse(inv, gi.item) > 0
-            local nm  = displayNameFromFullType(gi.item)
-            pushReq(present and "0,1,0" or "1,0,0", nm, present and 1 or 0, 1)
-            if present then markSeenItemFT(gi.item) end
-          end
 
-        -- CONSUMED
+        if gi.consume == false then
+          -- NOT consumed (tools): pick the same item the action will actually use
+          local chosen = _pickNonConsumedChoice and select(1, _pickNonConsumedChoice(inv, gi)) or nil
+          if chosen then
+            local baseName = (chosen.getDisplayName and chosen:getDisplayName())
+                             or (tags and displayNameForTags(inv, tags))
+                             or (gi.tag and displayNameForTag(inv, gi.tag))
+                             or (gi.item and displayNameFromFullType(gi.item))
+                             or getText("IGUI_CraftUI_OneOf")
+            local isDull = isItemDull(chosen)
+            local suffix = isDull and ("(" .. dullTooltip .. ")") or nil
+            pushReq(rgbPresent(true, isDull), baseName, 1, 1, suffix)
+            markSeenItemFT(chosen.getFullType and chosen:getFullType() or nil)
+          else
+            -- Missing: only show the One-of block (let it decide header color; pass nil)
+            local need = gi.uses or 1
+            if tags then
+              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need, nil))
+            elseif gi.tag then
+              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, nil))
+            else
+              if gi.item then
+                pushReq(RED, displayNameFromFullType(gi.item), 0, 1)
+              end
+            end
+          end
         else
+          -- CONSUMED
           local need = gi.uses or 1
           if tags then
-            local it   = findBestByTags(inv, tags, need)
+            local it = findBestByTags(inv, tags, need)
             if it then
               local have = isDrainable(it) and math.min(drainableUses(it), need) or 1
-              local nm   = it:getDisplayName() or displayNameForTags(inv, tags)
-              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need)
-              if have >= need then markSeenItemFT(it:getFullType()) end
+              pushReq((have >= need) and GREEN or RED,
+                      (it.getDisplayName and it:getDisplayName()) or displayNameForTags(inv, tags),
+                      have, need)
+              if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
             else
-              -- No base “Scissors/SharpKnife 0/1” line; only the OneOf block
-              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need))
+              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need, nil))
             end
           elseif gi.tag then
-            local it   = findBestByTag(inv, gi.tag, need)
+            local it = findBestByTag(inv, gi.tag, need)
             if it then
               local have = isDrainable(it) and math.min(drainableUses(it), need) or 1
-              local nm   = it:getDisplayName() or displayNameForTag(inv, gi.tag)
-              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need)
-              if have >= need then markSeenItemFT(it:getFullType()) end
+              pushReq((have >= need) and GREEN or RED,
+                      (it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag),
+                      have, need)
+              if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
             else
-              -- keep vanilla style for single-tag
-              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need))
+              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, nil))
             end
           elseif gi.item then
             local have = invHaveForFullType(gi.item, need)
-            local nm   = displayNameFromFullType(gi.item)
-            pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need)
+            pushReq((have >= need) and GREEN or RED, displayNameFromFullType(gi.item), have, need)
             if have >= need then markSeenItemFT(gi.item) end
           end
         end
@@ -735,48 +855,42 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   do
     local eq = mergeEquip(fixer.equip, fixing.equip)
     if eq.wearTag then
-      local present = hasTag(inv, eq.wearTag)
-      if present then
-        local it  = firstTagItem(inv, eq.wearTag)
-        local nm  = (it and it.getDisplayName and it:getDisplayName()) or fallbackNameForTag(eq.wearTag)
-        pushReq("0,1,0", nm, 1, 1)
-        if it and it.getFullType then markSeenItemFT(it:getFullType()) end
+      local it = findBestByTag(inv, eq.wearTag, 1)
+      if it then
+        pushReq(GREEN, (it.getDisplayName and it:getDisplayName()) or fallbackNameForTag(eq.wearTag), 1, 1)
+        markSeenItemFT(it.getFullType and it:getFullType() or nil)
       else
-        -- keep a single “Welding Mask 0/1” + OneOf block (single tag)
-        pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1))
+        pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1, nil))
       end
     elseif eq.wear then
       local it  = findFirstTypeRecurse(inv, eq.wear)
       local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(eq.wear)
-      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1)
+      pushReq(it and GREEN or RED, nm, it and 1 or 0, 1)
       if it and it.getFullType then markSeenItemFT(it:getFullType()) end
     end
   end
 
-  -- 4) Primary / Secondary (not consumed) — skip if we already showed the same item (de-dup vs globals)
+  -- 4) Primary / Secondary (not consumed) — avoid dupes
   do
     local eq = mergeEquip(fixer.equip, fixing.equip)
 
     local function showEquipByItem(fullType)
-      if not fullType then return end
-      if wasSeenFT(fullType) then return end
+      if not fullType or wasSeenFT(fullType) then return end
       local present = countTypeRecurse(inv, fullType) > 0
       local nm  = displayNameFromFullType(fullType)
-      pushReq(present and "0,1,0" or "1,0,0", nm, present and 1 or 0, 1)
+      pushReq(present and GREEN or RED, nm, present and 1 or 0, 1)
       if present then markSeenItemFT(fullType) end
     end
 
     local function showEquipByTag(tag)
       if not tag then return end
-      -- try to resolve the chosen item for de-dup
       local it = findBestByTag(inv, tag, 1)
       if it and wasSeenFT(it:getFullType()) then return end
       if it then
-        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1)
-        markSeenItemFT(it:getFullType())
+        pushReq(GREEN, (it.getDisplayName and it:getDisplayName()) or fallbackNameForTag(tag), 1, 1)
+        markSeenItemFT(it.getFullType and it:getFullType() or nil)
       else
-        -- (optional) show OneOf for equip tags; keep your previous behavior
-        pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1))
+        pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, nil))
       end
     end
 
@@ -794,18 +908,14 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
       local ok  = lvl >= req
       local perkLabel = (getText and getText("IGUI_perks_" .. name)) or name
       if perkLabel == ("IGUI_perks_" .. name) then perkLabel = name end
-      pushSkill(ok and "0,1,0" or "1,0,0", perkLabel, lvl, req)
+      pushSkill(ok and GREEN or RED, perkLabel, lvl, req)
     end
   end
 
   -- Stitch all sections together
   desc = desc .. table.concat(reqLines)
-  if #oneOfBlocks > 0 then
-    -- Each _appendOneOfTagsList() already includes “One of:” header + lines.
-    for _,blk in ipairs(oneOfBlocks) do desc = desc .. " " .. blk end
-  end
+  for _, blk in ipairs(oneOfBlocks) do desc = desc .. " " .. blk end
   desc = desc .. table.concat(skillLines)
-
   tip.description = desc
 end
 
@@ -834,24 +944,63 @@ local function isFullTypeBlowTorch(fullType)
   return false
 end
 
--- helper to DRY up fullType/tag selection
-local function _pickByFullOrTag(inv, fullType, tag, needUses)
-  if fullType then
-    return findFirstTypeRecurse(inv, fullType)
-  elseif tag then
-    return findBestByTag(inv, tag, needUses or 1)
+-- Helper for spec selection (string | {item=} | {tag=} | {tags=} | { ... , flags = {...} })
+-- Now honors IsNotDull only when present in spec.flags.
+local function _pickFromSpec(inv, spec, needUses)
+  if not spec then return nil end
+  local flags = normalizeFlags(spec.flags)
+  local enforceNotDull = hasFlag(flags, "IsNotDull")
+  local need = needUses or 1
+
+  if spec.tags then
+    return enforceNotDull and findBestByTagsNotDull(inv, spec.tags, need) or  findBestByTags(inv,      spec.tags, need)
+
+  elseif spec.tag then
+    local it = findBestByTag(inv, spec.tag, need)
+    if enforceNotDull and it and isItemDull(it) then return nil end
+    return it
+
+  elseif spec.item then
+    local it = findFirstTypeRecurse(inv, spec.item)
+    if enforceNotDull and it and isItemDull(it) then return nil end
+    return it
   end
   return nil
 end
 
--- returns (chosenPrimary, chosenSecondary)
+-- returns (chosenPrimary, chosenSecondary, equipKeep)
 local function queueEquipActions(playerObj, eq, globalItem)
   if not eq then return end
+  local inv = playerObj:getInventory()
   local chosenPrimary, chosenSecondary = nil, nil
+  local equipKeep = {}
 
+  -- Normalize equip specs & propagate recipe-level equip.flags to the spec if needed
+  local function _toSpec(v, inheritedFlags)
+    if not v then return nil end
+    local spec = nil
+    if type(v) == "string" then
+      -- string means concrete item fullType
+      spec = { item = v }
+    elseif type(v) == "table" then
+      -- allow { item="...", flags={...} } / { tag="..." } / { tags={...} }
+      if v.item or v.tag or v.tags then
+        spec = v
+      end
+    end
+    if spec then
+      -- if the spec itself didn’t define flags, inherit from equip.flags
+      local f = normalizeFlags(spec.flags or inheritedFlags)
+      if f then spec.flags = f end
+    end
+    return spec
+  end
+
+  local pSpec = _toSpec(eq.primary or (eq.primaryTag and { tag = eq.primaryTag } or nil), eq.flags)
+  local sSpec = _toSpec(eq.secondary or (eq.secondaryTag and { tag = eq.secondaryTag } or nil), eq.flags)
+
+  -- detect torch uses from globalItem (if any) to pick a viable torch for primary when needed
   local needTorchUses = nil
-  local torchRequested = false
-
   if globalItem then
     local gTags = normalizeTagsField(globalItem)
     if (globalItem.item and isFullTypeBlowTorch(globalItem.item))
@@ -864,51 +1013,67 @@ local function queueEquipActions(playerObj, eq, globalItem)
       needTorchUses = globalItem.uses or 1
     end
   end
-  if (eq.primary and isFullTypeBlowTorch(eq.primary)) or (eq.primaryTag == "BlowTorch") then
-    torchRequested = true
-  end
 
   -- PRIMARY
   do
-    local inv = playerObj:getInventory()
-    local desiredPrimary = nil
-    if torchRequested then
-      desiredPrimary = findBestBlowtorch(inv, needTorchUses or 1)
-      if not desiredPrimary then
-        desiredPrimary = _pickByFullOrTag(inv, eq.primary, eq.primaryTag, 1)
+    local preferTorch = false
+    if pSpec then
+      -- If the desired primary is a blowtorch (by item/tag/tags), prefer a torch with enough uses
+      if (pSpec.item and isFullTypeBlowTorch(pSpec.item))
+         or (pSpec.tag == "BlowTorch")
+         or (pSpec.tags and (function()
+              for _,t in ipairs(pSpec.tags) do if t == "BlowTorch" then return true end end
+              return false
+            end)()
+         ) then
+        preferTorch = true
       end
-    else
-      desiredPrimary = _pickByFullOrTag(inv, eq.primary, eq.primaryTag, 1)
     end
 
-    if desiredPrimary then
-      chosenPrimary = desiredPrimary
-      toPlayerInventory(playerObj, desiredPrimary)
-      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, desiredPrimary, 50, true, false))
+    if preferTorch then
+      chosenPrimary = findBestBlowtorch(inv, needTorchUses or 1) or _pickFromSpec(inv, pSpec, 1, true)
+    else
+      chosenPrimary = _pickFromSpec(inv, pSpec, 1, true)
+    end
+
+    if chosenPrimary then
+      toPlayerInventory(playerObj, chosenPrimary)
+      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, chosenPrimary, 50, true, false))
+      local pf = normalizeFlags(pSpec and pSpec.flags)
+      equipKeep[#equipKeep+1] = { item = chosenPrimary, flags = pf }
     end
   end
 
   -- SECONDARY
   do
-    local inv = playerObj:getInventory()
-    local desiredSecondary = _pickByFullOrTag(inv, eq.secondary, eq.secondaryTag, 1)
-    if desiredSecondary then
-      chosenSecondary = desiredSecondary
-      toPlayerInventory(playerObj, desiredSecondary)
-      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, desiredSecondary, 50, false, false))
+    chosenSecondary = _pickFromSpec(inv, sSpec, 1, true)
+    if chosenSecondary then
+      toPlayerInventory(playerObj, chosenSecondary)
+      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, chosenSecondary, 50, false, false))
+      local sf = normalizeFlags(sSpec and sSpec.flags)
+      equipKeep[#equipKeep+1] = { item = chosenSecondary, flags = sf }
     end
   end
 
-  -- WEAR
+  -- WEAR (optional flags too, if you decide to use wear as a spec table)
   if eq.wearTag and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
-    local it = firstTagItem(playerObj:getInventory(), eq.wearTag)
+    local it = firstTagItem(inv, eq.wearTag)
     if it then toPlayerInventory(playerObj, it); ISInventoryPaneContextMenu.wearItem(it, playerObj:getPlayerNum()) end
-  elseif eq.wear and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
-    local it = findFirstTypeRecurse(playerObj:getInventory(), eq.wear)
+  elseif eq.wear and type(eq.wear) == "string" and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
+    local it = findFirstTypeRecurse(inv, eq.wear)
     if it then toPlayerInventory(playerObj, it); ISInventoryPaneContextMenu.wearItem(it, playerObj:getPlayerNum()) end
+  elseif eq.wear and type(eq.wear) == "table" then
+    -- support { item="...", flags={...} } / { tag="..." } / { tags={...} }
+    local wItem = _pickFromSpec(inv, eq.wear, 1, true)
+    if wItem and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
+      toPlayerInventory(playerObj, wItem)
+      ISInventoryPaneContextMenu.wearItem(wItem, playerObj:getPlayerNum())
+      equipKeep[#equipKeep+1] = { item = wItem, flags = normalizeFlags(eq.wear.flags) }
+    end
   end
 
-  return chosenPrimary, chosenSecondary
+  if #equipKeep == 0 then equipKeep = nil end
+  return chosenPrimary, chosenSecondary, equipKeep
 end
 
 local function findRepairParentOption(context, matcherFn)
@@ -938,16 +1103,24 @@ local function isSubmenuEmpty(parent)
   if not (parent and parent.subOption) then return true end
   local sub = parent.subOption
   local opts = sub.options
+
   if type(opts) == "table" then
-    return next(opts) == nil
+    local _pairs = _G.pairs or pairs  -- avoid shadowed globals
+    for _ in _pairs(opts) do
+      return false
+    end
+    return true
   end
+
   if opts and opts.size then
     return opts:size() == 0
   end
   return true
 end
 
--- Mechanics window: attach our rows to vanilla "Repair" submenu if present, otherwise create it.
+----------------------------------------------------------------
+-- F) Mechanics window (vanilla-style submenu; attach to existing)
+----------------------------------------------------------------
 local old_doPart = ISVehicleMechanics.doPartContextMenu
 function ISVehicleMechanics:doPartContextMenu(part, x, y)
   old_doPart(self, part, x, y)
@@ -961,7 +1134,8 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   if part:getCondition() >= 100 then return end
 
   local ft, any = broken:getFullType(), false
-  for _,fx in ipairs(VRO.Recipes) do
+  for __ri = 1, #VRO.Recipes do
+    local fx = VRO.Recipes[__ri]
     local set = resolveRequireSet(fx)
     if set[ft] then any = true; break end
   end
@@ -974,74 +1148,78 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   if not parent then parent = self.context:addOption(repairTxt, nil, nil) end
   local sub = ensureSubMenu(self.context, parent); if not sub then return end
 
-  -- Local helpers (scoped to this function only)
-  local function _normalizeGlobals(fixer, fixing)
-    local giList = (fixer and fixer.globalItems) or (fixing and fixing.globalItems)
+  -- normalize single-or-list globals to an array
+  local function _normalizeGlobals(fixr, fixg)
+    local giList = (fixr and fixr.globalItems) or (fixg and fixg.globalItems)
     if giList and type(giList) == "table" then
-      if giList[1] then return giList end
-      return { giList }
+      if giList[1] then return giList else return { giList } end
     end
-    local single = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
+    local single = (fixr and fixr.globalItem) or (fixg and fixg.globalItem)
     if single then return { single } end
     return nil
   end
 
   local function _gatherMultiGlobals(inv, list)
-    if not list then return true, nil end
+    if not list then return true, nil, nil end
     if type(list) == "table" and not list[1] and (list.item or list.tag or list.tags) then
       list = { list }
     end
-    if type(list) ~= "table" or #list == 0 then
-      return true, nil
-    end
+    if type(list) ~= "table" or #list == 0 then return true, nil, nil end
 
-    local allOK, flat = true, {}
+    local allOK, consumeFlat, keepFlat = true, {}, {}
 
     for i = 1, #list do
-      local gi = list[i]
-      if type(gi) ~= "table" then
-        allOK = false; break
-      end
-
-      local tags = normalizeTagsField(gi)
+      local gi = list[i]; if type(gi) ~= "table" then allOK = false; break end
 
       if gi.consume == false then
-        if tags then
-          if not invHasAnyTag(inv, tags) then allOK = false; break end
-        elseif gi.tag then
-          if not hasTag(inv, gi.tag) then allOK = false; break end
-        elseif gi.item then
-          if countTypeRecurse(inv, gi.item) <= 0 then allOK = false; break end
+        -- use _pickNonConsumedChoice to select the actual tool and carry flags
+        local chosen, flags = _pickNonConsumedChoice(inv, gi)
+        if chosen then
+          keepFlat[#keepFlat+1] = { item = chosen, flags = flags }
         else
           allOK = false; break
         end
       else
         local need = gi.uses or 1
+        local tags = normalizeTagsField(gi)
         if tags then
           local it = findBestByTags(inv, tags, need)
           if it and (not isDrainable(it) or drainableUses(it) >= need) then
-            flat[#flat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
-          else
-            allOK = false; break
-          end
+            consumeFlat[#consumeFlat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
+          else allOK = false; break end
         elseif gi.tag then
           local it = findBestByTag(inv, gi.tag, need)
           if it and (not isDrainable(it) or drainableUses(it) >= need) then
-            flat[#flat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
-          else
-            allOK = false; break
-          end
+            consumeFlat[#consumeFlat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
+          else allOK = false; break end
         elseif gi.item then
           local b = gatherRequiredItems(inv, gi.item, need)
-          if b then for _,entry in ipairs(b) do flat[#flat+1] = entry end
-          else allOK = false; break end
+          if b then for _,e in ipairs(b) do consumeFlat[#consumeFlat+1] = e end else allOK = false; break end
         else
           allOK = false; break
         end
       end
     end
 
-    if flat[1] then return allOK, flat else return allOK, nil end
+    if #consumeFlat == 0 then consumeFlat = nil end
+    if #keepFlat    == 0 then keepFlat    = nil end
+    return allOK, consumeFlat, keepFlat
+  end
+
+  local function _equipRequirementsOK(inv, eq)
+    if not eq then return true end
+    local ok = true
+    if eq.primaryTag then
+      ok = ok and hasTag(inv, eq.primaryTag)
+    elseif eq.primary then
+      ok = ok and (findFirstTypeRecurse(inv, eq.primary) ~= nil)
+    end
+    if eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
+      ok = ok and hasTag(inv, eq.secondaryTag)
+    elseif eq.secondary and eq.secondary ~= eq.primary then
+      ok = ok and (findFirstTypeRecurse(inv, eq.secondary) ~= nil)
+    end
+    return ok
   end
 
   local function _pickTorchGlobal(list, fallbackSingle)
@@ -1049,9 +1227,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
       for _,gi in ipairs(list) do
         local gTags = normalizeTagsField(gi)
         if gi.tag == "BlowTorch" then return gi end
-        if gTags then
-          for _,t in ipairs(gTags) do if t == "BlowTorch" then return gi end end
-        end
+        if gTags then for _,t in ipairs(gTags) do if t == "BlowTorch" then return gi end end end
         if gi.item and (gi.item == "Base.BlowTorch" or gi.item:find("BlowTorch", 1, true)) then return gi end
       end
     end
@@ -1059,49 +1235,43 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   end
 
   local rendered = false
-  for _,fixing in ipairs(VRO.Recipes) do
+  for __ri = 1, #VRO.Recipes do
+    local fixing = VRO.Recipes[__ri]
     local applies = resolveRequireSet(fixing)[ft] == true
     if applies then
-      for idx, fixer in ipairs(fixing.fixers or {}) do
-        local fxBundle = gatherRequiredItems(playerObj:getInventory(), fixer.item, fixer.uses or 1)
+      local fixers = fixing.fixers or {}
+      for idx = 1, #fixers do
+        local fixer = fixers[idx]
+        local inv = playerObj:getInventory()
+
+        local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
 
         local multiList = _normalizeGlobals(fixer, fixing)
-        local glOK, glBundle = true, nil
-
+        local glOK, glBundle, glKeep = true, nil, nil
         if multiList then
-          glOK, glBundle = _gatherMultiGlobals(playerObj:getInventory(), multiList)
+          glOK, glBundle, glKeep = _gatherMultiGlobals(inv, multiList)
         else
           local gi = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
           if gi then
-            local tags = normalizeTagsField(gi)
             if gi.consume == false then
-              if tags then
-                glOK = invHasAnyTag(playerObj:getInventory(), tags)
-              elseif gi.tag then
-                glOK = hasTag(playerObj:getInventory(), gi.tag)
-              else
-                glOK = countTypeRecurse(playerObj:getInventory(), gi.item) > 0
-              end
+              local chosen, flags = _pickNonConsumedChoice(inv, gi)
+              glOK   = chosen ~= nil
+              glKeep = chosen and { { item = chosen, flags = flags } } or nil
             else
               local need = gi.uses or 1
+              local tags = normalizeTagsField(gi)
               if tags then
-                local it = findBestByTags(playerObj:getInventory(), tags, need)
+                local it = findBestByTags(inv, tags, need)
                 if it and (not isDrainable(it) or drainableUses(it) >= need) then
                   glBundle = { { item = it, takeUses = isDrainable(it) and need or 1 } }
-                  glOK = true
-                else
-                  glOK = false
-                end
+                else glOK = false end
               elseif gi.tag then
-                local it = findBestByTag(playerObj:getInventory(), gi.tag, need)
+                local it = findBestByTag(inv, gi.tag, need)
                 if it and (not isDrainable(it) or drainableUses(it) >= need) then
                   glBundle = { { item = it, takeUses = isDrainable(it) and need or 1 } }
-                  glOK = true
-                else
-                  glOK = false
-                end
+                else glOK = false end
               else
-                glBundle = gatherRequiredItems(playerObj:getInventory(), gi.item, need)
+                glBundle = gatherRequiredItems(inv, gi.item, need)
                 glOK = (glBundle ~= nil)
               end
             end
@@ -1110,20 +1280,29 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
         local skillsOK = true
         if fixer.skills then
-          for name, req in pairs(fixer.skills) do
-            if perkLevel(playerObj, name) < req then skillsOK = false; break end
+          for name,req in pairs(fixer.skills) do
+            if perkLevel(playerObj, name) < req then skillsOK=false; break end
           end
         end
 
         local eq = mergeEquip(fixer.equip, fixing.equip)
         local wearOK = true
         if eq.wearTag then
-          wearOK = hasTag(playerObj:getInventory(), eq.wearTag)
+          wearOK = hasTag(inv, eq.wearTag)
         elseif eq.wear then
-          wearOK = (findFirstTypeRecurse(playerObj:getInventory(), eq.wear) ~= nil)
+          wearOK = (findFirstTypeRecurse(inv, eq.wear) ~= nil)
         end
 
-        local equipOK = equipRequirementsOK(playerObj:getInventory(), eq)
+        if glKeep then
+          for _,k in ipairs(glKeep) do
+            if hasFlag(k.flags, "IsNotDull") and isItemDull(k.item) then
+              glOK = false
+              break
+            end
+          end
+        end
+
+        local equipOK = _equipRequirementsOK(inv, eq)
         local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK
         local raw   = displayNameFromFullType(fixer.item)
         local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
@@ -1131,13 +1310,12 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
         local option
         if haveAll then
           rendered = true
-
           local singleFallback = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
           local torchGlobal    = _pickTorchGlobal(multiList, singleFallback)
 
-          option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB, torchHint)
+          option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
             queuePathToPartArea(p, prt)
-            local chosenP, chosenS = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint)
+            local chosenP, chosenS, equipKeep = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint)
             local tm    = resolveTime(fixr, fixg, p, brk)
             local anim  = resolveAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
@@ -1145,12 +1323,12 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
             local showM = resolveShowModel(fixr, fixg)
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
-              brokenItem=brk, fixerBundle=fxB, globalBundle=glB,
+              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
+              equipKeep=equipKeep,
               time=tm, anim=anim, sfx=sfx, successSfx=sfxOK, showModel=showM,
               expectedPrimary=chosenP, expectedSecondary=chosenS,
             })
-          end, part, fixing, fixer, idx, broken, fxBundle, glBundle, torchGlobal)
-
+          end, part, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else
           option = sub:addOption(label, nil, nil); option.notAvailable = true
         end
@@ -1168,7 +1346,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 end
 
 ----------------------------------------------------------------
--- F) Inventory repairs (vanilla-style submenu; attach to existing)
+-- G) Inventory repairs (vanilla-style submenu; attach to existing)
 ----------------------------------------------------------------
 local function resolveInvItemFromContext(items)
   if not items or #items==0 then return nil end
@@ -1192,7 +1370,7 @@ local function invRepairLabel(item)
   local nm = (getItemNameFromFullType and getItemNameFromFullType(item:getFullType()))
            or (item.getDisplayName and item:getDisplayName())
            or (item.getType and item:getType()) or "Item"
-  return getText("ContextMenu_Repair") .. nm
+  return getText("ContextMenu_Repair") .. "" .. nm
 end
 
 local function addInventoryFixOptions(playerObj, context, broken)
@@ -1200,18 +1378,22 @@ local function addInventoryFixOptions(playerObj, context, broken)
   if not isRepairableFromInventory(broken) then return end
   local ft = broken:getFullType(); if not ft then return end
 
+  -- Does any VRO recipe apply to this fullType?
   local any = false
-  for _, fx in ipairs(VRO.Recipes) do
+  for __ri = 1, #VRO.Recipes do
+    local fx = VRO.Recipes[__ri]
     local set = resolveRequireSet(fx)
     if set[ft] then any = true; break end
   end
   if not any then return end
 
+  -- Attach under vanilla's "Repair <item>" entry (or create it)
   local expectedLabel = invRepairLabel(broken)
   local parent = findRepairParentOption(context, function(n) return n == expectedLabel end)
   if not parent then parent = context:addOption(expectedLabel, nil, nil) end
   local sub = ensureSubMenu(context, parent); if not sub then return end
 
+  -- Normalize single-or-list globals to an array
   local function _normalizeGlobals(fixr, fixg)
     local giList = (fixr and fixr.globalItems) or (fixg and fixg.globalItems)
     if giList and type(giList) == "table" then
@@ -1222,52 +1404,57 @@ local function addInventoryFixOptions(playerObj, context, broken)
     return nil
   end
 
+  -- Gather globals into two bundles:
+  --   * consumeFlat (for consumed uses)
+  --   * keepFlat    (for not-consumed concrete items + flags)
   local function _gatherMultiGlobals(inv, list)
-    if not list then return true, nil end
+    if not list then return true, nil, nil end
     if type(list) == "table" and not list[1] and (list.item or list.tag or list.tags) then
       list = { list }
     end
-    if type(list) ~= "table" or #list == 0 then return true, nil end
+    if type(list) ~= "table" or #list == 0 then return true, nil, nil end
 
-    local allOK, flat = true, {}
+    local allOK, consumeFlat, keepFlat = true, {}, {}
+
     for i = 1, #list do
-      local gi = list[i]; if type(gi) ~= "table" then allOK=false; break end
-      local tags = normalizeTagsField(gi)
+      local gi = list[i]; if type(gi) ~= "table" then allOK = false; break end
 
       if gi.consume == false then
-        if tags then
-          if not invHasAnyTag(inv, tags) then allOK=false; break end
-        elseif gi.tag then
-          if not hasTag(inv, gi.tag) then allOK=false; break end
-        elseif gi.item then
-          if countTypeRecurse(inv, gi.item) <= 0 then allOK=false; break end
+        -- Use the shared chooser so de-dulling & flags are consistent everywhere
+        local chosen, flags = _pickNonConsumedChoice(inv, gi)
+        if chosen then
+          keepFlat[#keepFlat+1] = { item = chosen, flags = flags }
         else
-          allOK=false; break
+          allOK = false; break
         end
       else
         local need = gi.uses or 1
+        local tags = normalizeTagsField(gi)
         if tags then
           local it = findBestByTags(inv, tags, need)
           if it and (not isDrainable(it) or drainableUses(it) >= need) then
-            flat[#flat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
-          else allOK=false; break end
+            consumeFlat[#consumeFlat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
+          else allOK = false; break end
         elseif gi.tag then
           local it = findBestByTag(inv, gi.tag, need)
           if it and (not isDrainable(it) or drainableUses(it) >= need) then
-            flat[#flat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
-          else allOK=false; break end
+            consumeFlat[#consumeFlat+1] = { item = it, takeUses = isDrainable(it) and need or 1 }
+          else allOK = false; break end
         elseif gi.item then
           local b = gatherRequiredItems(inv, gi.item, need)
-          if b then for _,e in ipairs(b) do flat[#flat+1] = e end else allOK=false; break end
+          if b then for _,e in ipairs(b) do consumeFlat[#consumeFlat+1] = e end else allOK = false; break end
         else
-          allOK=false; break
+          allOK = false; break
         end
       end
     end
-    if #flat == 0 then flat = nil end
-    return allOK, flat
+
+    if #consumeFlat == 0 then consumeFlat = nil end
+    if #keepFlat    == 0 then keepFlat    = nil end
+    return allOK, consumeFlat, keepFlat
   end
 
+  -- Are equip (primary/secondary) requirements satisfied? (fullType or tag)
   local function _equipRequirementsOK(inv, eq)
     if not eq then return true end
     local ok = true
@@ -1284,33 +1471,46 @@ local function addInventoryFixOptions(playerObj, context, broken)
     return ok
   end
 
+  -- Pick a torch-like global entry (for equipping/anim hint)
+  local function _pickTorchGlobal(list, fallbackSingle)
+    if list then
+      for _,gi in ipairs(list) do
+        local gTags = normalizeTagsField(gi)
+        if gi.tag == "BlowTorch" then return gi end
+        if gTags then for _,t in ipairs(gTags) do if t == "BlowTorch" then return gi end end end
+        if gi.item and (gi.item == "Base.BlowTorch" or gi.item:find("BlowTorch", 1, true)) then return gi end
+      end
+    end
+    return fallbackSingle
+  end
+
   local rendered = false
-  for _, fixing in ipairs(VRO.Recipes) do
+  for __ri = 1, #VRO.Recipes do
+    local fixing = VRO.Recipes[__ri]
     local applies = resolveRequireSet(fixing)[ft] == true
     if applies then
-      for idx, fixer in ipairs(fixing.fixers or {}) do
+      local fixers = fixing.fixers or {}
+      for idx = 1, #fixers do
+        local fixer = fixers[idx]
         local inv = playerObj:getInventory()
 
-        -- fixer item bundle
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
         -- global items (list or single), multi-tag aware
         local multiList = _normalizeGlobals(fixer, fixing)
-        local glOK, glBundle = true, nil
+        local glOK, glBundle, glKeep = true, nil, nil
         if multiList then
-          glOK, glBundle = _gatherMultiGlobals(inv, multiList)
+          glOK, glBundle, glKeep = _gatherMultiGlobals(inv, multiList)
         else
+          -- single global fallback (wrap into same bundles/logic)
           local gi = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
           if gi then
-            local tags, need = normalizeTagsField(gi), (gi.uses or 1)
             if gi.consume == false then
-              if tags then
-                glOK = invHasAnyTag(inv, tags)
-              elseif gi.tag then
-                glOK = hasTag(inv, gi.tag)
-              else
-                glOK = countTypeRecurse(inv, gi.item) > 0
-              end
+              local chosen, flags = _pickNonConsumedChoice(inv, gi)
+              glOK   = chosen ~= nil
+              glKeep = chosen and { { item = chosen, flags = flags } } or nil
             else
+              local need = gi.uses or 1
+              local tags = normalizeTagsField(gi)
               if tags then
                 local it = findBestByTags(inv, tags, need)
                 if it and (not isDrainable(it) or drainableUses(it) >= need) then
@@ -1346,6 +1546,15 @@ local function addInventoryFixOptions(playerObj, context, broken)
           wearOK = (findFirstTypeRecurse(inv, eq.wear) ~= nil)
         end
 
+        if glKeep then
+          for _,k in ipairs(glKeep) do
+            if hasFlag(k.flags, "IsNotDull") and isItemDull(k.item) then
+              glOK = false
+              break
+            end
+          end
+        end
+
         local equipOK = _equipRequirementsOK(inv, eq)
         local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK
         local raw   = displayNameFromFullType(fixer.item)
@@ -1354,10 +1563,11 @@ local function addInventoryFixOptions(playerObj, context, broken)
         local option
         if haveAll then
           rendered = true
+          local singleFallback = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
+          local torchGlobal    = _pickTorchGlobal(multiList, singleFallback)
 
-          local effGlobal = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
-          option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB, gItem)
-            local chosenP, chosenS = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), gItem)
+          option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
+            local chosenP, chosenS, equipKeep = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint)
             local tm    = resolveTime(fixr, fixg, p, brk)
             local anim  = resolveInvAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
@@ -1365,11 +1575,12 @@ local function addInventoryFixOptions(playerObj, context, broken)
             local showM = resolveShowModel(fixr, fixg)
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
-              brokenItem=brk, fixerBundle=fxB, globalBundle=glB,
+              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
+              equipKeep=equipKeep,
               time=tm, anim=anim, sfx=sfx, successSfx=sfxOK, showModel=showM,
               expectedPrimary=chosenP, expectedSecondary=chosenS,
             })
-          end, fixing, fixer, idx, broken, fxBundle, glBundle, effGlobal)
+          end, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else
           option = sub:addOption(label, nil, nil); option.notAvailable = true
         end
@@ -1400,7 +1611,7 @@ if not _G.VRO_InvHooked then
 end
 
 ----------------------------------------------------------------
--- G) Public API
+-- H) Public API
 ----------------------------------------------------------------
 function VRO.addRecipe(recipe) table.insert(VRO.Recipes, recipe) end
 VRO.API = { addRecipe = VRO.addRecipe }

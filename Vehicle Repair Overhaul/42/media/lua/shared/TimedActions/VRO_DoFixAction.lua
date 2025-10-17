@@ -105,6 +105,60 @@ local function condRepairedPercent(chr, fixing, fixer, hbr, fixerIndex)
   return base
 end
 
+-- Keep-flag application (mirror vanilla)
+local function _normalizeFlags(f)
+  if not f then return nil end
+  if type(f)=="table" and not f[1] then return f end
+  local m = {}; for _,k in ipairs(f) do if type(k)=="string" then m[k]=true end end
+  return next(m) and m or nil
+end
+
+local function _perkLevel(chr, name)
+  return (perkLevel and perkLevel(chr, name)) or 0
+end
+
+local function _maintenanceMod(chr)
+  local m = _perkLevel(chr, "Maintenance")
+  local w = (chr and chr.getWeaponLevel and (chr:getWeaponLevel() or 0)) or 0
+  return m + math.floor(w/2)
+end
+
+local function _highestRelevantSkill(chr, fixing, fixer)
+  local maxv = 0
+  local tbl  = (fixer and fixer.skills) or (fixing and fixing.skills) or nil
+  if tbl then
+    for n,_ in pairs(tbl) do maxv = math.max(maxv, _perkLevel(chr, n)) end
+  end
+  return maxv
+end
+
+local function _applyKeepFlags(chr, item, flags, hiSkill)
+  if not (item and flags) then return end
+  local fl = _normalizeFlags(flags)
+  if not fl then return end
+
+  local skill = (hiSkill or 0) + _maintenanceMod(chr)
+
+  local function dmg(factor)
+    if item.damageCheck then item:damageCheck(skill, factor, false) end
+  end
+  local function sharp()
+    if item.hasSharpness and item:hasSharpness() and item.sharpnessCheck then
+      item:sharpnessCheck(skill, 1.0, false)
+    else
+      dmg(6.0)
+    end
+  end
+
+  if     fl.MayDegradeHeavy     then dmg(1.0)
+  elseif fl.MayDegrade          then dmg(2.0)
+  elseif fl.MayDegradeLight     then dmg(3.0)
+  elseif fl.MayDegradeVeryLight then dmg(6.0)
+  end
+
+  if fl.SharpnessCheck then sharp() end
+end
+
 local function defaultAnimForPart(part)
   if not part then return "VehicleWorkOnMid" end
   if part.getWheelIndex and part:getWheelIndex() ~= -1 then return "VehicleWorkOnTire" end
@@ -132,8 +186,8 @@ end
 ----------------------------------------------------------------
 -- Progress helpers: show bars on every used item
 ----------------------------------------------------------------
+-- Progress helpers: show bars on the EXACT items we actually use/keep
 local function collectProgressItems(self)
-  -- Dedup across bundles/tools/subject and extra refs we’ll resolve here.
   local list, seen = {}, {}
   local function add(it)
     if it and it.setJobDelta and not seen[it] then
@@ -146,68 +200,21 @@ local function collectProgressItems(self)
     for _,b in ipairs(bundle) do add(b.item) end
   end
 
-  -- Bundles (consumed fixer/global items)
+  -- Consumed stuff
   addBundle(self.fixerBundle)
   addBundle(self.globalBundle)
 
-  -- tools we equipped
+  -- Not-consumed items we explicitly chose for flags/damage (globals keep + equip keep)
+  if self.keepFlagTargets then
+    for _,k in ipairs(self.keepFlagTargets) do add(k.item) end
+  end
+
+  -- Hands we told the TA to show (in case they werenâ€™t in keepFlagTargets)
   add(self.expectedPrimary)
   add(self.expectedSecondary)
 
-  -- the broken loose item (inventory repair)
+  -- The loose broken item (inventory repair)
   add(self.brokenItem)
-
-  -- Also include WEAR item (recipe/fixer equip) + NON-CONSUMED globalItems
-  local inv = self.character and self.character:getInventory() or nil
-  if inv then
-    local function findByTag(tag)
-      if inv.getFirstTagRecurse then return inv:getFirstTagRecurse(tag) end
-      return nil
-    end
-    local function findByAnyTag(tags)
-      if type(tags) == "table" then
-        for _,tg in ipairs(tags) do
-          local it = findByTag(tg)
-          if it then return it end
-        end
-      elseif type(tags) == "string" then
-        return findByTag(tags)
-      end
-      return nil
-    end
-    local function findByType(ft)
-      if inv.getFirstTypeRecurse then return inv:getFirstTypeRecurse(ft) end
-      return nil
-    end
-
-    -- Merge equip (recipe defaults, then fixer overrides)
-    local eq = {}
-    if self.fixing and self.fixing.equip then for k,v in pairs(self.fixing.equip) do eq[k]=v end end
-    if self.fixer  and self.fixer.equip  then for k,v in pairs(self.fixer.equip)  do eq[k]=v end end
-    if eq.wearTag then add(findByTag(eq.wearTag)) end
-    if eq.wear    then add(findByType(eq.wear))  end
-
-    -- Non-consumed global items (support single or list, on recipe or fixer),
-    -- now with multi-tag support via gi.tags = { "TagA","TagB",... }.
-    local function pushGI(gi)
-      if gi and gi.consume == false then
-        if gi.tags then
-          add(findByAnyTag(gi.tags))
-        elseif gi.tag then
-          add(findByTag(gi.tag))
-        elseif gi.item then
-          add(findByType(gi.item))
-        end
-      end
-    end
-    if self.fixing then
-      if self.fixing.globalItems then
-        for _,gi in ipairs(self.fixing.globalItems) do pushGI(gi) end
-      end
-      if self.fixing.globalItem then pushGI(self.fixing.globalItem) end
-    end
-    if self.fixer and self.fixer.globalItem then pushGI(self.fixer.globalItem) end
-  end
 
   return list
 end
@@ -361,6 +368,13 @@ function VRO.DoFixAction:perform()
   consumeItems(self.character, self.fixerBundle)
   if self.globalBundle then consumeItems(self.character, self.globalBundle) end
 
+  local hi = _highestRelevantSkill(self.character, self.fixing, self.fixer)
+if self.keepFlagTargets then
+  for _,k in ipairs(self.keepFlagTargets) do
+    _applyKeepFlags(self.character, k.item, k.flags, hi)
+  end
+end
+
   -- Clear all progress bars
   if self._progressItems then
     for _,it in ipairs(self._progressItems) do
@@ -392,12 +406,20 @@ function VRO.DoFixAction:new(args)
   o.actionAnim   = args.anim
   o.fxSound      = args.sfx
   o.successSfx   = args.successSfx
-  o.showModel    = (args.showModel ~= false) -- default true
+  o.showModel    = (args.showModel ~= false)
   o.expectedPrimary   = args.expectedPrimary
   o.expectedSecondary = args.expectedSecondary
-  o.caloriesModifier = 4;
-  -- Job label used for the inventory progress bar text
-  o.jobType = args.jobType or buildJobType(args.part, args.brokenItem)
+  o.caloriesModifier  = 4
+  o.jobType           = args.jobType or buildJobType(args.part, args.brokenItem)
+
+  -- Fold any keep-lists (globals keep + equip keep + direct)
+  local keep = {}
+  local function append(lst) if lst then for i=1,#lst do keep[#keep+1] = lst[i] end end end
+  append(args.globalKeep)
+  append(args.equipKeep)
+  append(args.keepFlagTargets)
+  o.keepFlagTargets = (#keep > 0) and keep or nil
+
   return o
 end
 
