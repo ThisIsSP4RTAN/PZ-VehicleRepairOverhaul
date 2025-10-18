@@ -9,6 +9,46 @@ require "Vehicles/ISUI/ISVehicleMenu"
 require "luautils"
 
 local enableSalvage = ISVehicleMenu.FillMenuOutsideVehicle
+-- Cross-build tag lookup (same approach as your repairs tooltip)
+local function _getScriptsForTag(tag)
+    local sm = ScriptManager and ScriptManager.instance
+    if not sm then return nil end
+    if sm.getItemsTag then
+        return sm:getItemsTag(tag)            -- ArrayList<ScriptItem>
+    elseif sm.getAllItemsWithTag then
+        return sm:getAllItemsWithTag(tag)     -- ArrayList<ScriptItem>
+    end
+    return nil
+end
+
+-- Build a red "One of:" list for a missing tag (e.g., WeldingMask)
+local function appendOneOfForTag(desc, tag)
+    local arr = _getScriptsForTag(tag)
+
+    -- Header
+    desc = desc .. " <LINE> <RGB:1,0,0> " .. getText("IGUI_CraftUI_OneOf") .. " <LINE> "
+
+    if arr and arr.size and arr:size() > 0 then
+        for i = 1, arr:size() do
+            local si = arr:get(i-1)
+            local ft = (si.getFullName and si:getFullName())
+                    or (si:getModule():getName() .. "." .. si:getName())
+            local nm = (getItemNameFromFullType and getItemNameFromFullType(ft))
+                    or (si.getDisplayName and si:getDisplayName())
+                    or ft
+
+            desc = desc .. " <INDENT:20> <RGB:1,0,0> " .. nm .. " 0/1 <INDENT:0> "
+            if i < arr:size() then
+                desc = desc .. " <LINE> "
+            end
+        end
+    else
+        -- Fallback line if the tag has no scripts found
+        local nm = getText("ContextMenu_WeldingMask")
+        desc = desc .. " <INDENT:20> <RGB:1,0,0> " .. nm .. " 0/1 <INDENT:0> "
+    end
+    return desc
+end
 
 local function predicateBlowTorch(item)
     return (item ~= nil) and
@@ -82,32 +122,6 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
         toolTip:setName(getText("ContextMenu_SalvageVehicle"));
         toolTip.description = getText("Tooltip_SalvageVehicle") .. " <LINE> <LINE> " .. getText("Tooltip_craft_Needs") .. " : <LINE> ";
 
-        if playerObj:getPerkLevel(Perks.MetalWelding) >= MWSkill then
-            toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. getText("IGUI_perks_MetalWelding") .. " " .. MWSkillDisplay .. "/" .. 4;
-        else
-            toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. getText("IGUI_perks_MetalWelding") .. " " .. MWSkillDisplay .. "/" .. 4;
-            option.notAvailable = true;
-        end
-
-        if playerObj:getPerkLevel(Perks.Mechanics) >= MecSkill then
-            toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. getText("IGUI_perks_Mechanics") .. " " .. MecSkillDisplay .. "/" .. 3;
-        else
-            toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. getText("IGUI_perks_Mechanics") .. " " .. MecSkillDisplay .. "/" .. 3;
-            option.notAvailable = true;
-        end
-
-        local inventory = playerObj:getInventory()
-        local weldingmaskItem = inventory:getFirstTagRecurse("WeldingMask")
-        local hasMask = weldingmaskItem ~= nil
-		local displayName = weldingmaskItem and weldingmaskItem:getDisplayName() or "Welding Mask"
-
-    if hasMask then
-            toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. displayName .. " 1/1";
-        else
-            toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. displayName .. " 0/1";
-            option.notAvailable = true;
-        end
-
         local blowTorch = playerObj:getInventory():getBestTypeEvalRecurse("Base.BlowTorch", comparatorDrainableUsesInt)
         if blowTorch then
             local blowTorchUseLeft = blowTorch:getCurrentUses();
@@ -122,6 +136,33 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
             option.notAvailable = true;
         end
 
-    enableSalvage(player, context, vehicle, test)
+        local inventory = playerObj:getInventory()
+        local maskTag   = "WeldingMask"
+        local maskItem  = inventory:getFirstTagRecurse(maskTag)
 
+        if maskItem then
+            -- We have at least one valid mask; show a single green line (no "One of" list).
+            local displayName = (maskItem.getDisplayName and maskItem:getDisplayName()) or getText("ContextMenu_WeldingMask") or "Welder Mask"
+            toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. displayName .. " 1/1"
+        else
+            -- No mask: show a red "One of:" header with all valid items for the WeldingMask tag, and mark option unavailable.
+            option.notAvailable = true
+            toolTip.description = appendOneOfForTag(toolTip.description, maskTag)
+        end
+
+        if playerObj:getPerkLevel(Perks.MetalWelding) >= MWSkill then
+            toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. getText("IGUI_perks_MetalWelding") .. " " .. MWSkillDisplay .. "/" .. 4;
+        else
+            toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. getText("IGUI_perks_MetalWelding") .. " " .. MWSkillDisplay .. "/" .. 4;
+            option.notAvailable = true;
+        end
+
+        if playerObj:getPerkLevel(Perks.Mechanics) >= MecSkill then
+            toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. getText("IGUI_perks_Mechanics") .. " " .. MecSkillDisplay .. "/" .. 3;
+        else
+            toolTip.description = toolTip.description .. " <LINE> <RGB:1,0,0> " .. getText("IGUI_perks_Mechanics") .. " " .. MecSkillDisplay .. "/" .. 3;
+            option.notAvailable = true;
+        end
+
+    enableSalvage(player, context, vehicle, test)
 end

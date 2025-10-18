@@ -496,6 +496,10 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.91nissan240sxTaillightsMod3","Base.93chevyK3500rooflights2","Base.65bansheePopupLights3",
   }
 
+    VRO.PartLists.Radio_All = {
+    "Base.RadioMakeShift","Base.RadioBlack","Base.RadioRed","Base.HamRadioMakeShift","Base.HamRadio1","Base.HamRadio2",
+  }
+
   VRO.PartLists.RoofRack_All = {
     "Base.E150MysteryMachineRoofrack2","Base.93fordTaurusWagonRoofrack1","Base.63Type2VanRoofrackSmall1","Base.63Type2VanRoofrackLarge1","Base.ShubertSedanRoofRack",
     "Base.93chevySuburbanRoofrack2","Base.89volvo245WagonRoofrack1","Base.87chevySuburbanRoofrack2","Base.92amgeneralM998Roofrack","Base.89dodgeCaravanRoofrack0",

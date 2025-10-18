@@ -4,17 +4,18 @@
 -- You can put defaults on the recipe itself:
 --   require = {
 --     Base.Item1, Base.Item2
---     -- or { "@All_Hoods", Base.Item1 }    -- supports part lists and one-offs
+--     -- or { "@All_Hoods", Base.Item1 }    -- supports part lists, one-offs and part IDs (for parts with no physical item)
+--       -- (Anything listed without "@" or a module prefix is considered a part ID)
 --   }
 --
 --   equip = {
 --     -- Accepts a string fullType OR a table with item/tag(s) and optional flags
+--     -- NOTE: Flags are applied after the action (tools may degrade).
 --     -- String (no flags):  primary = "Base.BlowTorch"
---     -- Table (with flags): primary = { tag = "BlowTorch", flags = { "IsNotDull","MayDegradeLight" } }
+--     -- Table (with flags): primary = { tag = "Scissors", flags = { "IsNotDull","MayDegradeLight" } }
 --     -- Multi-tag:          secondary = { tags = { "Wrench","Ratchet" }, flags = { "MayDegrade" } }
 --     -- Wear item:          wear = { tag = "WeldingMask", flags = { "MayDegradeVeryLight" } }
 --     -- (You can still use primaryTag / secondaryTag / wearTag as shorthand if no flags are needed.)
---     -- NOTE: Flags on equip items are applied after the action (tools may degrade).
 --     primary   = "Base.BlowTorch",   -- or { item="Base.BlowTorch", flags={...} } / { tag="X", flags={...} } / { tags={...}, flags={...} }
 --     secondary = "Base.Hammer",      -- same shapes as primary
 --     wear      = "Base.WelderMask",  -- same shapes as primary
@@ -52,7 +53,7 @@
 --     "MayDegrade"           -- medium wear chance
 --     "MayDegradeLight"      -- light wear chance
 --     "MayDegradeVeryLight"  -- very light wear chance
---     "SharpnessCheck"       -- if the tool has sharpness, run a sharpness roll; if not, apply light wear
+--     "SharpnessCheck"       -- if the tool has sharpness, run a sharpness roll; if not, apply light wear (I don't really understand how this works)
 --     "IsNotDull"            -- REQUIRE a non-dull tool to be used; option is unavailable if only dull tools exist
 --
 --   Notes:
@@ -64,8 +65,8 @@
 --       if you don’t have any matching item; otherwise only the chosen item is shown.
 --
 -- EXTRA NOTE:
---   Any recipe/fixer that uses a "Build" animation should take a minimum of 37 ticks and be doubled
---   each time if you increase it. (37 x 2 x 2, etc.) Otherwise the hammering sound will not sync up.
+--   Any recipe/fixer that uses a "Build" animation has an implied hammering sound. The repair time should take a minimum of 37 ticks and 
+--   be doubled each time if you increase it. (37 x 2 x 2, etc.) Otherwise the hammering sound will trail after the animation finishes.
 ----------------------------------------------------------------
 
 
@@ -562,7 +563,7 @@ return {
 
     {
       name = "Fix Trunk Welding",
-      require = "@Trunk_All",
+      require = { "@Trunk_All", "TruckBed" },
       globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
       conditionModifier = 1.2,
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
@@ -594,7 +595,7 @@ return {
 
     {
       name = "Fix Trunk",
-      require = "@Trunk_All",
+      require = { "@Trunk_All", "TruckBed" },
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
@@ -626,7 +627,7 @@ return {
     },
 
     {
-      name = "Fix Trunk 1",
+      name = { "Fix Trunk 1", "TruckBed" },
       require = "@Trunk_All",
       globalItem = nil,
       conditionModifier = 0.3,
@@ -1804,6 +1805,29 @@ return {
         { item = "Base.ScrapMetal",       uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
         { item = "Base.SteelScrap",       uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
         { item = "Base.UnusableMetal",    uses = 10, skills = { MetalWelding = 3, Mechanics = 3 } },
+      },
+    },
+
+    {
+      name = "Fix Radio",
+      require = "@Radio_All",
+      globalItems = {
+        { item = "Base.Screws", uses = 4, consume = true },
+        { item = "Base.ElectronicsScrap", uses = 2, consume = true },
+      },
+      conditionModifier = 0.6,
+      equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
+      anim = "disassembleElectrical",
+      time = 200,
+
+      fixers = {
+        { item = "Base.RadioTransmitter", uses = 1, skills = { Electricity = 2, Mechanics = 1 } },
+        { item = "Base.RadioReceiver",    uses = 1, skills = { Electricity = 2, Mechanics = 1 } },
+        { item = "Base.Amplifier ",       uses = 1, skills = { Electricity = 2, Mechanics = 1 } },
+        { item = "Base.Wire",             uses = 2, skills = { Electricity = 2, Mechanics = 1 } },
+        { item = "Base.ElectricWire",     uses = 1, skills = { Electricity = 2, Mechanics = 1 } },
+        { item = "Base.Epoxy",            uses = 1, skills = { Electricity = 2, Mechanics = 1 } },
+        { item = "Base.Glue",             uses = 2, skills = { Electricity = 2, Mechanics = 1 } },
       },
     },
 

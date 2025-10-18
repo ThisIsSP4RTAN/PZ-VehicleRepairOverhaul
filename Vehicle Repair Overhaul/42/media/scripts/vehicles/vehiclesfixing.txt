@@ -1308,7 +1308,23 @@ module Base
         Fixer = Base.ScrapMetal=10;MetalWelding=3;Mechanics=3,
         Fixer = Base.SteelScrap=10;MetalWelding=3;Mechanics=3,
         Fixer = Base.UnusableMetal=10;MetalWelding=3;Mechanics=3,
-    }	
+    }
+
+/************************ Radio ************************/
+
+    fixing VRO Fix Radio
+    {
+        GlobalItem = Base.ElectronicsScrap=2,
+        ConditionModifier = 0.6,
+
+        Fixer = Base.RadioTransmitter=1;Electricity=2;Mechanics=1,
+        Fixer = Base.RadioReceiver=1;Electricity=2;Mechanics=1,
+        Fixer = Base.Amplifier=1;Electricity=2;Mechanics=1,
+        Fixer = Base.Wire=2;Electricity=2;Mechanics=1,
+        Fixer = Base.ElectricWire=1;Electricity=2;Mechanics=1,
+        Fixer = Base.Epoxy=1;Electricity=2;Mechanics=1,
+        Fixer = Base.Glue=2;Electricity=2;Mechanics=1,
+    }
 
 /************************ Lights ************************/
 

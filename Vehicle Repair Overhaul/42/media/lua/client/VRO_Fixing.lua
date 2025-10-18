@@ -111,6 +111,18 @@ end
 VRO_LoadPartLists()
 VRO_PruneMissingFixers()
 
+-- === Access Overrides loader ===
+VRO.AccessOverrides = VRO.AccessOverrides or {}
+local function VRO_LoadAccessOverrides()
+  local ok, mod = pcall(require, "VRO_AccessOverrides")
+  if ok and type(mod) == "table" then
+    VRO.AccessOverrides = mod
+  elseif _G.VRO_AccessOverrides and type(_G.VRO_AccessOverrides) == "table" then
+    VRO.AccessOverrides = _G.VRO_AccessOverrides
+  end
+end
+VRO_LoadAccessOverrides()
+
 -- Expand a single "require" entry into a set of full types.
 -- Supports:
 --   "Base.Something"
@@ -660,11 +672,44 @@ end
 ----------------------------------------------------------------
 -- C) Path & facing
 ----------------------------------------------------------------
+-- Resolve the area we should path to for a given part, with override support.
+local function _prettyPartId(id)
+  if not id or type(id) ~= "string" then return nil end
+  -- Convert camel-case IDs like "GloveBox" -> "Glove Box"
+  return id:gsub("(%l)(%u)", "%1 %2")
+end
+
+local function _resolveRepairAreaForPart(part)
+  -- Default to whatever the part says, else Engine
+  local area = (part and part.getArea and part:getArea()) or "Engine"
+  local veh  = part and part.getVehicle and part:getVehicle() or nil
+  if not veh then return tostring(area) end
+
+  local script   = veh.getScript and veh:getScript() or nil
+  local vFull    = script and script.getFullName and script:getFullName() or nil  -- e.g. "Base.97bushAmbulance"
+  local vName    = script and script.getName and script:getName() or nil          -- e.g. "97bushAmbulance"
+
+  local partId   = part.getId and part:getId() or nil                              -- e.g. "GloveBox"
+  local partPretty = _prettyPartId(partId)                                         -- e.g. "Glove Box"
+
+  local ov = VRO.AccessOverrides or {}
+  -- find the right vehicle bucket or the wildcard
+  local bucket = ov[vFull] or ov[vName] or ov["*"]
+  if not bucket then return tostring(area) end
+
+  -- look for exact part id, then pretty name, then wildcard
+  local forced = (partId and bucket[partId]) or (partPretty and bucket[partPretty]) or bucket["*"]
+  if forced and type(forced) == "string" and forced ~= "" then
+    area = forced
+  end
+  return tostring(area)
+end
+
 local function queuePathToPartArea(playerObj, part)
   local vehicle = part and part:getVehicle()
   if not playerObj or not vehicle then return end
-  local area = (part and part.getArea and part:getArea()) or "Engine"
-  ISTimedActionQueue.add(ISPathFindAction:pathToVehicleArea(playerObj, vehicle, tostring(area)))
+  local targetArea = _resolveRepairAreaForPart(part)
+  ISTimedActionQueue.add(ISPathFindAction:pathToVehicleArea(playerObj, vehicle, targetArea))
 end
 
 ----------------------------------------------------------------
@@ -1126,23 +1171,36 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   old_doPart(self, part, x, y)
 
   if VRO_UseVanillaFixingRecipes() then return end
-
   local playerObj = getSpecificPlayer(self.playerNum)
   if not playerObj or not part then return end
-  if not part:getItemType() or part:getItemType():isEmpty() then return end
-  local broken = part:getInventoryItem(); if not broken then return end
+
+  -- ALLOW nil itemType (e.g., TruckBed, GloveBox, etc.)
+  -- if not part:getItemType() or part:getItemType():isEmpty() then return end
+
+  local broken = part:getInventoryItem()  -- may be nil for parts with no inventory item
   if part:getCondition() >= 100 then return end
 
-  local ft, any = broken:getFullType(), false
+  -- Keys we can match against recipe 'require':
+  local ft = broken and broken.getFullType and broken:getFullType() or nil
+  local partId = part.getId and part:getId() or nil
+
+  -- Helper: does a given recipe target this item fullType OR this part ID?
+  local function recipeMatchesTarget(fixing)
+    local set = resolveRequireSet(fixing)
+    if ft and set[ft] then return true end
+    if partId and set[partId] then return true end
+    return false
+  end
+
+  -- Do we have any recipes at all that target this item or part?
+  local any = false
   for __ri = 1, #VRO.Recipes do
     local fx = VRO.Recipes[__ri]
-    local set = resolveRequireSet(fx)
-    if set[ft] then any = true; break end
+    if recipeMatchesTarget(fx) then any = true; break end
   end
   if not any then return end
 
   self.context = self.context or ISContextMenu.get(self.playerNum, x + self:getAbsoluteX(), y + self:getAbsoluteY())
-
   local repairTxt = getText("ContextMenu_Repair")
   local parent = findRepairParentOption(self.context, function(n) return n == repairTxt end)
   if not parent then parent = self.context:addOption(repairTxt, nil, nil) end
@@ -1209,6 +1267,11 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   local function _equipRequirementsOK(inv, eq)
     if not eq then return true end
     local ok = true
+    if eq.wearTag then
+      ok = ok and hasTag(inv, eq.wearTag)
+    elseif eq.wear then
+      ok = ok and (findFirstTypeRecurse(inv, eq.wear) ~= nil)
+    end
     if eq.primaryTag then
       ok = ok and hasTag(inv, eq.primaryTag)
     elseif eq.primary then
@@ -1237,17 +1300,15 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   local rendered = false
   for __ri = 1, #VRO.Recipes do
     local fixing = VRO.Recipes[__ri]
-    local applies = resolveRequireSet(fixing)[ft] == true
-    if applies then
+    if recipeMatchesTarget(fixing) then
       local fixers = fixing.fixers or {}
       for idx = 1, #fixers do
         local fixer = fixers[idx]
         local inv = playerObj:getInventory()
-
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
-
         local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle, glKeep = true, nil, nil
+
         if multiList then
           glOK, glBundle, glKeep = _gatherMultiGlobals(inv, multiList)
         else
@@ -1264,11 +1325,13 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
                 local it = findBestByTags(inv, tags, need)
                 if it and (not isDrainable(it) or drainableUses(it) >= need) then
                   glBundle = { { item = it, takeUses = isDrainable(it) and need or 1 } }
+                  glOK = true
                 else glOK = false end
               elseif gi.tag then
                 local it = findBestByTag(inv, gi.tag, need)
                 if it and (not isDrainable(it) or drainableUses(it) >= need) then
                   glBundle = { { item = it, takeUses = isDrainable(it) and need or 1 } }
+                  glOK = true
                 else glOK = false end
               else
                 glBundle = gatherRequiredItems(inv, gi.item, need)
@@ -1458,6 +1521,11 @@ local function addInventoryFixOptions(playerObj, context, broken)
   local function _equipRequirementsOK(inv, eq)
     if not eq then return true end
     local ok = true
+    if eq.wearTag then
+      ok = ok and hasTag(inv, eq.wearTag)
+    elseif eq.wear then
+      ok = ok and (findFirstTypeRecurse(inv, eq.wear) ~= nil)
+    end
     if eq.primaryTag then
       ok = ok and hasTag(inv, eq.primaryTag)
     elseif eq.primary then
@@ -1493,11 +1561,11 @@ local function addInventoryFixOptions(playerObj, context, broken)
       for idx = 1, #fixers do
         local fixer = fixers[idx]
         local inv = playerObj:getInventory()
-
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
         -- global items (list or single), multi-tag aware
         local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle, glKeep = true, nil, nil
+
         if multiList then
           glOK, glBundle, glKeep = _gatherMultiGlobals(inv, multiList)
         else

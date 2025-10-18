@@ -359,6 +359,10 @@ local function injectAllFixingRequires()
         { "@MilitaryWindow_All" }
     )
 
+    injectFixingRequire("VRO Fix Radio",
+        { "@Radio_All" }
+    )
+
     injectFixingRequire("VRO Fix Light",
         { "@Light_All" }
     )

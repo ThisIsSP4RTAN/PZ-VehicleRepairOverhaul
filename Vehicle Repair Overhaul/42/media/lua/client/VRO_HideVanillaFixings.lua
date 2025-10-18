@@ -93,6 +93,7 @@ local OURS_BY_NAME = {
     "VRO Fix Window",
     "VRO Fix Window 1",
     "VRO Fix Military Windows Welding",
+    "VRO Fix Radio",
     "VRO Fix Light",
     "VRO Fix Roof Rack Welding",
     "VRO Fix Roof Rack",
