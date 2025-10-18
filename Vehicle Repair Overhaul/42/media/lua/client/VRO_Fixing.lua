@@ -94,8 +94,8 @@ end
 local function VRO_LoadExternalRecipes()
   local ok, mod = pcall(require, "VRO_Recipes")
   if ok and mod then _appendRecipesFrom(mod) end
-  if _G.VRO_Recipes  then _appendRecipesFrom(_G.VRO_Recipes)  end
-  if _G.VRO_RECIPES  then _appendRecipesFrom(_G.VRO_RECIPES)  end
+  if _G.VRO_Recipes then _appendRecipesFrom(_G.VRO_Recipes) end
+  if _G.VRO_RECIPES then _appendRecipesFrom(_G.VRO_RECIPES) end
 end
 VRO_LoadExternalRecipes()
 
@@ -190,7 +190,7 @@ local function drainableUses(it)
   if not it then return 0 end
   if isDrainable(it) then
     if it.getDrainableUsesInt then return it:getDrainableUsesInt() end
-    if it.getCurrentUses     then return it:getCurrentUses() end
+    if it.getCurrentUses then return it:getCurrentUses() end
     if it.getUsedDelta and it.getUseDelta then
       local used, step = it:getUsedDelta(), it:getUseDelta()
       if step and step > 0 then return math.max(0, math.floor((1.0 - used) / step + 0.0001)) end
@@ -412,19 +412,6 @@ local function isRepairableFromInventory(it)
   return cur < max
 end
 
--- Normalize single/global into a list (fixer overrides recipe)
-local function resolveGlobalList(fixer, fixing)
-  -- fixer.globalItems overrides; else fixing.globalItems; else single globalItem on fixer/recipe
-  local gi = (fixer and fixer.globalItems) or (fixing and fixing.globalItems)
-  if gi and type(gi) == "table" then
-    if gi[1] then return gi end
-    return { gi }
-  end
-  local single = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
-  if single then return { single } end
-  return nil
-end
-
 -- Keep-flag helpers (robust, no next/ipairs/pairs shadow issues)
 local function normalizeFlags(f)
   if f == nil then return nil end
@@ -488,14 +475,76 @@ local function isItemDull(it)
   return false
 end
 
--- Always exclude dull items when picking by tags
-local function findBestByTagsNotDull(inv, tags, need)
-  local it = findBestByTags(inv, tags, need)
-  if it and not isItemDull(it) then return it end
-  -- Try tag-by-tag for the first non-dull candidate
+-- Return the best non-dull item that satisfies a single tag.
+-- Prefers items with enough drainable uses; otherwise the fullest non-empty.
+local function findBestByTagNotDull(inv, tag, needUses)
+  needUses = needUses or 1
+
+  -- Fast path: first match that is not dull and has enough uses (if drainable)
+  if inv.getFirstEvalRecurse then
+    local it = inv:getFirstEvalRecurse(function(item)
+      return item
+        and item.hasTag and item:hasTag(tag)
+        and not isItemDull(item)
+        and (not isDrainable(item) or drainableUses(item) >= needUses)
+    end)
+    if it then return it end
+  end
+
+  -- Best path: among non-dull matches, pick the one with most usable “uses”
+  if inv.getBestEvalRecurse then
+    local best = inv:getBestEvalRecurse(
+      function(item)
+        return item and item.hasTag and item:hasTag(tag) and not isItemDull(item)
+      end,
+      function(a, b)
+        local ua = isDrainable(a) and drainableUses(a) or 1
+        local ub = isDrainable(b) and drainableUses(b) or 1
+        return ua - ub
+      end
+    )
+    if best then return best end
+  end
+
+  -- Nothing non-dull for this tag
+  return nil
+end
+
+-- Return the best non-dull item that satisfies ANY of multiple tags.
+-- Looks across all tags as a set, then falls back to searching each tag individually.
+local function findBestByTagsNotDull(inv, tags, needUses)
+  needUses = needUses or 1
+
+  -- Fast path: first non-dull that satisfies any tag and has enough uses
+  if inv.getFirstEvalRecurse then
+    local it = inv:getFirstEvalRecurse(function(item)
+      return item
+        and item.hasTag and itemHasAnyTag(item, tags)
+        and not isItemDull(item)
+        and (not isDrainable(item) or drainableUses(item) >= needUses)
+    end)
+    if it then return it end
+  end
+
+  -- Best path: among non-dull matches for ANY tag, pick fullest
+  if inv.getBestEvalRecurse then
+    local best = inv:getBestEvalRecurse(
+      function(item)
+        return item and item.hasTag and itemHasAnyTag(item, tags) and not isItemDull(item)
+      end,
+      function(a, b)
+        local ua = isDrainable(a) and drainableUses(a) or 1
+        local ub = isDrainable(b) and drainableUses(b) or 1
+        return ua - ub
+      end
+    )
+    if best then return best end
+  end
+
+  -- Per-tag fallback: *within the same tag* keep searching for a non-dull candidate
   for _, t in ipairs(tags) do
-    local cand = findBestByTag(inv, t, need)
-    if cand and not isItemDull(cand) then return cand end
+    local it = findBestByTagNotDull(inv, t, needUses)
+    if it then return it end
   end
   return nil
 end
@@ -669,6 +718,29 @@ local function _appendOneOfTagsList(desc, inv, tags, need, _unused_forceHeader)
   return desc
 end
 
+-- Pick an inventory item that satisfies a spec { item=..., tag=..., tags={...} }
+-- Respects flags (e.g., IsNotDull).
+function VRO_PickFromSpec(inv, spec, needUses)
+  if not (inv and spec) then return nil end
+  local flags = normalizeFlags(spec.flags)
+  local need  = needUses or 1
+  local enforceNotDull = hasFlag(flags, "IsNotDull")
+
+  local chosen = nil
+  if spec.tags then
+    chosen = enforceNotDull and findBestByTagsNotDull(inv, spec.tags, need) or findBestByTags(inv, spec.tags, need)
+
+  elseif spec.tag then
+    chosen = findBestByTag(inv, spec.tag, need)
+    if enforceNotDull and chosen and isItemDull(chosen) then chosen = nil end
+
+  elseif spec.item then
+    chosen = findFirstTypeRecurse(inv, spec.item)
+    if enforceNotDull and chosen and isItemDull(chosen) then chosen = nil end
+  end
+  return chosen
+end
+
 ----------------------------------------------------------------
 -- C) Path & facing
 ----------------------------------------------------------------
@@ -772,24 +844,21 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
 
   -- Buckets we stitch together at the end
   local reqLines, oneOfBlocks, skillLines = {}, {}, {}
-
-  -- NOTE: now supports an optional trailing suffix (e.g., "(Dull Tool)") AFTER the X/Y count.
-  local function lineStr(rgb, name, have, need, suffix)
-    local s = string.format(" <RGB:%s>%s %d/%d", rgb, name, have, need)
-    if suffix and suffix ~= "" then s = s .. " " .. suffix end
-    return s .. " <LINE> "
+  local function lineStr(rgb, name, have, need, isDull)
+    local suffix = isDull and (" (" .. dullTooltip .. ")") or ""
+    return string.format(" <RGB:%s>%s %d/%d%s <LINE> ", rgb, name, have, need, suffix)
   end
-  local function pushReq(rgb, name, have, need, suffix)   reqLines[#reqLines+1]    = lineStr(rgb, name, have, need, suffix) end
-  local function pushSkill(rgb, name, have, need)         skillLines[#skillLines+1] = lineStr(rgb, name, have, need) end
-  local function pushOneOfBlock(block) if block and block ~= "" then oneOfBlocks[#oneOfBlocks+1] = block end end
-
-  local YELLOW, GREEN, RED = "1,1,0", "0,1,0", "1,0,0"
-  local function rgbPresent(present, dull)
-    if not present then return RED end
-    return dull and YELLOW or GREEN
+  local function pushReq(rgb, name, have, need, isDull)
+    reqLines[#reqLines+1] = lineStr(rgb, name, have, need, isDull)
+  end
+  local function pushSkill(rgb, name, have, need)
+    skillLines[#skillLines+1] = lineStr(rgb, name, have, need, false)
+  end
+  local function pushOneOfBlock(textBlock)
+    if textBlock and textBlock ~= "" then oneOfBlocks[#oneOfBlocks+1] = textBlock end
   end
 
-  -- de-dup across globals/equip
+  -- De-dup against items we already listed (e.g., blowtorch shown only once)
   local seenFull = {}
   local function markSeenItemFT(ft) if ft then seenFull[ft] = true end end
   local function wasSeenFT(ft) return ft and seenFull[ft] == true end
@@ -806,11 +875,35 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
       local it = bagged:get(i-1)
       local u  = drainableUses(it)
       if u > 0 then
-        have = have + (isDrainable(it) and u or 1)
+        if isDrainable(it) then have = have + u else have = have + 1 end
         if have >= cap then break end
       end
     end
     return have
+  end
+
+  -- Prefer the currently worn item if it matches a tag
+  local function getWornMatchingTag(chr, tag)
+    local worn = chr and chr:getWornItems()
+    if not worn then return nil end
+    for i = 0, worn:size()-1 do
+      local wi = worn:get(i)
+      local it = wi and wi:getItem() or nil
+      if it and it.hasTag and it:hasTag(tag) then return it end
+    end
+    return nil
+  end
+
+  -- Prefer current hand item if it satisfies a tag/fullType (primary or secondary)
+  local function preferHandForTag(chr, tag, which) -- which = "primary"|"secondary"
+    local cur = (which == "primary") and chr:getPrimaryHandItem() or chr:getSecondaryHandItem()
+    if cur and cur.hasTag and cur:hasTag(tag) then return cur end
+    return nil
+  end
+  local function preferHandForItem(chr, fullType, which)
+    local cur = (which == "primary") and chr:getPrimaryHandItem() or chr:getSecondaryHandItem()
+    if cur and cur.getFullType and cur:getFullType() == fullType then return cur end
+    return nil
   end
 
   -- Header
@@ -824,71 +917,70 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     local need = fixer.uses or 1
     local have = invHaveForFullType(fixer.item, need)
     local nm   = displayNameFromFullType(fixer.item)
-    pushReq((have >= need) and GREEN or RED, nm, have, need)
+    local rgb  = (have >= need) and "0,1,0" or "1,0,0"
+    pushReq(rgb, nm, have, need, false)
     if have >= need then markSeenItemFT(fixer.item) end
   end
 
-  -- 2) Global items (consumed or not), multi-tag aware, and de-duped
+  -- 2) Global items (respect non-consumed tags + flags via _pickNonConsumedChoice)
   do
-    local effGlobals = resolveGlobalList(fixer, fixing)
-    if effGlobals and #effGlobals > 0 then
-      for _, gi in ipairs(effGlobals) do
+    -- Support recipe- or fixer-level single/multi globals; defer to helper used by menus
+    local function _normalizeGlobals(fixr, fixg)
+      local giList = (fixr and fixr.globalItems) or (fixg and fixg.globalItems)
+      if giList and type(giList) == "table" then
+        if giList[1] then return giList else return { giList } end
+      end
+      local single = (fixr and fixr.globalItem) or (fixg and fixg.globalItem)
+      if single then return { single } end
+      return nil
+    end
+
+    local effList = _normalizeGlobals(fixer, fixing)
+    if effList and type(effList) == "table" then
+      for i = 1, #effList do
+        local gi   = effList[i]
         local tags = normalizeTagsField(gi)
+        local need = gi.uses or 1
 
         if gi.consume == false then
-          -- NOT consumed (tools): pick the same item the action will actually use
-          local chosen = _pickNonConsumedChoice and select(1, _pickNonConsumedChoice(inv, gi)) or nil
+          -- Choose exactly what the action would choose (handles IsNotDull / SharpnessCheck)
+          local chosen = _pickNonConsumedChoice(inv, gi)
           if chosen then
-            local baseName = (chosen.getDisplayName and chosen:getDisplayName())
-                             or (tags and displayNameForTags(inv, tags))
-                             or (gi.tag and displayNameForTag(inv, gi.tag))
-                             or (gi.item and displayNameFromFullType(gi.item))
-                             or getText("IGUI_CraftUI_OneOf")
-            local isDull = isItemDull(chosen)
-            local suffix = isDull and ("(" .. dullTooltip .. ")") or nil
-            pushReq(rgbPresent(true, isDull), baseName, 1, 1, suffix)
+            local nm = (chosen.getDisplayName and chosen:getDisplayName())
+                       or (tags and displayNameForTags(inv, tags))
+                       or (gi.tag and displayNameForTag(inv, gi.tag))
+                       or (gi.item and displayNameFromFullType(gi.item))
+                       or getText("IGUI_CraftUI_OneOf")
+            pushReq("0,1,0", nm, 1, 1, isItemDull(chosen) or false)
             markSeenItemFT(chosen.getFullType and chosen:getFullType() or nil)
           else
             -- Missing: only show the One-of block (let it decide header color; pass nil)
-            local need = gi.uses or 1
             if tags then
-              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need, nil))
+              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need, false))
             elseif gi.tag then
-              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, nil))
-            else
-              if gi.item then
-                pushReq(RED, displayNameFromFullType(gi.item), 0, 1)
-              end
+              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, false))
+            elseif gi.item then
+              pushReq("1,0,0", displayNameFromFullType(gi.item), 0, 1, false)
             end
           end
         else
-          -- CONSUMED
-          local need = gi.uses or 1
+          -- Consumed requirement
           if tags then
-            local it = findBestByTags(inv, tags, need)
-            if it then
-              local have = isDrainable(it) and math.min(drainableUses(it), need) or 1
-              pushReq((have >= need) and GREEN or RED,
-                      (it.getDisplayName and it:getDisplayName()) or displayNameForTags(inv, tags),
-                      have, need)
-              if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
-            else
-              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need, nil))
-            end
+            local it   = findBestByTags(inv, tags, need)
+            local have = it and (isDrainable(it) and math.min(drainableUses(it), need) or 1) or 0
+            local nm   = (it and it.getDisplayName and it:getDisplayName()) or displayNameForTags(inv, tags)
+            pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, it and isItemDull(it))
+            if have >= need and it and it.getFullType then markSeenItemFT(it:getFullType()) end
           elseif gi.tag then
-            local it = findBestByTag(inv, gi.tag, need)
-            if it then
-              local have = isDrainable(it) and math.min(drainableUses(it), need) or 1
-              pushReq((have >= need) and GREEN or RED,
-                      (it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag),
-                      have, need)
-              if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
-            else
-              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, nil))
-            end
+            local it   = findBestByTag(inv, gi.tag, need)
+            local have = it and (isDrainable(it) and math.min(drainableUses(it), need) or 1) or 0
+            local nm   = (it and it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag)
+            pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, it and isItemDull(it))
+            if have >= need and it and it.getFullType then markSeenItemFT(it:getFullType()) end
           elseif gi.item then
             local have = invHaveForFullType(gi.item, need)
-            pushReq((have >= need) and GREEN or RED, displayNameFromFullType(gi.item), have, need)
+            local nm   = displayNameFromFullType(gi.item)
+            pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, false)
             if have >= need then markSeenItemFT(gi.item) end
           end
         end
@@ -896,64 +988,106 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     end
   end
 
-  -- 3) Wear requirement (not consumed); for multi-tag wear only show OneOf block when missing
+  -- 3) Wear requirement — prefer already-worn items that satisfy the spec
   do
     local eq = mergeEquip(fixer.equip, fixing.equip)
     if eq.wearTag then
-      local it = findBestByTag(inv, eq.wearTag, 1)
-      if it then
-        pushReq(GREEN, (it.getDisplayName and it:getDisplayName()) or fallbackNameForTag(eq.wearTag), 1, 1)
-        markSeenItemFT(it.getFullType and it:getFullType() or nil)
+      local worn = getWornMatchingTag(player, eq.wearTag)
+      if worn then
+        local nm = worn:getDisplayName() or fallbackNameForTag(eq.wearTag)
+        pushReq("0,1,0", nm, 1, 1, false)
+        markSeenItemFT(worn.getFullType and worn:getFullType() or nil)
       else
-        pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1, nil))
+        -- not worn: show present from inventory if any, else OneOf block only
+        local it = findBestByTag(inv, eq.wearTag, 1)
+        if it then
+          pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(eq.wearTag), 1, 1, isItemDull(it))
+          markSeenItemFT(it.getFullType and it:getFullType() or nil)
+        else
+          pushReq("1,0,0", fallbackNameForTag(eq.wearTag), 0, 1, false)
+          pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1, false))
+        end
       end
     elseif eq.wear then
-      local it  = findFirstTypeRecurse(inv, eq.wear)
-      local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(eq.wear)
-      pushReq(it and GREEN or RED, nm, it and 1 or 0, 1)
+      -- specific wearable by fullType
+      local worn = getWornMatchingTag(player, displayNameFromFullType(eq.wear)) -- unlikely; keep inventory check
+      local it   = worn or findFirstTypeRecurse(inv, eq.wear)
+      local nm   = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(eq.wear)
+      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and isItemDull(it))
       if it and it.getFullType then markSeenItemFT(it:getFullType()) end
     end
   end
 
-  -- 4) Primary / Secondary (not consumed) — avoid dupes
+  -- 4) Primary / Secondary — prefer current hands when they satisfy the spec
   do
     local eq = mergeEquip(fixer.equip, fixing.equip)
 
-    local function showEquipByItem(fullType)
-      if not fullType or wasSeenFT(fullType) then return end
-      local present = countTypeRecurse(inv, fullType) > 0
-      local nm  = displayNameFromFullType(fullType)
-      pushReq(present and GREEN or RED, nm, present and 1 or 0, 1)
-      if present then markSeenItemFT(fullType) end
+    local function showPrimaryByItem(fullType)
+      if not fullType then return end
+      if wasSeenFT(fullType) then return end
+      local cur = preferHandForItem(player, fullType, "primary")
+      local it  = cur or findFirstTypeRecurse(inv, fullType)
+      local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(fullType)
+      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and isItemDull(it))
+      if it and it.getFullType then markSeenItemFT(it:getFullType()) end
     end
 
-    local function showEquipByTag(tag)
+    local function showPrimaryByTag(tag)
       if not tag then return end
-      local it = findBestByTag(inv, tag, 1)
+      local cur = preferHandForTag(player, tag, "primary")
+      local it  = cur or findBestByTag(inv, tag, 1)
       if it and wasSeenFT(it:getFullType()) then return end
       if it then
-        pushReq(GREEN, (it.getDisplayName and it:getDisplayName()) or fallbackNameForTag(tag), 1, 1)
-        markSeenItemFT(it.getFullType and it:getFullType() or nil)
+        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, isItemDull(it))
+        markSeenItemFT(it:getFullType())
       else
-        pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, nil))
+        pushReq("1,0,0", fallbackNameForTag(tag), 0, 1, false)
+        pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
       end
     end
 
-    if eq.primary   then showEquipByItem(eq.primary)
-    elseif eq.primaryTag then showEquipByTag(eq.primaryTag) end
+    local function showSecondaryByItem(fullType)
+      if not fullType then return end
+      if wasSeenFT(fullType) then return end
+      local cur = preferHandForItem(player, fullType, "secondary")
+      local it  = cur or findFirstTypeRecurse(inv, fullType)
+      local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(fullType)
+      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and isItemDull(it))
+      if it and it.getFullType then markSeenItemFT(it:getFullType()) end
+    end
 
-    if eq.secondary and eq.secondary ~= eq.primary then showEquipByItem(eq.secondary)
-    elseif eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then showEquipByTag(eq.secondaryTag) end
+    local function showSecondaryByTag(tag)
+      if not tag then return end
+      local cur = preferHandForTag(player, tag, "secondary")
+      local it  = cur or findBestByTag(inv, tag, 1)
+      if it and wasSeenFT(it:getFullType()) then return end
+      if it then
+        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, isItemDull(it))
+        markSeenItemFT(it:getFullType())
+      else
+        pushReq("1,0,0", fallbackNameForTag(tag), 0, 1, false)
+        pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
+      end
+    end
+
+    if eq.primary then showPrimaryByItem(eq.primary)
+    elseif eq.primaryTag then showPrimaryByTag(eq.primaryTag) end
+
+    if eq.secondary and eq.secondary ~= eq.primary then
+      showSecondaryByItem(eq.secondary)
+    elseif eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
+      showSecondaryByTag(eq.secondaryTag)
+    end
   end
 
   -- 5) Skills (always last)
   if fixer.skills then
-    for name,req in pairs(fixer.skills) do
+    for name, req in pairs(fixer.skills) do
       local lvl = perkLevel(player, name)
       local ok  = lvl >= req
       local perkLabel = (getText and getText("IGUI_perks_" .. name)) or name
       if perkLabel == ("IGUI_perks_" .. name) then perkLabel = name end
-      pushSkill(ok and GREEN or RED, perkLabel, lvl, req)
+      pushSkill(ok and "0,1,0" or "1,0,0", perkLabel, lvl, req)
     end
   end
 
@@ -989,49 +1123,32 @@ local function isFullTypeBlowTorch(fullType)
   return false
 end
 
--- Helper for spec selection (string | {item=} | {tag=} | {tags=} | { ... , flags = {...} })
--- Now honors IsNotDull only when present in spec.flags.
-local function _pickFromSpec(inv, spec, needUses)
-  if not spec then return nil end
-  local flags = normalizeFlags(spec.flags)
-  local enforceNotDull = hasFlag(flags, "IsNotDull")
-  local need = needUses or 1
-
-  if spec.tags then
-    return enforceNotDull and findBestByTagsNotDull(inv, spec.tags, need) or  findBestByTags(inv,      spec.tags, need)
-
-  elseif spec.tag then
-    local it = findBestByTag(inv, spec.tag, need)
-    if enforceNotDull and it and isItemDull(it) then return nil end
-    return it
-
-  elseif spec.item then
-    local it = findFirstTypeRecurse(inv, spec.item)
-    if enforceNotDull and it and isItemDull(it) then return nil end
-    return it
-  end
-  return nil
-end
-
 -- returns (chosenPrimary, chosenSecondary, equipKeep)
 local function queueEquipActions(playerObj, eq, globalItem)
   if not eq then return end
   local inv = playerObj:getInventory()
-  local chosenPrimary, chosenSecondary = nil, nil
   local equipKeep = {}
 
-  -- Normalize equip specs & propagate recipe-level equip.flags to the spec if needed
+  -- Move an item into the player inventory if needed
+  local function _ensureInPlayerInv(it)
+    if not it then return end
+    if it:getContainer() ~= inv then
+      toPlayerInventory(playerObj, it)
+    end
+  end
+
+  -- Normalize a spec into { item=..., tag=..., tags={...}, flags=... }
   local function _toSpec(v, inheritedFlags)
     if not v then return nil end
     local spec = nil
     if type(v) == "string" then
       -- string means concrete item fullType
       spec = { item = v }
-    elseif type(v) == "table" then
-      -- allow { item="...", flags={...} } / { tag="..." } / { tags={...} }
-      if v.item or v.tag or v.tags then
-        spec = v
-      end
+    elseif type(v) == "table" and (v.item or v.tag or v.tags) then
+      spec = v
+    elseif type(v) == "table" and v.tag == nil and v.tags == nil and v.item == nil then
+      -- allow equip = { primary = { tag="...", flags={...} }, flags={...} }
+      spec = v
     end
     if spec then
       -- if the spec itself didn’t define flags, inherit from equip.flags
@@ -1041,79 +1158,150 @@ local function queueEquipActions(playerObj, eq, globalItem)
     return spec
   end
 
+  local function _specIsTorch(spec)
+    if not spec then return false end
+    if spec.item and isFullTypeBlowTorch(spec.item) then return true end
+    if spec.tag  and spec.tag == "BlowTorch" then return true end
+    if spec.tags then
+      for _,t in ipairs(spec.tags) do if t == "BlowTorch" then return true end end
+    end
+    return false
+  end
+
+  -- Normalize specs and inherit eq.flags
   local pSpec = _toSpec(eq.primary or (eq.primaryTag and { tag = eq.primaryTag } or nil), eq.flags)
   local sSpec = _toSpec(eq.secondary or (eq.secondaryTag and { tag = eq.secondaryTag } or nil), eq.flags)
 
-  -- detect torch uses from globalItem (if any) to pick a viable torch for primary when needed
+  -- Wear can be string, tag, or a full spec table
+  local wSpec = nil
+  if type(eq.wear) == "table" then
+    wSpec = _toSpec(eq.wear, eq.flags)
+  elseif type(eq.wear) == "string" then
+    wSpec = _toSpec({ item = eq.wear }, eq.flags)
+  elseif eq.wearTag then
+    wSpec = _toSpec({ tag = eq.wearTag }, eq.flags)
+  end
+
+  -- Torch uses hint from globals (so we pick a torch with enough fuel)
   local needTorchUses = nil
-  if globalItem then
-    local gTags = normalizeTagsField(globalItem)
-    if (globalItem.item and isFullTypeBlowTorch(globalItem.item))
-       or (globalItem.tag == "BlowTorch")
-       or (gTags and (function()
-            for _,t in ipairs(gTags) do if t == "BlowTorch" then return true end end
-            return false
-          end)())
-    then
-      needTorchUses = globalItem.uses or 1
+  do
+    local gi = globalItem
+    if gi then
+      local gTags = normalizeTagsField(gi)
+      local isTorch =
+        (gi.item and isFullTypeBlowTorch(gi.item)) or
+        (gi.tag == "BlowTorch") or
+        (gTags and (function() for _,t in ipairs(gTags) do if t == "BlowTorch" then return true end end return false end)())
+      if isTorch then needTorchUses = gi.uses or 1 end
     end
   end
 
+  -- Helper: does an equipped item satisfy a spec?
+  local function _equippedSatisfies(it, spec)
+    if not (it and spec) then return false end
+    local flags = normalizeFlags(spec.flags)
+    if hasFlag(flags, "IsNotDull") and isItemDull(it) then return false end
+    if spec.item then
+      return it.getFullType and it:getFullType() == spec.item
+    elseif spec.tag then
+      return it.hasTag and it:hasTag(spec.tag)
+    elseif spec.tags then
+      return it.hasTag and itemHasAnyTag(it, spec.tags)
+    end
+    return false
+  end
+
+  ----------------------------------------------------------------
   -- PRIMARY
-  do
-    local preferTorch = false
-    if pSpec then
-      -- If the desired primary is a blowtorch (by item/tag/tags), prefer a torch with enough uses
-      if (pSpec.item and isFullTypeBlowTorch(pSpec.item))
-         or (pSpec.tag == "BlowTorch")
-         or (pSpec.tags and (function()
-              for _,t in ipairs(pSpec.tags) do if t == "BlowTorch" then return true end end
-              return false
-            end)()
-         ) then
-        preferTorch = true
-      end
+  ----------------------------------------------------------------
+  local chosenPrimary = nil
+  if pSpec then
+    local curP = playerObj:getPrimaryHandItem()
+    local preferTorch = _specIsTorch(pSpec)
+
+    if curP and _equippedSatisfies(curP, pSpec) then
+      chosenPrimary = curP
+    elseif preferTorch then
+      chosenPrimary = findBestBlowtorch(inv, needTorchUses or 1) or VRO_PickFromSpec(inv, pSpec, 1)
+    else
+      chosenPrimary = VRO_PickFromSpec(inv, pSpec, 1)
     end
 
-    if preferTorch then
-      chosenPrimary = findBestBlowtorch(inv, needTorchUses or 1) or _pickFromSpec(inv, pSpec, 1, true)
-    else
-      chosenPrimary = _pickFromSpec(inv, pSpec, 1, true)
+    if chosenPrimary and chosenPrimary ~= curP then
+      _ensureInPlayerInv(chosenPrimary)
+      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, chosenPrimary, 50, true, false))
     end
 
     if chosenPrimary then
-      toPlayerInventory(playerObj, chosenPrimary)
-      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, chosenPrimary, 50, true, false))
-      local pf = normalizeFlags(pSpec and pSpec.flags)
-      equipKeep[#equipKeep+1] = { item = chosenPrimary, flags = pf }
+      equipKeep[#equipKeep+1] = { item = chosenPrimary, flags = normalizeFlags(pSpec.flags) }
     end
   end
 
-  -- SECONDARY
-  do
-    chosenSecondary = _pickFromSpec(inv, sSpec, 1, true)
-    if chosenSecondary then
-      toPlayerInventory(playerObj, chosenSecondary)
+  ----------------------------------------------------------------
+  -- SECONDARY (avoid reusing same object as primary)
+  ----------------------------------------------------------------
+  local chosenSecondary = nil
+  if sSpec then
+    local curS = playerObj:getSecondaryHandItem()
+    local function _sameAsPrimary(it) return chosenPrimary and it and it == chosenPrimary end
+
+    if curS and _equippedSatisfies(curS, sSpec) and not _sameAsPrimary(curS) then
+      chosenSecondary = curS
+    else
+      chosenSecondary = VRO_PickFromSpec(inv, sSpec, 1)
+      if _sameAsPrimary(chosenSecondary) then
+        -- try to find an alternate satisfying item that isn’t the primary
+        chosenSecondary = nil
+        if sSpec.tag then
+          local alt = inv:getFirstEvalRecurse(function(item)
+            return item and item ~= chosenPrimary and item.hasTag and item:hasTag(sSpec.tag)
+          end)
+          chosenSecondary = alt
+        elseif sSpec.item then
+          local bundle = gatherRequiredItems(inv, sSpec.item, 2)
+          if bundle and #bundle >= 2 then chosenSecondary = bundle[2].item end
+        elseif sSpec.tags then
+          local alt = inv:getFirstEvalRecurse(function(item)
+            return item and item ~= chosenPrimary and itemHasAnyTag(item, sSpec.tags)
+          end)
+          chosenSecondary = alt
+        end
+      end
+    end
+
+    if chosenSecondary and chosenSecondary ~= curS then
+      _ensureInPlayerInv(chosenSecondary)
       ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, chosenSecondary, 50, false, false))
-      local sf = normalizeFlags(sSpec and sSpec.flags)
-      equipKeep[#equipKeep+1] = { item = chosenSecondary, flags = sf }
+    end
+
+    if chosenSecondary then
+      equipKeep[#equipKeep+1] = { item = chosenSecondary, flags = normalizeFlags(sSpec.flags) }
     end
   end
 
-  -- WEAR (optional flags too, if you decide to use wear as a spec table)
-  if eq.wearTag and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
-    local it = firstTagItem(inv, eq.wearTag)
-    if it then toPlayerInventory(playerObj, it); ISInventoryPaneContextMenu.wearItem(it, playerObj:getPlayerNum()) end
-  elseif eq.wear and type(eq.wear) == "string" and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
-    local it = findFirstTypeRecurse(inv, eq.wear)
-    if it then toPlayerInventory(playerObj, it); ISInventoryPaneContextMenu.wearItem(it, playerObj:getPlayerNum()) end
-  elseif eq.wear and type(eq.wear) == "table" then
-    -- support { item="...", flags={...} } / { tag="..." } / { tags={...} }
-    local wItem = _pickFromSpec(inv, eq.wear, 1, true)
-    if wItem and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
-      toPlayerInventory(playerObj, wItem)
-      ISInventoryPaneContextMenu.wearItem(wItem, playerObj:getPlayerNum())
-      equipKeep[#equipKeep+1] = { item = wItem, flags = normalizeFlags(eq.wear.flags) }
+  ----------------------------------------------------------------
+  -- WEAR (prefer already-worn if it satisfies)
+  ----------------------------------------------------------------
+  if wSpec then
+    local worn = (function(chr, spec)
+      local wornList = chr:getWornItems(); if not wornList then return nil end
+      for i = 0, wornList:size()-1 do
+        local wi = wornList:get(i)
+        local wItem = wi and wi:getItem() or nil
+        if _equippedSatisfies(wItem, spec) then return wItem end
+      end
+      return nil
+    end)(playerObj, wSpec)
+
+    if worn then
+      equipKeep[#equipKeep+1] = { item = worn, flags = normalizeFlags(wSpec.flags) }
+    else
+      local wItem = VRO_PickFromSpec(inv, wSpec, 1)
+      if wItem and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
+        _ensureInPlayerInv(wItem)
+        ISInventoryPaneContextMenu.wearItem(wItem, playerObj:getPlayerNum())
+        equipKeep[#equipKeep+1] = { item = wItem, flags = normalizeFlags(wSpec.flags) }
+      end
     end
   end
 
