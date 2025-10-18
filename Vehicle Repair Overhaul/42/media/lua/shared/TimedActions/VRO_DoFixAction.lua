@@ -59,6 +59,17 @@ local function setHBR(part, invItem, val)
   if part then part:getModData().VRO_HaveBeenRepaired = val end
 end
 
+-- Returns true only if the part has a real inventory item with a module-qualified full type
+-- (e.g., "Base.Something"). Parts like TruckBed (no item) will return false.
+local function _partHasModuleItem(part)
+  if not part then return false end
+  if not (part.getInventoryItem and part:getInventoryItem()) then return false end
+  local inv = part:getInventoryItem()
+  local ft  = inv and inv.getFullType and inv:getFullType() or nil
+  -- Must contain a '.' to be a module-qualified type (e.g., "Base.Foo")
+  return (ft ~= nil) and (string.find(ft, ".", 1, true) ~= nil)
+end
+
 -- Perk helpers + repair math
 local function resolvePerk(perkName)
   if Perks then
@@ -334,7 +345,16 @@ function VRO.DoFixAction:perform()
       broken:syncItemFields()
     end
 
+    -- >>> HBR RECORDING RULES <<<
+    -- * Loose inventory repairs always record HBR on the item.
+    -- * Installed parts only record HBR when they have a real inventory item with a module-qualified full type.
+    -- local shouldRecordHBR =
+    --   (broken ~= nil) or
+    --   (part ~= nil and _partHasModuleItem(part))
+
+    -- if shouldRecordHBR then
     setHBR(part, broken, hbr + 1)
+    -- end
 
     if self._soundHandle then
       self.character:getEmitter():stopSound(self._soundHandle)
@@ -365,15 +385,15 @@ function VRO.DoFixAction:perform()
     self.character:getEmitter():playSound("FixingItemFailed")
   end
 
-  consumeItems(self.character, self.fixerBundle)
+  if self.fixerBundle then consumeItems(self.character, self.fixerBundle) end
   if self.globalBundle then consumeItems(self.character, self.globalBundle) end
 
   local hi = _highestRelevantSkill(self.character, self.fixing, self.fixer)
-if self.keepFlagTargets then
-  for _,k in ipairs(self.keepFlagTargets) do
-    _applyKeepFlags(self.character, k.item, k.flags, hi)
+  if self.keepFlagTargets then
+    for _,k in ipairs(self.keepFlagTargets) do
+      _applyKeepFlags(self.character, k.item, k.flags, hi)
+    end
   end
-end
 
   -- Clear all progress bars
   if self._progressItems then

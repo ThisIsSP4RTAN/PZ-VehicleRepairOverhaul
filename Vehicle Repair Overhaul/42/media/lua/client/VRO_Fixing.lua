@@ -397,7 +397,6 @@ local function normalizeFlags(f)
     return false
   end
 
-  -- Case 2: array style table  e.g. { "MayDegradeLight", "IsNotDull" }
   if type(f) == "table" and f[1] ~= nil then
     local m = {}
     local _ipairs = _G.ipairs or ipairs

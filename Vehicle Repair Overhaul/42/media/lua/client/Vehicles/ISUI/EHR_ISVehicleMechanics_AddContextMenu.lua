@@ -2,6 +2,38 @@ require "Vehicles/ISUI/ISVehicleMechanics"
 
 local old_ISVehicleMechanics_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
 
+-- Prefer an already-worn item that matches a tag (e.g., WeldingMask)
+local function getWornMatchingTag(chr, tag)
+    local worn = chr and chr:getWornItems()
+    if not worn then return nil end
+    for i = 0, worn:size()-1 do
+        local wi = worn:get(i)
+        local it = wi and wi:getItem() or nil
+        if it and it.hasTag and it:hasTag(tag) then return it end
+    end
+    return nil
+end
+
+-- Build a red "One of:" list for a single tag when none are present
+local function appendOneOfForTag(desc, tag)
+    local sm = ScriptManager and ScriptManager.instance
+    local arr = sm and (sm.getItemsTag and sm:getItemsTag(tag) or sm.getAllItemsWithTag and sm:getAllItemsWithTag(tag))
+    if not (arr and arr.size and arr:size() > 0) then
+        return desc .. string.format(" <RGB:1,0,0>%s 0/1 <LINE>", tag)
+    end
+    desc = desc .. string.format(" <RGB:1,0,0>%s <LINE>", getText("IGUI_CraftUI_OneOf"))
+    for i = 1, arr:size() do
+        local si  = arr:get(i-1)
+        local ft  = si and si.getFullName and si:getFullName() or nil
+        local name = (ft and getItemNameFromFullType and getItemNameFromFullType(ft))
+                 or (si and si.getDisplayName and si:getDisplayName())
+                 or (si and si.getName and si:getName())
+                 or "Welding Mask"
+        desc = desc .. string.format(" <INDENT:20> <RGB:1,0,0>%s 0/1 <LINE> <INDENT:0> ", name)
+    end
+    return desc
+end
+
 -- Copied from ISUI/ISWorldObjectContextMenu for finding a blowtorch with enough propane and modified for desired uses
 local function EHR_predicateBlowTorch(item)
     return (item ~= nil) and
@@ -96,7 +128,11 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 			end
 		end
 
-		local mask = playerObj:getInventory():getFirstTagRecurse("WeldingMask")
+		-- Prefer already-worn WeldingMask; else first in inventory
+		local mask = getWornMatchingTag(playerObj, "WeldingMask")
+		if not mask then
+			mask = playerObj:getInventory():getFirstTagRecurse("WeldingMask")
+		end
 
 		if currentCondition < 100 and allPartsPresent and self.chr:getPerkLevel(Perks.Mechanics) >= requiredMechanicsSkillLevel and self.chr:getPerkLevel(Perks.MetalWelding) >= requiredMetalworkingSkillLevel and blowtorch ~= nil and mask ~= nil then
 			option = self.context:addOption(getText("ContextMenu_Repair"), playerObj, ISVehicleMechanics.EHR_onRepairHeater, part, requiredParts, blowtorch, mask, targetCondition, requiredMechanicsSkillLevel, requiredMetalworkingSkillLevel)
@@ -137,62 +173,66 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 		local rgb = " <RGB:0,1,0>"
 		local addedTxt = ""
 
-		if self.chr:getPerkLevel(Perks.Mechanics) < requiredMechanicsSkillLevel then
-			rgb = " <RGB:1,0,0>"
-		end
-		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Mechanics") .. " " .. self.chr:getPerkLevel(Perks.Mechanics) .. "/" .. requiredMechanicsSkillLevel .. " <LINE>"
-		rgb = " <RGB:0,1,0>"
+			for neededPart,numberNeeded in pairs(requiredParts) do
+				local scriptItem = ScriptManager.instance:getItem(neededPart)
+				local displayName = scriptItem and getItemDisplayName(neededPart)
+				local numberOfPart = self.chr:getInventory():getNumberOfItem(neededPart, false, true)
 
-		if self.chr:getPerkLevel(Perks.MetalWelding) < requiredMetalworkingSkillLevel then
-			rgb = " <RGB:1,0,0>"
-		end
-		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_MetalWelding") .. " " .. self.chr:getPerkLevel(Perks.MetalWelding) .. "/" .. requiredMetalworkingSkillLevel .. " <LINE>"
-		rgb = " <RGB:0,1,0>"
-
-		for neededPart,numberNeeded in pairs(requiredParts) do
-			local scriptItem = ScriptManager.instance:getItem(neededPart)
-			local displayName = scriptItem and getItemDisplayName(neededPart)
-			local numberOfPart = self.chr:getInventory():getNumberOfItem(neededPart, false, true)
-
-			if numberNeeded > 0 then
-				if numberOfPart < numberNeeded then
-					tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
-				else
-					tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
+				if numberNeeded > 0 then
+					if numberOfPart < numberNeeded then
+						tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
+					else
+						tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " " .. numberOfPart .. "/" .. numberNeeded .. " <LINE>"
+					end
 				end
 			end
-		end
-	end
 
-	local weldingmaskItem = self.chr:getInventory():getFirstTagRecurse("WeldingMask")
-	local displayName = weldingmaskItem and weldingmaskItem:getDisplayName() or "Welding Mask"
+			local scriptItem = ScriptManager.instance:getItem("Base.BlowTorch")
+			local displayName = scriptItem and getItemDisplayName("BlowTorch")
 
-	if not self.chr:getInventory():containsTag("WeldingMask") then
-		tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/1 <LINE>"
-	else
-		tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " 1/1 <LINE>"
-	end
-
-		local scriptItem = ScriptManager.instance:getItem("Base.BlowTorch")
-        local displayName = scriptItem and getItemDisplayName("BlowTorch")
-
-		if blowtorch == nil then
-			tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/10 <LINE>"
-		else
-			local blowtorchUseLeft = blowtorch:getCurrentUses();
-            if blowtorchUseLeft >= 10 then
-
-			if blowtorchUseLeft < 10 then
-				tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " " .. blowtorchUseLeft .. "/10 <LINE>"
+			if blowtorch == nil then
+				tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/10 <LINE>"
 			else
-				tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " " .. blowtorchUseLeft .. "/10 <LINE>"
-			end
-		end
+				local blowtorchUseLeft = blowtorch:getCurrentUses();
+				if blowtorchUseLeft >= 10 then
 
-		if option.notAvailable then
-			tooltip.description = tooltip.description .. " <LINE><RGB:1,0,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
-		else
-			tooltip.description = tooltip.description .. " <LINE><RGB:0,1,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
+				if blowtorchUseLeft < 10 then
+					tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " " .. blowtorchUseLeft .. "/10 <LINE>"
+				else
+					tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " " .. blowtorchUseLeft .. "/10 <LINE>"
+				end
+			end
+			do
+				local inv   = self.chr:getInventory()
+				local tag   = "WeldingMask"
+				local worn  = getWornMatchingTag(self.chr, tag)
+				local item  = worn or inv:getFirstTagRecurse(tag)
+
+				if item then
+					local name = (item.getDisplayName and item:getDisplayName()) or getText("ContextMenu_WeldingMask") or "Welder Mask"
+					tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. name .. " 1/1 <LINE>"
+				else
+					tooltip.description = appendOneOfForTag(tooltip.description, tag)
+				end
+			end
+
+			if self.chr:getPerkLevel(Perks.MetalWelding) < requiredMetalworkingSkillLevel then
+				rgb = " <RGB:1,0,0>"
+			end
+			tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_MetalWelding") .. " " .. self.chr:getPerkLevel(Perks.MetalWelding) .. "/" .. requiredMetalworkingSkillLevel .. " <LINE>"
+			rgb = " <RGB:0,1,0>"
+
+			if self.chr:getPerkLevel(Perks.Mechanics) < requiredMechanicsSkillLevel then
+				rgb = " <RGB:1,0,0>"
+			end
+			tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Mechanics") .. " " .. self.chr:getPerkLevel(Perks.Mechanics) .. "/" .. requiredMechanicsSkillLevel .. " <LINE>"
+			rgb = " <RGB:0,1,0>"
+
+			if option.notAvailable then
+				tooltip.description = tooltip.description .. " <LINE><RGB:1,0,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
+			else
+				tooltip.description = tooltip.description .. " <LINE><RGB:0,1,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
+			end
 		end
 	end
 end
@@ -200,6 +240,11 @@ end
 function ISVehicleMechanics.EHR_onRepairHeater(playerObj, part, requiredParts, blowtorch, mask, targetCondition, requiredMechanicsSkillLevel, requiredMetalworkingSkillLevel)
 	if playerObj:getVehicle() then
 		ISVehicleMenu.onExit(playerObj)
+	end
+
+	-- Have the character wear the welder mask (only if not already worn)
+	if mask and (not mask.isEquipped or not mask:isEquipped()) then
+		ISInventoryPaneContextMenu.wearItem(mask, playerObj:getPlayerNum());
 	end
 
 	-- Have the character walk to the engine

@@ -780,6 +780,8 @@ module Base
         Fixer = Base.RabbitLeather_Grey_Fur_Tan;Tailoring=1;Mechanics=1,
         Fixer = Base.RaccoonLeather_Grey_Fur;Tailoring=1;Mechanics=1,
         Fixer = Base.RaccoonLeather_Grey_Fur_Tan;Tailoring=1;Mechanics=1,
+        Fixer = Base.FawnLeather_Fur;Tailoring=1;Mechanics=1,
+        Fixer = Base.FawnLeather_Fur_Tan;Tailoring=1;Mechanics=1,
     }
 
     fixing VRO Fix Car seat 2
@@ -1547,6 +1549,7 @@ module Base
         Fixer = Base.RabbitLeather_Fur_Tan;Tailoring=2;Mechanics=1,
         Fixer = Base.RabbitLeather_Grey_Fur_Tan;Tailoring=2;Mechanics=1,
         Fixer = Base.RaccoonLeather_Grey_Fur_Tan;Tailoring=2;Mechanics=1,
+        Fixer = Base.FawnLeather_Fur_Tan;Tailoring=2;Mechanics=1,
     }
 
 	fixing VRO Fix SoftTops 2

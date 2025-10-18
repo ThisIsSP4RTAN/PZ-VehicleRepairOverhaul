@@ -4,6 +4,36 @@ require "Vehicles/ISUI/ISVehicleMechanics"
 
 local _Original_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
 
+-- Prefer an already-equipped item that matches a tag (primary or secondary)
+local function getEquippedMatchingTag(chr, tag)
+    if not chr then return nil end
+    local p = chr:getPrimaryHandItem()
+    if p and p.hasTag and p:hasTag(tag) then return p end
+    local s = chr:getSecondaryHandItem()
+    if s and s.hasTag and s:hasTag(tag) then return s end
+    return nil
+end
+
+-- Minimal "One of:" builder for a single tag (red list when none present)
+local function appendOneOfForTag(desc, tag)
+    local sm = ScriptManager and ScriptManager.instance
+    local arr = sm and (sm.getItemsTag and sm:getItemsTag(tag) or sm.getAllItemsWithTag and sm:getAllItemsWithTag(tag))
+    if not (arr and arr.size and arr:size() > 0) then
+        return desc .. string.format(" <RGB:1,0,0>%s 0/1 <LINE>", tag)
+    end
+    desc = desc .. string.format(" <RGB:1,0,0>%s <LINE>", getText("IGUI_CraftUI_OneOf"))
+    for i = 1, arr:size() do
+        local si = arr:get(i-1)
+        local ft = si and si.getFullName and si:getFullName() or nil
+        local name = (ft and getItemNameFromFullType and getItemNameFromFullType(ft))
+                  or (si and si.getDisplayName and si:getDisplayName())
+                  or (si and si.getName and si:getName())
+                  or "Screwdriver"
+        desc = desc .. string.format(" <INDENT:20> <RGB:1,0,0>%s 0/1 <LINE> <INDENT:0> ", name)
+    end
+    return desc
+end
+
 local function _findRepairOption(ctx)
 	if not (ctx and ctx.options) then return nil end
 	local label = getText("ContextMenu_Repair")
@@ -125,19 +155,6 @@ function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, 
 
 	if lua == "ELR_repairlightbar" then
 		local rgb = " <RGB:0,1,0>"
-		if self.chr:getPerkLevel(Perks.Electricity) < requiredSkillLevel then
-			rgb = " <RGB:1,0,0>"
-		end
-		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Electricity") .. " " .. self.chr:getPerkLevel(Perks.Electricity) .. "/" .. requiredSkillLevel .. " <LINE>"
-		rgb = " <RGB:0,1,0>"
-
-        local screwdriverItem = self.chr:getInventory():getFirstTagRecurse("Screwdriver")
-        local displayName = screwdriverItem and screwdriverItem:getDisplayName() or "Screwdriver"
-		if not self.chr:getInventory():containsTag("Screwdriver") then
-			tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. displayName .. " 0/1 <LINE>"
-		else
-			tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. displayName .. " 1/1 <LINE>"
-		end
 
 		for neededPart,numberNeeded in pairs(requiredParts) do
 
@@ -152,6 +169,25 @@ function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, 
 				end
 			end
 		end
+		do
+			local inv   = self.chr:getInventory()
+			local tag   = "Screwdriver"
+			local cur   = getEquippedMatchingTag(self.chr, tag)
+			local item  = cur or inv:getFirstTagRecurse(tag)
+			if item then
+				local name = (item.getDisplayName and item:getDisplayName()) or "Screwdriver"
+				tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. name .. " 1/1 <LINE>"
+			else
+				-- none at all → show red "One of:" list like VRO repairs
+				tooltip.description = appendOneOfForTag(tooltip.description, tag)
+			end
+		end
+
+		if self.chr:getPerkLevel(Perks.Electricity) < requiredSkillLevel then
+			rgb = " <RGB:1,0,0>"
+		end
+		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Electricity") .. " " .. self.chr:getPerkLevel(Perks.Electricity) .. "/" .. requiredSkillLevel .. " <LINE>"
+		rgb = " <RGB:0,1,0>"
 
 		if option.notAvailable then
 			tooltip.description = tooltip.description .. " <LINE><RGB:1,0,0>" .. getText("Tooltip_ELR_NewCondition") .. ": " .. targetCondition .. "%"
@@ -168,7 +204,6 @@ function ISVehicleMechanics.ELR_onRepairLightbar(playerObj, part, repairBlocks, 
 
 	-- Have the character walk to the vehicle's driver door
 	ISTimedActionQueue.add(ISPathFindAction:pathToVehicleArea(playerObj, part:getVehicle(), "SeatFrontLeft"))
-
 
 --[[
 
@@ -222,20 +257,22 @@ function ISVehicleMechanics.ELR_onRepairLightbar(playerObj, part, repairBlocks, 
 	end
 --]]
 
-
 	local timeToRepair = (repairBlocks * 100) - math.max(0, (20 * (playerObj:getPerkLevel(Perks.Electricity) - requiredSkillLevel)))
 
 	if (part:getVehicle():getLightbarLightsMode() ~= 0) or (part:getVehicle():getLightbarSirenMode() ~= 0) then
 		ISTimedActionQueue.add(ELRTurnOffLightbar:new(playerObj, true, part:getVehicle():getId()))
 	end
 
-	-- Choose the item we’ll pass to the timed action: the screwdriver the player will actually use
-	local screwdriver = playerObj:getInventory():getFirstTagRecurse("Screwdriver")
+	-- Prefer the screwdriver already equipped (primary or secondary); else first in inventory
+	local screwdriver = getEquippedMatchingTag(playerObj, "Screwdriver")
+	if not screwdriver then
+		screwdriver = playerObj:getInventory():getFirstTagRecurse("Screwdriver")
+	end
 
-	-- Ensure it’s in inventory and equipped (equip action is harmless if already equipped)
+	-- Only equip if neither hand already holds it (avoid swapping if we’re already using it)
 	if screwdriver then
 		ISVehiclePartMenu.toPlayerInventory(playerObj, screwdriver)
-		if playerObj:getPrimaryHandItem() ~= screwdriver then
+		if playerObj:getPrimaryHandItem() ~= screwdriver and playerObj:getSecondaryHandItem() ~= screwdriver then
 			ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, screwdriver, 50, true, false))
 		end
 	end

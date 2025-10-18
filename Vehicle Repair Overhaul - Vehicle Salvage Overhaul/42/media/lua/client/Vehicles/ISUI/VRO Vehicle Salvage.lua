@@ -9,7 +9,18 @@ require "Vehicles/ISUI/ISVehicleMenu"
 require "luautils"
 
 local enableSalvage = ISVehicleMenu.FillMenuOutsideVehicle
--- Cross-build tag lookup (same approach as your repairs tooltip)
+-- Prefer an already-worn item that matches a tag (e.g., WeldingMask)
+local function getWornMatchingTag(chr, tag)
+    local worn = chr and chr:getWornItems()
+    if not worn then return nil end
+    for i = 0, worn:size()-1 do
+        local wi = worn:get(i)
+        local it = wi and wi:getItem() or nil
+        if it and it.hasTag and it:hasTag(tag) then return it end
+    end
+    return nil
+end
+
 local function _getScriptsForTag(tag)
     local sm = ScriptManager and ScriptManager.instance
     if not sm then return nil end
@@ -85,9 +96,14 @@ end
 function ISVehicleMenu.onVehicleSalvage(player, vehicle)
     if luautils.walkAdj(player, vehicle:getSquare()) then
         ISWorldObjectContextMenu.equip(player, player:getPrimaryHandItem(), predicateBlowTorch, true);
-        local mask = player:getInventory():getFirstTagRecurse("WeldingMask");
-        if mask then
-            ISInventoryPaneContextMenu.wearItem(mask, player:getPlayerNum());
+
+        -- Prefer already-worn protective gear if it satisfies WeldingMask
+        local wornMask = getWornMatchingTag(player, "WeldingMask")
+        if not wornMask then
+            local mask = player:getInventory():getFirstTagRecurse("WeldingMask")
+            if mask then
+                ISInventoryPaneContextMenu.wearItem(mask, player:getPlayerNum())
+            end
         end
         ISTimedActionQueue.add(ISVehicleSalvage:new(player, vehicle));
     end
@@ -138,16 +154,23 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
 
         local inventory = playerObj:getInventory()
         local maskTag   = "WeldingMask"
-        local maskItem  = inventory:getFirstTagRecurse(maskTag)
-
-        if maskItem then
-            -- We have at least one valid mask; show a single green line (no "One of" list).
-            local displayName = (maskItem.getDisplayName and maskItem:getDisplayName()) or getText("ContextMenu_WeldingMask") or "Welder Mask"
+        local wornMask = getWornMatchingTag(playerObj, maskTag)
+        if wornMask then
+            local displayName = (wornMask.getDisplayName and wornMask:getDisplayName())
+                                or getText("ContextMenu_WeldingMask")
+                                or "Welder Mask"
             toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. displayName .. " 1/1"
         else
-            -- No mask: show a red "One of:" header with all valid items for the WeldingMask tag, and mark option unavailable.
-            option.notAvailable = true
-            toolTip.description = appendOneOfForTag(toolTip.description, maskTag)
+            -- Fall back to inventory
+            local maskItem  = inventory:getFirstTagRecurse(maskTag)
+            if maskItem then
+                local displayName = (maskItem.getDisplayName and maskItem:getDisplayName()) or getText("ContextMenu_WeldingMask") or "Welder Mask"
+                toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. displayName .. " 1/1"
+            else
+                -- None at all → show One Of list and mark unavailable
+                option.notAvailable = true
+                toolTip.description = appendOneOfForTag(toolTip.description, maskTag)
+            end
         end
 
         if playerObj:getPerkLevel(Perks.MetalWelding) >= MWSkill then
