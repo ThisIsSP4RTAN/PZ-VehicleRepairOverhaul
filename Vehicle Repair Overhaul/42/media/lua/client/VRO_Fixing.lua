@@ -374,35 +374,6 @@ local function isTorchItem(it)
   return ft == "Base.BlowTorch"
 end
 
--- Prefer a torch with >= needUses; otherwise fullest non-empty torch
-local function findBestBlowtorch(inv, needUses)
-  if inv.getFirstEvalRecurse then
-    local it = inv:getFirstEvalRecurse(function(item)
-      return isTorchItem(item) and drainableUses(item) >= (needUses or 1)
-    end)
-    if it then return it end
-  end
-  if inv.getBestEvalRecurse then
-    local best = inv:getBestEvalRecurse(
-      function(item) return isTorchItem(item) and drainableUses(item) > 0 end,
-      function(a,b)
-        local ua = (a and a.getDrainableUsesInt) and a:getDrainableUsesInt() or drainableUses(a)
-        local ub = (b and b.getDrainableUsesInt) and b:getDrainableUsesInt() or drainableUses(b)
-        return ua - ub
-      end)
-    if best then return best end
-  end
-  local bagged = ArrayList.new()
-  inv:getAllTypeRecurse("Base.BlowTorch", bagged)
-  local best, most = nil, -1
-  for i = 1, bagged:size() do
-    local it = bagged:get(i-1)
-    local u  = drainableUses(it)
-    if u > most then most = u; best = it end
-  end
-  return best
-end
-
 -- Item must be NOT broken and strictly below max condition to be repairable from inventory
 local function isRepairableFromInventory(it)
   if not it then return false end
@@ -1112,17 +1083,6 @@ local function toPlayerInventory(playerObj, it)
   end
 end
 
-local function isFullTypeBlowTorch(fullType)
-  if not fullType then return false end
-  if fullType == "Base.BlowTorch" or string.find(fullType, "BlowTorch", 1, true) then return true end
-  local sm = ScriptManager and ScriptManager.instance
-  if sm and sm.getItem then
-    local si = sm:getItem(fullType)
-    if si and si:hasTag("BlowTorch") then return true end
-  end
-  return false
-end
-
 -- returns (chosenPrimary, chosenSecondary, equipKeep)
 local function queueEquipActions(playerObj, eq, globalItem)
   if not eq then return end
@@ -1137,6 +1097,18 @@ local function queueEquipActions(playerObj, eq, globalItem)
     end
   end
 
+  -- Is this fullType a blowtorch? (covers Base.BlowTorch & tag)
+  local function isFullTypeBlowTorch(fullType)
+    if not fullType then return false end
+    if fullType == "Base.BlowTorch" or string.find(fullType, "BlowTorch", 1, true) then return true end
+    local sm = ScriptManager and ScriptManager.instance
+    if sm and sm.getItem then
+      local si = sm:getItem(fullType)
+      if si and si:hasTag("BlowTorch") then return true end
+    end
+    return false
+  end
+
   -- Normalize a spec into { item=..., tag=..., tags={...}, flags=... }
   local function _toSpec(v, inheritedFlags)
     if not v then return nil end
@@ -1146,8 +1118,7 @@ local function queueEquipActions(playerObj, eq, globalItem)
       spec = { item = v }
     elseif type(v) == "table" and (v.item or v.tag or v.tags) then
       spec = v
-    elseif type(v) == "table" and v.tag == nil and v.tags == nil and v.item == nil then
-      -- allow equip = { primary = { tag="...", flags={...} }, flags={...} }
+    elseif type(v) == "table" then
       spec = v
     end
     if spec then
@@ -1168,6 +1139,57 @@ local function queueEquipActions(playerObj, eq, globalItem)
     return false
   end
 
+  -- Choose the best torch by fuel (>= need), else fullest non-empty
+  local function findBestBlowtorch(inv, needUses)
+    if inv.getFirstEvalRecurse then
+      local it = inv:getFirstEvalRecurse(function(item)
+        return isTorchItem(item) and drainableUses(item) >= (needUses or 1)
+      end)
+      if it then return it end
+    end
+    if inv.getBestEvalRecurse then
+      local best = inv:getBestEvalRecurse(
+        function(item) return isTorchItem(item) and drainableUses(item) > 0 end,
+        function(a,b)
+          local ua = (a and a.getDrainableUsesInt) and a:getDrainableUsesInt() or drainableUses(a)
+          local ub = (b and b.getDrainableUsesInt) and b:getDrainableUsesInt() or drainableUses(b)
+          return ua - ub
+        end)
+      if best then return best end
+    end
+    local bagged = ArrayList.new()
+    inv:getAllTypeRecurse("Base.BlowTorch", bagged)
+    local best, most = nil, -1
+    for i = 1, bagged:size() do
+      local it = bagged:get(i-1)
+      local u  = drainableUses(it)
+      if u > most then most = u; best = it end
+    end
+    return best
+  end
+
+  -- Helper: does an equipped item satisfy spec **and** (optionally) have min uses?
+  local function _equippedSatisfies(it, spec, minUses)
+    if not (it and spec) then return false end
+    local flags = normalizeFlags(spec.flags)
+    if hasFlag(flags, "IsNotDull") and isItemDull(it) then return false end
+
+    local match = false
+    if spec.item then
+      match = it.getFullType and it:getFullType() == spec.item
+    elseif spec.tag then
+      match = it.hasTag and it:hasTag(spec.tag)
+    elseif spec.tags then
+      match = it.hasTag and itemHasAnyTag(it, spec.tags)
+    end
+    if not match then return false end
+
+    if minUses and minUses > 0 and isDrainable(it) then
+      return drainableUses(it) >= minUses
+    end
+    return true
+  end
+
   -- Normalize specs and inherit eq.flags
   local pSpec = _toSpec(eq.primary or (eq.primaryTag and { tag = eq.primaryTag } or nil), eq.flags)
   local sSpec = _toSpec(eq.secondary or (eq.secondaryTag and { tag = eq.secondaryTag } or nil), eq.flags)
@@ -1182,7 +1204,7 @@ local function queueEquipActions(playerObj, eq, globalItem)
     wSpec = _toSpec({ tag = eq.wearTag }, eq.flags)
   end
 
-  -- Torch uses hint from globals (so we pick a torch with enough fuel)
+  -- Torch fuel requirement hint from the global requirement (so we refuse empty)
   local needTorchUses = nil
   do
     local gi = globalItem
@@ -1196,21 +1218,6 @@ local function queueEquipActions(playerObj, eq, globalItem)
     end
   end
 
-  -- Helper: does an equipped item satisfy a spec?
-  local function _equippedSatisfies(it, spec)
-    if not (it and spec) then return false end
-    local flags = normalizeFlags(spec.flags)
-    if hasFlag(flags, "IsNotDull") and isItemDull(it) then return false end
-    if spec.item then
-      return it.getFullType and it:getFullType() == spec.item
-    elseif spec.tag then
-      return it.hasTag and it:hasTag(spec.tag)
-    elseif spec.tags then
-      return it.hasTag and itemHasAnyTag(it, spec.tags)
-    end
-    return false
-  end
-
   ----------------------------------------------------------------
   -- PRIMARY
   ----------------------------------------------------------------
@@ -1218,10 +1225,13 @@ local function queueEquipActions(playerObj, eq, globalItem)
   if pSpec then
     local curP = playerObj:getPrimaryHandItem()
     local preferTorch = _specIsTorch(pSpec)
+    local minUses     = preferTorch and (needTorchUses or 1) or nil
 
-    if curP and _equippedSatisfies(curP, pSpec) then
+    if curP and _equippedSatisfies(curP, pSpec, minUses) then
+      -- Equipped item is valid (and, if torch, has enough fuel) -> keep it
       chosenPrimary = curP
     elseif preferTorch then
+      -- Prefer a torch with enough fuel; fall back to any that matches the spec
       chosenPrimary = findBestBlowtorch(inv, needTorchUses or 1) or VRO_PickFromSpec(inv, pSpec, 1)
     else
       chosenPrimary = VRO_PickFromSpec(inv, pSpec, 1)
@@ -1244,8 +1254,10 @@ local function queueEquipActions(playerObj, eq, globalItem)
   if sSpec then
     local curS = playerObj:getSecondaryHandItem()
     local function _sameAsPrimary(it) return chosenPrimary and it and it == chosenPrimary end
+    local preferTorchS = _specIsTorch(sSpec)
+    local minUsesS     = preferTorchS and (needTorchUses or 1) or nil
 
-    if curS and _equippedSatisfies(curS, sSpec) and not _sameAsPrimary(curS) then
+    if curS and _equippedSatisfies(curS, sSpec, minUsesS) and not _sameAsPrimary(curS) then
       chosenSecondary = curS
     else
       chosenSecondary = VRO_PickFromSpec(inv, sSpec, 1)
@@ -1255,6 +1267,7 @@ local function queueEquipActions(playerObj, eq, globalItem)
         if sSpec.tag then
           local alt = inv:getFirstEvalRecurse(function(item)
             return item and item ~= chosenPrimary and item.hasTag and item:hasTag(sSpec.tag)
+              and (not minUsesS or not isDrainable(item) or drainableUses(item) >= minUsesS)
           end)
           chosenSecondary = alt
         elseif sSpec.item then
@@ -1263,6 +1276,7 @@ local function queueEquipActions(playerObj, eq, globalItem)
         elseif sSpec.tags then
           local alt = inv:getFirstEvalRecurse(function(item)
             return item and item ~= chosenPrimary and itemHasAnyTag(item, sSpec.tags)
+              and (not minUsesS or not isDrainable(item) or drainableUses(item) >= minUsesS)
           end)
           chosenSecondary = alt
         end
@@ -1288,7 +1302,7 @@ local function queueEquipActions(playerObj, eq, globalItem)
       for i = 0, wornList:size()-1 do
         local wi = wornList:get(i)
         local wItem = wi and wi:getItem() or nil
-        if _equippedSatisfies(wItem, spec) then return wItem end
+        if wItem and _equippedSatisfies(wItem, spec, nil) then return wItem end
       end
       return nil
     end)(playerObj, wSpec)
