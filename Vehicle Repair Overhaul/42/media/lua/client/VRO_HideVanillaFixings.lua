@@ -1,4 +1,5 @@
 require "ISUI/ISInventoryPaneContextMenu"
+local VRO = require "VRO/Core"
 
 -- Names must match the Fixing entry names exactly.
 -- These are ALWAYS hidden, regardless of sandbox option.

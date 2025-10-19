@@ -1,8 +1,6 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch, redundant-parameter
 require "TimedActions/ISBaseTimedAction"
-
-local VRO = rawget(_G, "VRO") or {}
-_G.VRO = VRO
+local VRO = require "VRO/Core"
 
 ----------------------------------------------------------------
 -- Minimal helpers the action relies on

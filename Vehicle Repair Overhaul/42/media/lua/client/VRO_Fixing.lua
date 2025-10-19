@@ -8,12 +8,10 @@ require "TimedActions/ISPathFindAction"
 require "TimedActions/ISEquipWeaponAction"
 require "VRO_DoFixAction"
 
-local VRO = rawget(_G, "VRO") or {}
+local VRO = require "VRO/Core"
 VRO.__index = VRO
-_G.VRO = VRO
-VRO.Recipes = {
+VRO.Recipes = VRO.Recipes or {}
 --[[  (recipes injected via VRO_Recipes.lua)  ]]
-}
 
 ----------------------------------------------------------------
 -- Sandbox toggle (hide our Lua options if vanilla-only is selected)
@@ -68,34 +66,28 @@ end
 -- Optional external recipe loader (keeps existing list; append from another file if present)
 local function _appendRecipesFrom(source)
   local out = VRO.Recipes
-
   if type(source) == "table" then
     local list = source.recipes
     if type(list) == "table" and list[1] ~= nil then
-      for i = 1, #list do
-        out[#out + 1] = list[i]
-      end
+      for i = 1, #list do out[#out + 1] = list[i] end
     elseif source[1] ~= nil then
-      for i = 1, #source do
-        out[#out + 1] = source[i]
-      end
+      for i = 1, #source do out[#out + 1] = source[i] end
     elseif source.name ~= nil then
       out[#out + 1] = source
     end
-
   elseif type(source) == "function" then
     local ok, tbl = pcall(source)
-    if ok and type(tbl) == "table" then
-      _appendRecipesFrom(tbl)
-    end
+    if ok and type(tbl) == "table" then _appendRecipesFrom(tbl) end
   end
 end
 
 local function VRO_LoadExternalRecipes()
-  local ok, mod = pcall(require, "VRO_Recipes")
+
+  local ok, mod = pcall(require, "VRO/Recipes")
   if ok and mod then _appendRecipesFrom(mod) end
-  if _G.VRO_Recipes then _appendRecipesFrom(_G.VRO_Recipes) end
-  if _G.VRO_RECIPES then _appendRecipesFrom(_G.VRO_RECIPES) end
+
+  ok, mod = pcall(require, "VRO_Recipes")
+  if ok and mod then _appendRecipesFrom(mod) end
 end
 VRO_LoadExternalRecipes()
 
@@ -111,14 +103,23 @@ end
 VRO_LoadPartLists()
 VRO_PruneMissingFixers()
 
--- === Access Overrides loader ===
+-- === Access Overrides loader (module-first, no globals) ===
 VRO.AccessOverrides = VRO.AccessOverrides or {}
+
+local function _merge(dst, src)
+  if type(dst) ~= "table" or type(src) ~= "table" then return end
+  for k, v in pairs(src) do dst[k] = v end
+end
+
 local function VRO_LoadAccessOverrides()
-  local ok, mod = pcall(require, "VRO_AccessOverrides")
+  -- Prefer namespaced path; fall back to legacy filename if you haven’t moved it yet
+  local ok, mod = pcall(require, "VRO/AccessOverrides")
+  if not ok or type(mod) ~= "table" then
+    ok, mod = pcall(require, "VRO_AccessOverrides")
+  end
   if ok and type(mod) == "table" then
-    VRO.AccessOverrides = mod
-  elseif _G.VRO_AccessOverrides and type(_G.VRO_AccessOverrides) == "table" then
-    VRO.AccessOverrides = _G.VRO_AccessOverrides
+    _merge(VRO.AccessOverrides, mod)
+    return
   end
 end
 VRO_LoadAccessOverrides()
@@ -955,11 +956,16 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
             else
               pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, false))
             end
+            elseif gi.item then
+              local have = invHaveForFullType(gi.item, need)
+              local nm   = displayNameFromFullType(gi.item)
+              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, false)
+              if have >= need then markSeenItemFT(gi.item) end
+            end
           end
         end
       end
     end
-  end
 
   -- 3) Wear requirement — prefer already-worn items that satisfy the spec
   do
@@ -977,7 +983,6 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
           pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(eq.wearTag), 1, 1, isItemDull(it))
           markSeenItemFT(it.getFullType and it:getFullType() or nil)
         else
-          pushReq("1,0,0", fallbackNameForTag(eq.wearTag), 0, 1, false)
           pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1, false))
         end
       end
@@ -1348,17 +1353,10 @@ end
 
 local function isSubmenuEmpty(parent)
   if not (parent and parent.subOption) then return true end
-  local sub = parent.subOption
-  local opts = sub.options
+  local sub  = parent.subOption
+  local opts = sub and sub.options or nil
 
-  if type(opts) == "table" then
-    local _pairs = _G.pairs or pairs  -- avoid shadowed globals
-    for _ in _pairs(opts) do
-      return false
-    end
-    return true
-  end
-
+  -- Java ArrayList-style
   if opts and opts.size then
     return opts:size() == 0
   end
@@ -1875,9 +1873,17 @@ local function OnFillInventoryObjectContextMenu(playerNum, context, items)
 end
 
 -- Guard re-registering on hot-reload
-if not _G.VRO_InvHooked then
-  Events.OnFillInventoryObjectContextMenu.Add(OnFillInventoryObjectContextMenu)
-  _G.VRO_InvHooked = true
+do
+  VRO.handlers = VRO.handlers or {}
+  local prev = VRO.handlers.invMenu
+
+  if prev and Events.OnFillInventoryObjectContextMenu.Remove then
+    Events.OnFillInventoryObjectContextMenu.Remove(prev)
+  end
+
+  -- Point the stable slot at the *current* function, then add it
+  VRO.handlers.invMenu = OnFillInventoryObjectContextMenu
+  Events.OnFillInventoryObjectContextMenu.Add(VRO.handlers.invMenu)
 end
 
 ----------------------------------------------------------------

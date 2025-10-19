@@ -1,12 +1,9 @@
+local VRO = require "VRO/Core"
 local function _getPartListByName(name)
-  -- Look in common places we use for centralized lists
-  local V = rawget(_G, "VRO")
-  if V then
-    if type(V.PartLists) == "table" and type(V.PartLists[name]) == "table" then return V.PartLists[name] end
-    if type(V.Lists)     == "table" and type(V.Lists[name])     == "table" then return V.Lists[name]     end
+
+  if type(VRO.PartLists) == "table" and type(VRO.PartLists[name]) == "table" then
+    return VRO.PartLists[name]
   end
-  local PL = rawget(_G, "VRO_PART_LISTS")
-  if type(PL) == "table" and type(PL[name]) == "table" then return PL[name] end
   return nil
 end
 

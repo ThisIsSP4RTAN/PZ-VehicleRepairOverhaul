@@ -1,4 +1,4 @@
-VRO = VRO or {}
+local VRO = require "VRO/Core"
 VRO.PartLists = VRO.PartLists or {}
 
 local function _mergeLists(dst, src)
@@ -10,29 +10,23 @@ local function _mergeLists(dst, src)
   end
 end
 
+-- 1) Load/merge once (try namespaced, legacy filename, and OPTIONAL legacy globals once)
 local function _loadSharedPartListsOnce()
   if VRO._partListsLoaded then return end
   VRO._partListsLoaded = true
 
-  local ok, mod = pcall(require, "VRO_PartLists")
-  if ok and type(mod) == "table" then
-    _mergeLists(VRO.PartLists, mod)
-  end
+  -- Prefer namespaced file first
+  local ok, mod = pcall(require, "VRO/PartLists")
+  if ok and type(mod) == "table" then _mergeLists(VRO.PartLists, mod) end
 
-  if type(_G.VRO) == "table" and type(_G.VRO.PartLists) == "table" then
-    _mergeLists(VRO.PartLists, _G.VRO.PartLists)
-  end
+  -- Legacy filename (your current file)
+  ok, mod = pcall(require, "VRO_PartLists")
+  if ok and type(mod) == "table" then _mergeLists(VRO.PartLists, mod) end
 end
 
 local function _getPartListByName(name)
   _loadSharedPartListsOnce()
-  if type(VRO.PartLists[name]) == "table" then return VRO.PartLists[name] end
-  local V = rawget(_G, "VRO")
-  if V then
-    if type(V.PartLists) == "table" and type(V.PartLists[name]) == "table" then return V.PartLists[name] end
-    if type(V.Lists)     == "table" and type(V.Lists[name])     == "table" then return V.Lists[name]     end
-  end
-  return nil
+  return (type(VRO.PartLists[name]) == "table") and VRO.PartLists[name] or nil
 end
 
 local function _existsFullType(fullType)

@@ -1,4 +1,4 @@
-VRO = VRO or {}
+local VRO = require "VRO/Core"
 VRO.PartLists = VRO.PartLists or {}
 
   VRO.PartLists.GasTank_All = {
