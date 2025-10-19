@@ -10,16 +10,13 @@ local function _mergeLists(dst, src)
   end
 end
 
--- 1) Load/merge once (try namespaced, legacy filename, and OPTIONAL legacy globals once)
 local function _loadSharedPartListsOnce()
   if VRO._partListsLoaded then return end
   VRO._partListsLoaded = true
 
-  -- Prefer namespaced file first
   local ok, mod = pcall(require, "VRO/PartLists")
   if ok and type(mod) == "table" then _mergeLists(VRO.PartLists, mod) end
 
-  -- Legacy filename (your current file)
   ok, mod = pcall(require, "VRO_PartLists")
   if ok and type(mod) == "table" then _mergeLists(VRO.PartLists, mod) end
 end
