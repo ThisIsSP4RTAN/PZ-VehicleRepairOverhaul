@@ -5,4 +5,5 @@ poster=poster.png
 icon=icon.png
 versionMin=42.0.0
 id=VehicleSalvageOverhaulB42
+loadModBefore=\ProjectSummerCar,\Ivmakk_RestoreEngineQuality
 author=hehehemann, SP4RTAN
