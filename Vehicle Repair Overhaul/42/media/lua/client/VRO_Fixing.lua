@@ -6,6 +6,7 @@ require "ISUI/ISInventoryPaneContextMenu"
 require "TimedActions/ISBaseTimedAction"
 require "TimedActions/ISPathFindAction"
 require "TimedActions/ISEquipWeaponAction"
+require "TimedActions/ISUnequipAction"
 require "VRO_DoFixAction"
 
 local VRO = require "VRO/Core"
@@ -784,8 +785,13 @@ local function resolveSuccessSound(fixer, fixing) return pick(fixer.successSound
 local function resolveShowModel(fixer, fixing)
   local f = (fixer.equip and fixer.equip.showModel)
   if f == nil and fixing.equip then f = fixing.equip.showModel end
-  if f == nil then f = true end
-  return f
+  if f ~= nil then return f end
+
+  -- If neither primary/secondary (nor tags) nor wear are requested, hide hand models.
+  local eq = mergeEquip(fixer.equip, fixing.equip)
+  local noHands = not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
+  local noWear  = not (eq.wear or eq.wearTag)
+  return not (noHands and noWear)  -- => false when nothing is specified
 end
 local function resolveTime(fixer, fixing, player, broken)
   local t = (fixer.time ~= nil) and fixer.time or fixing.time
@@ -1099,6 +1105,19 @@ local function queueEquipActions(playerObj, eq, globalItem)
     if not it then return end
     if it:getContainer() ~= inv then
       toPlayerInventory(playerObj, it)
+    end
+  end
+
+  local noHandEquip =
+    not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
+  if noHandEquip then
+    local curP = playerObj:getPrimaryHandItem()
+    if curP then
+      ISTimedActionQueue.add(ISUnequipAction:new(playerObj, curP, 50))
+    end
+    local curS = playerObj:getSecondaryHandItem()
+    if curS and curS ~= curP then
+      ISTimedActionQueue.add(ISUnequipAction:new(playerObj, curS, 50))
     end
   end
 
@@ -1584,6 +1603,8 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
             local sfx   = resolveSound(fixr, fixg)
             local sfxOK = resolveSuccessSound(fixr, fixg)
             local showM = resolveShowModel(fixr, fixg)
+            local noHands = not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
+            if noHands then showM = false end
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
               brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
@@ -1841,6 +1862,8 @@ local function addInventoryFixOptions(playerObj, context, broken)
             local sfx   = resolveSound(fixr, fixg)
             local sfxOK = resolveSuccessSound(fixr, fixg)
             local showM = resolveShowModel(fixr, fixg)
+            local noHands = not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
+            if noHands then showM = false end
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
               brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
