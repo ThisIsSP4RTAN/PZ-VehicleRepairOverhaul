@@ -67,7 +67,7 @@ local OURS_BY_NAME = {
     "VRO Fix Car seat",
     "VRO Fix Car seat 1",
     "VRO Fix Car seat 2",
-    "VRO Fix Car seat 4",
+    "VRO Fix Car seat 3",
     "VRO Fix Tire",
     "VRO Fix Military Tire",
     "VRO Fix Small Brake",

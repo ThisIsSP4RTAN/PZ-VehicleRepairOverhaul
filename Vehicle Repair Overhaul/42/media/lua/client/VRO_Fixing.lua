@@ -936,22 +936,25 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
         else
           -- Consumed requirement
           if tags then
-            local it   = findBestByTags(inv, tags, need)
-            local have = it and (isDrainable(it) and math.min(drainableUses(it), need) or 1) or 0
-            local nm   = (it and it.getDisplayName and it:getDisplayName()) or displayNameForTags(inv, tags)
-            pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, it and isItemDull(it))
-            if have >= need and it and it.getFullType then markSeenItemFT(it:getFullType()) end
-          elseif gi.tag then
-            local it   = findBestByTag(inv, gi.tag, need)
-            local have = it and (isDrainable(it) and math.min(drainableUses(it), need) or 1) or 0
-            local nm   = (it and it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag)
-            pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, it and isItemDull(it))
-            if have >= need and it and it.getFullType then markSeenItemFT(it:getFullType()) end
-          elseif gi.item then
-            local have = invHaveForFullType(gi.item, need)
-            local nm   = displayNameFromFullType(gi.item)
-            pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, false)
-            if have >= need then markSeenItemFT(gi.item) end
+            local it = findBestByTags(inv, tags, need)
+            if it then
+              local have = (isDrainable(it) and math.min(drainableUses(it), need)) or 1
+              local nm   = (it.getDisplayName and it:getDisplayName()) or displayNameForTags(inv, tags)
+              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, isItemDull(it))
+              if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
+            else
+              pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need, false))
+            end
+            elseif gi.tag then
+            local it = findBestByTag(inv, gi.tag, need)
+            if it then
+              local have = (isDrainable(it) and math.min(drainableUses(it), need)) or 1
+              local nm   = (it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag)
+              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, isItemDull(it))
+              if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
+            else
+              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, false))
+            end
           end
         end
       end
@@ -1011,7 +1014,6 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
         pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, isItemDull(it))
         markSeenItemFT(it:getFullType())
       else
-        pushReq("1,0,0", fallbackNameForTag(tag), 0, 1, false)
         pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
       end
     end
@@ -1035,7 +1037,6 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
         pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, isItemDull(it))
         markSeenItemFT(it:getFullType())
       else
-        pushReq("1,0,0", fallbackNameForTag(tag), 0, 1, false)
         pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
       end
     end
