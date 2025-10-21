@@ -126,16 +126,36 @@ local OURS_PREDICATES = {
 
 -- Internals
 local _alwaysNameSet = {}
-for _, n in ipairs(HIDE_BY_NAME) do _alwaysNameSet[n] = true end
+if HIDE_BY_NAME[1] ~= nil then
+  for i = 1, #HIDE_BY_NAME do
+    local n = HIDE_BY_NAME[i]
+    if type(n) == "string" then _alwaysNameSet[n] = true end
+  end
+end
 
 local _alwaysReqSet = {}
-for _, ft in ipairs(HIDE_BY_REQUIRE_FULLTYPE) do _alwaysReqSet[ft] = true end
+if HIDE_BY_REQUIRE_FULLTYPE[1] ~= nil then
+  for i = 1, #HIDE_BY_REQUIRE_FULLTYPE do
+    local ft = HIDE_BY_REQUIRE_FULLTYPE[i]
+    if type(ft) == "string" then _alwaysReqSet[ft] = true end
+  end
+end
 
 local _oursNameSet = {}
-for _, n in ipairs(OURS_BY_NAME) do _oursNameSet[n] = true end
+if OURS_BY_NAME[1] ~= nil then
+  for i = 1, #OURS_BY_NAME do
+    local n = OURS_BY_NAME[i]
+    if type(n) == "string" then _oursNameSet[n] = true end
+  end
+end
 
 local _oursReqSet = {}
-for _, ft in ipairs(OURS_BY_REQUIRE_FULLTYPE) do _oursReqSet[ft] = true end
+if OURS_BY_REQUIRE_FULLTYPE[1] ~= nil then
+  for i = 1, #OURS_BY_REQUIRE_FULLTYPE do
+    local ft = OURS_BY_REQUIRE_FULLTYPE[i]
+    if type(ft) == "string" then _oursReqSet[ft] = true end
+  end
+end
 
 local function _inReqSet(fixing, reqSet)
     if not (fixing and fixing.getRequiredItem) then return false end
@@ -149,11 +169,15 @@ local function _inReqSet(fixing, reqSet)
 end
 
 local function _anyTrue(preds, fixing, brokenObject)
-    for _, pred in ipairs(preds) do
-        local ok, res = pcall(function() return pred(fixing, brokenObject) end)
-        if ok and res then return true end
+  if not (preds and preds[1] ~= nil) then return false end
+  for i = 1, #preds do
+    local pred = preds[i]
+    if type(pred) == "function" then
+      local ok, res = pcall(pred, fixing, brokenObject)
+      if ok and res then return true end
     end
-    return false
+  end
+  return false
 end
 
 -- Prefer Lua when the sandbox toggle is OFF.
@@ -191,27 +215,32 @@ local function _shouldHideFixing(fixing, brokenObject)
     return false
 end
 
--- Wrap vanilla so hidden recipes never get added
-if not _G.VRO_HIDEVANILLA_WRAPPED then
-    local _orig_buildFixingMenu = ISInventoryPaneContextMenu.buildFixingMenu
-    if _orig_buildFixingMenu then
-        ISInventoryPaneContextMenu.buildFixingMenu = function(brokenObject, player, fixing, fixingNum, fixOption, subMenuFix, vehiclePart)
-            if _shouldHideFixing(fixing, brokenObject) then return end
-            return _orig_buildFixingMenu(brokenObject, player, fixing, fixingNum, fixOption, subMenuFix, vehiclePart)
-        end
+-- Wrap vanilla so hidden recipes never get added (module-scoped, hot-reload safe)
+do
+  VRO.hooks = VRO.hooks or {}
+
+  -- Use the original if we saved it before; otherwise capture current vanilla
+  local orig = VRO.hooks.orig_buildFixingMenu or ISInventoryPaneContextMenu.buildFixingMenu
+  if orig then
+    local function wrapped(brokenObject, player, fixing, fixingNum, fixOption, subMenuFix, vehiclePart)
+      if _shouldHideFixing(fixing, brokenObject) then return end
+      return orig(brokenObject, player, fixing, fixingNum, fixOption, subMenuFix, vehiclePart)
     end
-    _G.VRO_HIDEVANILLA_WRAPPED = true
+
+    -- Reinstall wrapper every load to pick up any code changes
+    ISInventoryPaneContextMenu.buildFixingMenu = wrapped
+    VRO.hooks.orig_buildFixingMenu    = orig
+    VRO.hooks.wrapped_buildFixingMenu = wrapped
+  end
 end
 
+
 -- Tiny runtime API
-VRO_HideVanillaFixings = VRO_HideVanillaFixings or {}
+VRO.HideVanillaFixings = VRO.HideVanillaFixings or {}
 
--- ALWAYS hide
-function VRO_HideVanillaFixings.hideByName(name) _alwaysNameSet[name] = true end
-function VRO_HideVanillaFixings.hideByRequire(fullType) _alwaysReqSet[fullType] = true end
-function VRO_HideVanillaFixings.hideIf(fn) table.insert(HIDE_PREDICATES, fn) end
-
--- Hide ONLY when preferring Lua
-function VRO_HideVanillaFixings.hideOursByName(name) _oursNameSet[name] = true end
-function VRO_HideVanillaFixings.hideOursByRequire(fullType) _oursReqSet[fullType] = true end
-function VRO_HideVanillaFixings.hideOursIf(fn) table.insert(OURS_PREDICATES, fn) end
+function VRO.HideVanillaFixings.hideByName(name)               _alwaysNameSet[name] = true end
+function VRO.HideVanillaFixings.hideByRequire(fullType)        _alwaysReqSet[fullType] = true end
+function VRO.HideVanillaFixings.hideIf(fn)                     HIDE_PREDICATES[#HIDE_PREDICATES+1] = fn end
+function VRO.HideVanillaFixings.hideOursByName(name)           _oursNameSet[name] = true end
+function VRO.HideVanillaFixings.hideOursByRequire(fullType)    _oursReqSet[fullType] = true end
+function VRO.HideVanillaFixings.hideOursIf(fn)                 OURS_PREDICATES[#OURS_PREDICATES+1] = fn end

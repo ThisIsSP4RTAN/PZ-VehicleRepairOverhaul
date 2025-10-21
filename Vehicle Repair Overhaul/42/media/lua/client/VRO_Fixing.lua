@@ -142,7 +142,10 @@ local function _expandRequireEntry(entry, out_set, seenLists)
         seenLists[key] = true
         local lst = VRO.PartLists[key]
         if type(lst) == "table" then
-          for _,ft in ipairs(lst) do out_set[ft] = true end
+          for i = 1, #lst do
+          local ft = lst[i]
+          out_set[ft] = true
+        end
         else
           print("[VRO] Part list not found: " .. tostring(key))
         end
@@ -178,8 +181,9 @@ local function resolveRequireSet(fixing)
       if type(fixing.requireLists) == "string" then
         _expandRequireEntry("@"..fixing.requireLists, set)
       elseif type(fixing.requireLists) == "table" then
-        for _,name in ipairs(fixing.requireLists) do
-          _expandRequireEntry("@"..tostring(name), set)
+        local rl = fixing.requireLists
+        for i = 1, #rl do
+          _expandRequireEntry("@"..tostring(rl[i]), set)
         end
       end
     end
@@ -263,7 +267,10 @@ end
 
 local function itemHasAnyTag(it, tags)
   if not (it and it.hasTag and tags) then return false end
-  for _,t in ipairs(tags) do if it:hasTag(t) then return true end end
+  for i = 1, #tags do
+  local t = tags[i]
+  if it:hasTag(t) then return true end
+end
   return false
 end
 
@@ -309,7 +316,8 @@ local function findBestByTags(inv, tags, needUses)
     )
     if best then return best end
   end
-  for _,t in ipairs(tags) do
+  for i = 1, #tags do
+    local t = tags[i]
     local it = firstTagItem(inv, t)
     if it then return it end
   end
@@ -331,9 +339,15 @@ end
 
 -- NEW: display for multi-tags (first present wins; else Tag1/Tag2)
 local function displayNameForTags(inv, tags)
-  for _,t in ipairs(tags) do
+  if not (tags and tags[1] ~= nil) then
+    return nil
+  end
+  for i = 1, #tags do
+    local t  = tags[i]
     local it = firstTagItem(inv, t)
-    if it and it.getDisplayName then return it:getDisplayName() end
+    if it and it.getDisplayName then
+      return it:getDisplayName()
+    end
   end
   return table.concat(tags, "/")
 end
@@ -385,29 +399,22 @@ local function isRepairableFromInventory(it)
   return cur < max
 end
 
--- Keep-flag helpers (robust, no next/ipairs/pairs shadow issues)
+-- Keep-flag helper: array-of-strings → set { flag=true, ... }
 local function normalizeFlags(f)
   if f == nil then return nil end
 
-  -- Quick helper: true iff table has at least one truthy value
-  local function tableHasAnyTruth(t)
-    -- iterate using the global pairs explicitly fetched once
-    local _pairs = _G.pairs or pairs
-    for _, v in _pairs(t) do
-      if v then return true end
-    end
-    return false
-  end
-
+  -- Only handle array form here (map-like tables are ignored as before)
   if type(f) == "table" and f[1] ~= nil then
-    local m = {}
-    local _ipairs = _G.ipairs or ipairs
-    for _, k in _ipairs(f) do
-      if type(k) == "string" then m[k] = true end
+    local m, n = {}, 0
+    for i = 1, #f do
+      local k = f[i]
+      if type(k) == "string" and m[k] ~= true then
+        m[k] = true
+        n = n + 1
+      end
     end
-    return tableHasAnyTruth(m) and m or nil
+    return (n > 0) and m or nil
   end
-
   return nil
 end
 
@@ -514,7 +521,8 @@ local function findBestByTagsNotDull(inv, tags, needUses)
   end
 
   -- Per-tag fallback: *within the same tag* keep searching for a non-dull candidate
-  for _, t in ipairs(tags) do
+  for i = 1, #tags do
+    local t = tags[i]
     local it = findBestByTagNotDull(inv, t, needUses)
     if it then return it end
   end
@@ -654,11 +662,12 @@ local function _appendOneOfTagsList(desc, inv, tags, need, _unused_forceHeader)
     return _scriptDispName(si)
   end
 
-  for _, tag in ipairs(tags) do
+  for i = 1, #tags do
+    local tag = tags[i]
     local arr = _getScriptsForTag(tag)
     if arr and arr.size and arr:size() > 0 then
-      for i = 1, arr:size() do
-        local si = arr:get(i-1)
+      for j = 1, arr:size() do
+        local si = arr:get(j - 1)
         local ft = _scriptFullType(si)
         if ft and not added[ft] then
           added[ft] = true
@@ -674,9 +683,9 @@ local function _appendOneOfTagsList(desc, inv, tags, need, _unused_forceHeader)
           local haveStr = (have and "1" or "0") .. "/" .. tostring(need)
           local suffix  = dull and (" (" .. dullTooltip .. ")") or ""
 
-          table.insert(lines,
-            string.format(" <INDENT:20> <RGB:%s>%s %s%s <LINE> <INDENT:0> ",
-              rgb, name, haveStr, suffix))
+          lines[#lines + 1] = string.format(
+            " <INDENT:20> <RGB:%s>%s %s%s <LINE> <INDENT:0> ",
+            rgb, name, haveStr, suffix)
         end
       end
     end
@@ -685,7 +694,10 @@ local function _appendOneOfTagsList(desc, inv, tags, need, _unused_forceHeader)
   if #lines > 0 then
     local headerRGB = anyEligible and "0,1,0" or (anyHave and "1,1,0" or "1,0,0")
     desc = desc .. string.format(" <RGB:%s>%s <LINE> ", headerRGB, getText("IGUI_CraftUI_OneOf"))
-    for _, L in ipairs(lines) do desc = desc .. L end
+    for i = 1, #lines do
+      local L = lines[i]
+      desc = desc .. L
+    end
   end
   return desc
 end
@@ -1075,7 +1087,13 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
 
   -- Stitch all sections together
   desc = desc .. table.concat(reqLines)
-  for _, blk in ipairs(oneOfBlocks) do desc = desc .. " " .. blk end
+
+  if oneOfBlocks and oneOfBlocks[1] ~= nil then
+    for i = 1, #oneOfBlocks do
+      desc = desc .. " " .. oneOfBlocks[i]
+    end
+  end
+
   desc = desc .. table.concat(skillLines)
   tip.description = desc
 end
@@ -1156,9 +1174,13 @@ local function queueEquipActions(playerObj, eq, globalItem)
   local function _specIsTorch(spec)
     if not spec then return false end
     if spec.item and isFullTypeBlowTorch(spec.item) then return true end
-    if spec.tag  and spec.tag == "BlowTorch" then return true end
-    if spec.tags then
-      for _,t in ipairs(spec.tags) do if t == "BlowTorch" then return true end end
+    if spec.tag == "BlowTorch" then return true end
+
+    local tags = spec.tags
+    if tags and tags[1] ~= nil then
+      for i = 1, #tags do
+        if tags[i] == "BlowTorch" then return true end
+      end
     end
     return false
   end
@@ -1234,11 +1256,24 @@ local function queueEquipActions(playerObj, eq, globalItem)
     local gi = globalItem
     if gi then
       local gTags = normalizeTagsField(gi)
-      local isTorch =
-        (gi.item and isFullTypeBlowTorch(gi.item)) or
-        (gi.tag == "BlowTorch") or
-        (gTags and (function() for _,t in ipairs(gTags) do if t == "BlowTorch" then return true end end return false end)())
-      if isTorch then needTorchUses = gi.uses or 1 end
+      local isTorch = false
+
+      if gi.item and isFullTypeBlowTorch(gi.item) then
+        isTorch = true
+      elseif gi.tag == "BlowTorch" then
+        isTorch = true
+      elseif gTags and gTags[1] ~= nil then
+        for i = 1, #gTags do
+          if gTags[i] == "BlowTorch" then
+            isTorch = true
+            break
+          end
+        end
+      end
+
+      if isTorch then
+        needTorchUses = gi.uses or 1
+      end
     end
   end
 
@@ -1471,7 +1506,13 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           else allOK = false; break end
         elseif gi.item then
           local b = gatherRequiredItems(inv, gi.item, need)
-          if b then for _,e in ipairs(b) do consumeFlat[#consumeFlat+1] = e end else allOK = false; break end
+          if b then
+            for i2 = 1, #b do
+              consumeFlat[#consumeFlat + 1] = b[i2]
+            end
+          else
+            allOK = false; break
+          end
         else
           allOK = false; break
         end
@@ -1505,12 +1546,27 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   end
 
   local function _pickTorchGlobal(list, fallbackSingle)
-    if list then
-      for _,gi in ipairs(list) do
-        local gTags = normalizeTagsField(gi)
-        if gi.tag == "BlowTorch" then return gi end
-        if gTags then for _,t in ipairs(gTags) do if t == "BlowTorch" then return gi end end end
-        if gi.item and (gi.item == "Base.BlowTorch" or gi.item:find("BlowTorch", 1, true)) then return gi end
+    if list and list[1] ~= nil then
+      for i = 1, #list do
+        local gi = list[i]
+        if gi then
+          -- direct tag
+          if gi.tag == "BlowTorch" then return gi end
+
+          -- tags array
+          local gTags = normalizeTagsField(gi)
+          if gTags and gTags[1] ~= nil then
+            for j = 1, #gTags do
+              if gTags[j] == "BlowTorch" then return gi end
+            end
+          end
+
+          -- item full type / name contains "BlowTorch"
+          local it = gi.item
+          if it and (it == "Base.BlowTorch" or (type(it) == "string" and string.find(it, "BlowTorch", 1, true))) then
+            return gi
+          end
+        end
       end
     end
     return fallbackSingle
@@ -1575,9 +1631,10 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           wearOK = (findFirstTypeRecurse(inv, eq.wear) ~= nil)
         end
 
-        if glKeep then
-          for _,k in ipairs(glKeep) do
-            if hasFlag(k.flags, "IsNotDull") and isItemDull(k.item) then
+        if glKeep and glKeep[1] ~= nil then
+          for i = 1, #glKeep do
+            local k = glKeep[i]
+            if k and hasFlag(k.flags, "IsNotDull") and isItemDull(k.item) then
               glOK = false
               break
             end
@@ -1640,11 +1697,19 @@ local function resolveInvItemFromContext(items)
     if first.items and #first.items>0 and instanceof(first.items[1],"InventoryItem") then return first.items[1] end
     if first.item and instanceof(first.item,"InventoryItem") then return first.item end
   end
-  for _,v in ipairs(items) do
-    if instanceof(v,"InventoryItem") then return v end
-    if type(v)=="table" then
-      if v.items and #v.items>0 and instanceof(v.items[1],"InventoryItem") then return v.items[1] end
-      if v.item and instanceof(v.item,"InventoryItem") then return v.item end
+  for i = 1, #items do
+    local v = items[i]
+    if instanceof(v, "InventoryItem") then
+      return v
+    end
+    if type(v) == "table" then
+      local arr = v.items
+      if arr and arr[1] ~= nil and instanceof(arr[1], "InventoryItem") then
+        return arr[1]
+      end
+      if v.item and instanceof(v.item, "InventoryItem") then
+        return v.item
+      end
     end
   end
   return nil
@@ -1726,9 +1791,17 @@ local function addInventoryFixOptions(playerObj, context, broken)
           else allOK = false; break end
         elseif gi.item then
           local b = gatherRequiredItems(inv, gi.item, need)
-          if b then for _,e in ipairs(b) do consumeFlat[#consumeFlat+1] = e end else allOK = false; break end
+          if b then
+            for i3 = 1, #b do
+              consumeFlat[#consumeFlat + 1] = b[i3]
+            end
+          else
+            allOK = false
+            break
+          end
         else
-          allOK = false; break
+          allOK = false
+          break
         end
       end
     end
@@ -1762,12 +1835,27 @@ local function addInventoryFixOptions(playerObj, context, broken)
 
   -- Pick a torch-like global entry (for equipping/anim hint)
   local function _pickTorchGlobal(list, fallbackSingle)
-    if list then
-      for _,gi in ipairs(list) do
-        local gTags = normalizeTagsField(gi)
-        if gi.tag == "BlowTorch" then return gi end
-        if gTags then for _,t in ipairs(gTags) do if t == "BlowTorch" then return gi end end end
-        if gi.item and (gi.item == "Base.BlowTorch" or gi.item:find("BlowTorch", 1, true)) then return gi end
+    if list and list[1] ~= nil then
+      for i = 1, #list do
+        local gi = list[i]
+        if gi then
+          -- direct tag
+          if gi.tag == "BlowTorch" then return gi end
+
+          -- tags array
+          local gTags = normalizeTagsField(gi)
+          if gTags and gTags[1] ~= nil then
+            for j = 1, #gTags do
+              if gTags[j] == "BlowTorch" then return gi end
+            end
+          end
+
+          -- item full type / name contains "BlowTorch"
+          local it = gi.item
+          if it and (it == "Base.BlowTorch" or (type(it) == "string" and string.find(it, "BlowTorch", 1, true))) then
+            return gi
+          end
+        end
       end
     end
     return fallbackSingle
@@ -1835,9 +1923,10 @@ local function addInventoryFixOptions(playerObj, context, broken)
           wearOK = (findFirstTypeRecurse(inv, eq.wear) ~= nil)
         end
 
-        if glKeep then
-          for _,k in ipairs(glKeep) do
-            if hasFlag(k.flags, "IsNotDull") and isItemDull(k.item) then
+        if glKeep and glKeep[1] ~= nil then
+          for i = 1, #glKeep do
+            local k = glKeep[i]
+            if k and hasFlag(k.flags, "IsNotDull") and isItemDull(k.item) then
               glOK = false
               break
             end

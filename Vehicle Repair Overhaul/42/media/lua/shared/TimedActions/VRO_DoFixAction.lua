@@ -22,24 +22,30 @@ local function drainableUses(it)
 end
 
 local function consumeItems(character, bundles)
-  if not bundles then return end
-  for _, b in ipairs(bundles) do
-    local it, take = b.item, b.takeUses or 0
-    if it and take > 0 then
-      if isDrainable(it) then
-        if it.Use then
-          for _=1,take do if drainableUses(it) <= 0 then break end; it:Use() end
-        elseif it.getUseDelta and it.getUsedDelta and it.setUsedDelta then
-          local step = it:getUseDelta()
-          it:setUsedDelta(math.min(1.0, it:getUsedDelta() + step * take))
-        end
-        if drainableUses(it) <= 0 then
-          local con = it.getContainer and it:getContainer() or (character and character:getInventory()) or nil
+  if not bundles or bundles[1] == nil then return end
+  for i = 1, #bundles do
+    local b = bundles[i]
+    if b then
+      local it, take = b.item, b.takeUses or 0
+      if it and take > 0 then
+        if isDrainable(it) then
+          if it.Use then
+            for _ = 1, take do
+              if drainableUses(it) <= 0 then break end
+              it:Use()
+            end
+          elseif it.getUseDelta and it.getUsedDelta and it.setUsedDelta then
+            local step = it:getUseDelta()
+            it:setUsedDelta(math.min(1.0, it:getUsedDelta() + step * take))
+          end
+          if drainableUses(it) <= 0 then
+            local con = (it.getContainer and it:getContainer()) or (character and character:getInventory()) or nil
+            if con then con:Remove(it) end
+          end
+        else
+          local con = (it.getContainer and it:getContainer()) or (character and character:getInventory()) or nil
           if con then con:Remove(it) end
         end
-      else
-        local con = it.getContainer and it:getContainer() or (character and character:getInventory()) or nil
-        if con then con:Remove(it) end
       end
     end
   end
@@ -116,10 +122,26 @@ end
 
 -- Keep-flag application (mirror vanilla)
 local function _normalizeFlags(f)
-  if not f then return nil end
-  if type(f)=="table" and not f[1] then return f end
-  local m = {}; for _,k in ipairs(f) do if type(k)=="string" then m[k]=true end end
-  return next(m) and m or nil
+  if f == nil then return nil end
+
+  -- Map-like table: keep as-is (no iteration needed here)
+  if type(f) == "table" and f[1] == nil then
+    return f
+  end
+
+  -- Array-of-strings → { flag=true, ... } using indexing
+  if type(f) == "table" then
+    local m, n = {}, 0
+    for i = 1, #f do
+      local k = f[i]
+      if type(k) == "string" then
+        m[k] = true
+        n = n + 1
+      end
+    end
+    return (n > 0) and m or nil  -- no `next`
+  end
+  return nil
 end
 
 local function _perkLevel(chr, name)
@@ -201,12 +223,16 @@ local function collectProgressItems(self)
   local function add(it)
     if it and it.setJobDelta and not seen[it] then
       seen[it] = true
-      table.insert(list, it)
+      list[#list + 1] = it
     end
   end
+
   local function addBundle(bundle)
-    if not bundle then return end
-    for _,b in ipairs(bundle) do add(b.item) end
+    if not (bundle and bundle[1] ~= nil) then return end
+    for i = 1, #bundle do
+      local b = bundle[i]
+      if b then add(b.item) end
+    end
   end
 
   -- Consumed stuff
@@ -214,11 +240,15 @@ local function collectProgressItems(self)
   addBundle(self.globalBundle)
 
   -- Not-consumed items we explicitly chose for flags/damage (globals keep + equip keep)
-  if self.keepFlagTargets then
-    for _,k in ipairs(self.keepFlagTargets) do add(k.item) end
+  local keep = self.keepFlagTargets
+  if keep and keep[1] ~= nil then
+    for i = 1, #keep do
+      local k = keep[i]
+      if k then add(k.item) end
+    end
   end
 
-  -- Hands we told the TA to show (in case they werenâ€™t in keepFlagTargets)
+  -- Hands we told the TA to show (in case they weren’t in keepFlagTargets)
   add(self.expectedPrimary)
   add(self.expectedSecondary)
 
@@ -250,9 +280,11 @@ function VRO.DoFixAction:update()
   if veh then self.character:faceThisObject(veh) end
 
   -- Drive all progress bars
-  if self._progressItems then
+  local items = self._progressItems
+  if items and items[1] ~= nil then
     local jd = self:getJobDelta()
-    for _,it in ipairs(self._progressItems) do
+    for i = 1, #items do
+      local it = items[i]
       if it and it.setJobDelta then it:setJobDelta(jd) end
     end
   end
@@ -280,9 +312,15 @@ function VRO.DoFixAction:start()
   -- Set up all items to show progress bars + text
   self._progressItems = collectProgressItems(self)
   local job = self.jobType or buildJobType(self.part, self.brokenItem)
-  for _,it in ipairs(self._progressItems) do
-    if it.setJobType then it:setJobType(job) end
-    if it.setJobDelta then it:setJobDelta(0) end
+  local list = self._progressItems
+  if list and list[1] ~= nil then
+    for i = 1, #list do
+      local it = list[i]
+      if it then
+        if it.setJobType  then it:setJobType(job) end
+        if it.setJobDelta then it:setJobDelta(0)  end
+      end
+    end
   end
 
   if self.fxSound then
@@ -291,8 +329,10 @@ function VRO.DoFixAction:start()
 end
 
 function VRO.DoFixAction:stop()
-  if self._progressItems then
-    for _,it in ipairs(self._progressItems) do
+  local items = self._progressItems
+  if items and items[1] ~= nil then
+    for i = 1, #items do
+      local it = items[i]
       if it and it.setJobDelta then it:setJobDelta(0) end
     end
   end
@@ -386,16 +426,20 @@ function VRO.DoFixAction:perform()
   if self.fixerBundle then consumeItems(self.character, self.fixerBundle) end
   if self.globalBundle then consumeItems(self.character, self.globalBundle) end
 
-  local hi = _highestRelevantSkill(self.character, self.fixing, self.fixer)
-  if self.keepFlagTargets then
-    for _,k in ipairs(self.keepFlagTargets) do
-      _applyKeepFlags(self.character, k.item, k.flags, hi)
+  local hi   = _highestRelevantSkill(self.character, self.fixing, self.fixer)
+  local keep = self.keepFlagTargets
+  if keep and keep[1] ~= nil then
+    for i = 1, #keep do
+      local k = keep[i]
+      if k then _applyKeepFlags(self.character, k.item, k.flags, hi) end
     end
   end
 
   -- Clear all progress bars
-  if self._progressItems then
-    for _,it in ipairs(self._progressItems) do
+  local items = self._progressItems
+  if items and items[1] ~= nil then
+    for i = 1, #items do
+      local it = items[i]
       if it and it.setJobDelta then it:setJobDelta(0) end
     end
   end

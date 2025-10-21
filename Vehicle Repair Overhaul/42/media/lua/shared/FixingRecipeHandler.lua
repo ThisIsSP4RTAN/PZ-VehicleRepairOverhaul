@@ -24,39 +24,44 @@ local function _flattenTokens(tokens)
   local function _add(ft)
     if not includeSet[ft] then
       includeSet[ft] = true
-      table.insert(includeList, ft)
+      includeList[#includeList + 1] = ft
     end
   end
 
-  for _, tok in ipairs(tokens or {}) do
-    if type(tok) == "string" then
-      local negative = false
-      if tok:sub(1,1) == "!" then
-        negative = true
-        tok = tok:sub(2)
-      end
+  if tokens and tokens[1] ~= nil then
+    for i = 1, #tokens do
+      local tok = tokens[i]
+      if type(tok) == "string" then
+        local negative = false
+        if tok:sub(1,1) == "!" then
+          negative = true
+          tok = tok:sub(2)
+        end
 
-      if tok:sub(1,1) == "@" then
-        local listName = tok:sub(2)
-        local lst = _getPartListByName(listName)
-        if lst then
-          if negative then
-            for _, ft in ipairs(lst) do excludeSet[ft] = true end
-          else
-            for _, ft in ipairs(lst) do
-              if _existsFullType(ft) then _add(ft) end
+        if tok:sub(1,1) == "@" then
+          local listName = tok:sub(2)
+          local lst = _getPartListByName(listName)
+          if lst and lst[1] ~= nil then
+            if negative then
+              for j = 1, #lst do
+                local ft = lst[j]
+                excludeSet[ft] = true
+              end
+            else
+              for j = 1, #lst do
+                local ft = lst[j]
+                if _existsFullType(ft) then _add(ft) end
+              end
             end
+          else
+            -- missing list -> skip
           end
         else
-          --print(("[VRO] [Fixing] Missing part list @%s (skipped)"):format(listName))
-        end
-      else
-        -- single fullType
-        if negative then
-          excludeSet[tok] = true
-        else
-          if _existsFullType(tok) then _add(tok) else
-            --print(("[VRO] [Fixing] Missing item (skipped): %s"):format(tok))
+          -- single fullType
+          if negative then
+            excludeSet[tok] = true
+          else
+            if _existsFullType(tok) then _add(tok) end
           end
         end
       end
@@ -65,8 +70,13 @@ local function _flattenTokens(tokens)
 
   -- Apply exclusions while preserving order
   local out = {}
-  for _, ft in ipairs(includeList) do
-    if not excludeSet[ft] then table.insert(out, ft) end
+  if includeList[1] ~= nil then
+    for i = 1, #includeList do
+      local ft = includeList[i]
+      if not excludeSet[ft] then
+        out[#out + 1] = ft
+      end
+    end
   end
   return out
 end
