@@ -931,6 +931,18 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
         local tags = normalizeTagsField(gi)
         local need = gi.uses or 1
 
+        -- De-dupe: pre-mark torch & explicit items so equip lines won't echo them
+        if gi.item then markSeenItemFT(gi.item) end
+        if gi.tag == "BlowTorch" then markSeenItemFT("Base.BlowTorch") end
+        if tags and tags[1] ~= nil then
+          for j = 1, #tags do
+            if tags[j] == "BlowTorch" then
+              markSeenItemFT("Base.BlowTorch")
+              break
+            end
+          end
+        end
+
         if gi.consume == false then
           -- Choose exactly what the action would choose (handles IsNotDull / SharpnessCheck)
           local chosen = _pickNonConsumedChoice(inv, gi)
