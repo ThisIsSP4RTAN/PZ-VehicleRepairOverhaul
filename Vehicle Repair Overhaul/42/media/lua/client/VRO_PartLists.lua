@@ -383,7 +383,7 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.65bansheeRollbar3","Base.DG70FrontBumperB","Base.DG70FrontBumperC","Base.CUDAFrontBumper0","Base.CUDAFrontBumper1","Base.CUDAFrontBumper2","Base.CUDAFrontBumperA","Base.BumperRearCivic1","Base.E150FrontBumper2","Base.P19ABumperFront0","Base.97BushBullbarSAS",
     "Base.W460BumperRear1","Base.Int4700Bullbar2","Base.DG70RearBumper0","Base.DG70RearBumperA","Base.DG70RearBumperB","Base.DG70RearBumperC","Base.89BroncoBarrier","Base.CUDARearBumper0","Base.CUDARearBumperA","Base.CytAstra89Bull1","Base.CytMercEvoBull3","Base.90bmwE30Bullbar",
     "Base.E150RearBumper2","Base.P19ABumperRear0","Base.R32BumperRear0","Base.R32BumperRear1","Base.R32BumperRear2","Base.R32BumperRear3","Base.ECTO1Bumper1","Base.ECTO1BumperA","Base.M35A2Bumper1","Base.M35A2Grille1","Base.W460Bullbar2","Base.W460Bullbar3","Base.W460BullbarM",
-    "Base.FJ75Bullbar2","Base.W460Bumper1","Base.M923Bumper1","Base.M923Bumper2","Base.U1550LBull2","Base.M35Bumper2","Base.K5Bullbar2","Base.R32Bumper0","Base.R32Bumper1","Base.R32Bumper2","Base.R32Bumper3",
+    "Base.FJ75Bullbar2","Base.W460Bumper1","Base.M923Bumper1","Base.M923Bumper2","Base.U1550LBull2","Base.M35Bumper2","Base.K5Bullbar2","Base.R32Bumper0","Base.R32Bumper1","Base.R32Bumper2","Base.R32Bumper3","Base.93chevySilveradoPlowFrame",
   }
 
   VRO.PartLists.SaddlebagsHard_All = {

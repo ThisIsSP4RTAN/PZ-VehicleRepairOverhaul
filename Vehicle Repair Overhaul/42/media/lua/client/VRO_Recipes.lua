@@ -1770,9 +1770,8 @@ return {
         { item = "Base.Glue",           uses = 4, skills = { Mechanics = 1 } },
         { item = "Base.DuctTape",       uses = 4, skills = { Mechanics = 1 }, successSound = "FixWithTape" },
         { item = "Base.FiberglassTape", uses = 2, skills = { Mechanics = 1 }, successSound = "FixWithTape" },
-        { item = "Base.Gum",            uses = 4, skills = { Mechanics = 1 } },
+        { item = "Base.Gum",            uses = 5, skills = { Mechanics = 1 } },
         { item = "Base.Sheet",          uses = 2, skills = { Mechanics = 1 } },
-        { item = "Base.RippedSheets",   uses = 3, skills = { Mechanics = 1 } },
       },
     },
 

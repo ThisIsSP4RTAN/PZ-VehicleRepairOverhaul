@@ -1283,9 +1283,8 @@ module Base
         Fixer = Base.Glue=4;Mechanics=1,
         Fixer = Base.DuctTape=4;Mechanics=1,
         Fixer = Base.FiberglassTape=2;Mechanics=1,
-        Fixer = Base.Gum=4;Mechanics=1,
+        Fixer = Base.Gum=5;Mechanics=1,
         Fixer = Base.Sheet=2;Mechanics=1,
-        Fixer = Base.RippedSheets=3;Mechanics=1,
     }
 
     fixing VRO Fix Military Windows Welding
