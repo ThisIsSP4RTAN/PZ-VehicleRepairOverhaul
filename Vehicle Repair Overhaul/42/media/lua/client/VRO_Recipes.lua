@@ -1840,7 +1840,6 @@ return {
       time = 200,
 
       fixers = {
-        { item = "Base.GlassPanel",       uses = 1, skills = { Electricity = 2, Mechanics = 1 } },
         { item = "Base.BrokenGlass",      uses = 2, skills = { Electricity = 2, Mechanics = 1 } },
         { item = "Base.ElectronicsScrap", uses = 2, skills = { Electricity = 2, Mechanics = 1 } },
         { item = "Base.LightBulb",        uses = 1, skills = { Electricity = 2, Mechanics = 1 } },

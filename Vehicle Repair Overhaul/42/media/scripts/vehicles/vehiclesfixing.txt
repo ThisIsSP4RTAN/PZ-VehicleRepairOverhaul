@@ -1334,7 +1334,6 @@ module Base
     {
         ConditionModifier = 0.8,
 
-        Fixer = Base.GlassPanel=1;Electricity=2;Mechanics=1,
         Fixer = Base.BrokenGlass=2;Electricity=2;Mechanics=1,
         Fixer = Base.ElectronicsScrap=2;Electricity=2;Mechanics=1,
         Fixer = Base.LightBulb=1;Electricity=2;Mechanics=1,
