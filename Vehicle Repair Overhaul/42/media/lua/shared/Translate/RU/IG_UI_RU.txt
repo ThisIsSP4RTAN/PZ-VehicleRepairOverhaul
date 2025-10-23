@@ -1,0 +1,3 @@
+IGUI_RU = {
+	IGUI_EER_RebuildEngine = "Переборка двигателя",
+}

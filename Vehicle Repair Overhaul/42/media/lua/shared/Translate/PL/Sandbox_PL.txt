@@ -1,0 +1,10 @@
+Sandbox_PL = {
+
+	Sandbox_VRO = "Vehicle Repair Overhaul",
+
+	Sandbox_VRO_EnableEngineRebuild = "Przebudowa silnika",
+	Sandbox_VRO_EnableEngineRebuild_tooltip = "Przełącza dostępność akcji „Przebuduj silnik”. (Jeśli włączony jest Project Summer Car lub inny mod naprawy silnika, to ustawienie nic nie robi.)",
+
+	Sandbox_VRO_UseVanillaFixingRecipes = "Stary system napraw",
+	Sandbox_VRO_UseVanillaFixingRecipes_tooltip = "Używa oryginalnego systemu napraw: naprawy na miejscu, bez maski spawalniczej, dźwięków i animacji.",
+}

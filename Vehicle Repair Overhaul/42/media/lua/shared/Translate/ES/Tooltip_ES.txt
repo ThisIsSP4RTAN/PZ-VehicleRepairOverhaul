@@ -1,5 +1,6 @@
 Tooltip_ES = {
 	Tooltip_FixAFlat = "Reparacion de neumaticos.",
 	Tooltip_EHR_NewCondition = "Estado Nuevo",
-	Tooltip_ELR_NewCondition = "Estado Nuevo", 
+	Tooltip_ELR_NewCondition = "Estado Nuevo",
+	Tooltip_eer_RebuildEngine = "La calidad y el estado del motor se restaurarán al máximo",
 }

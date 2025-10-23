@@ -1,8 +1,10 @@
 Sandbox_CH = {
 
 	Sandbox_VRO = "Vehicle Repair Overhaul"
-	
-	
-	Sandbox_VRO_EnableEngineRebuild = "允許引擎重新建造"
-	Sandbox_VRO_EnableEngineRebuild_tooltip = "遊戲中引擎重新建造操作是否可用."
+
+	Sandbox_VRO_EnableEngineRebuild = "允許引擎重新建造",
+	Sandbox_VRO_EnableEngineRebuild_tooltip = "遊戲中引擎重新建造操作是否可用.",
+
+	Sandbox_VRO_UseVanillaFixingRecipes = "舊修理係統。",
+	Sandbox_VRO_UseVanillaFixingRecipes_tooltip = "使用原始的修理係統，允許修復到位，不使用焊接麵具，任何聲音或動畫。",
 }

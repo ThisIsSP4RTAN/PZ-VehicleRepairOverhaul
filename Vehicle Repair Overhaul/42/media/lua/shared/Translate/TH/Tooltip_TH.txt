@@ -2,4 +2,6 @@ Tooltip_TH = {
 	Tooltip_FixAFlat = "ใช้ซ่อมยางรถยนต์",
 	Tooltip_EHR_NewCondition = "สภาพใหม่",
 	Tooltip_ELR_NewCondition = "สภาพใหม่",
+	Tooltip_eer_RebuildEngine = "คุณภาพและสภาพของเครื่องยนต์จะถูกซ่อมจนเต็มค่าสูงสุด",
+	
 }

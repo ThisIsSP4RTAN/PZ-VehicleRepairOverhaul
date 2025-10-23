@@ -2,4 +2,5 @@ Tooltip_TR = {
     Tooltip_FixAFlat = "Araç lastiklerini onarin.",
 	Tooltip_EHR_NewCondition = "Yeni Durum",
 	Tooltip_ELR_NewCondition = "Yeni Durum",
+	Tooltip_eer_RebuildEngine = "Motorun kalitesi ve durumu en üst seviyeye getirilecektir",
 }

@@ -1,0 +1,10 @@
+Sandbox_DE = {
+
+	Sandbox_VRO = "Vehicle Repair Overhaul",
+
+	Sandbox_VRO_EnableEngineRebuild = "Motorüberholung",
+	Sandbox_VRO_EnableEngineRebuild_tooltip = "Schaltet um, ob die Aktion „Motor überholen“ im Spiel verfügbar ist. (Ist Project Summer Car oder ein anderes Motorreparatur‑Mod aktiv, bewirkt diese Einstellung nichts.)",
+
+	Sandbox_VRO_UseVanillaFixingRecipes = "Altes Reparatursystem",
+	Sandbox_VRO_UseVanillaFixingRecipes_tooltip = "Verwendet das ursprüngliche Reparatursystem: Reparieren im Stehen, ohne Schweißmaske, ohne Geräusche und Animationen.",
+}
