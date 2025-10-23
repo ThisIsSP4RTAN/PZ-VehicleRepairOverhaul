@@ -1945,7 +1945,7 @@ return {
       name = "Fix Bullbar Welding",
       require = { "@Bullbar_All", "Base.M113FrontWindow1", "Base.M113FrontWindow2", "Base.M113FrontWindow3", "Base.M923SpareMount1", "Base.MH_MkII_guntower1",
                   "Base.MH_MkII_guntower2", "Base.MH_MkII_guntower3", "Base.M998SpareMount_Item", "Base.M998SpareTireMount_Item", "Base.M35TarpFrame2",
-                  "Base.ShermanDriveSprocket2", "Base.ShermanRearSprocket2", "Base.ShermanHatch2" },
+                  "Base.ShermanDriveSprocket2", "Base.ShermanRearSprocket2", "Base.ShermanHatch2", "DAMNBumperRear" },
       globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
       conditionModifier = 1.2,
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
@@ -1975,7 +1975,7 @@ return {
       name = "Fix Bullbar",
       require = { "@Bullbar_All", "Base.M113FrontWindow1", "Base.M113FrontWindow2", "Base.M113FrontWindow3", "Base.M923SpareMount1", "Base.MH_MkII_guntower1",
                   "Base.MH_MkII_guntower2", "Base.MH_MkII_guntower3", "Base.M998SpareMount_Item", "Base.M998SpareTireMount_Item", "Base.M35TarpFrame2",
-                  "Base.ShermanDriveSprocket2", "Base.ShermanRearSprocket2", "Base.ShermanHatch2" },
+                  "Base.ShermanDriveSprocket2", "Base.ShermanRearSprocket2", "Base.ShermanHatch2", "DAMNBumperRear" },
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
       conditionModifier = 0.7,
       equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
@@ -2005,7 +2005,7 @@ return {
 
     {
       name = "Fix Bullbar 1",
-      require = "@Bullbar_All",
+      require = { "@Bullbar_All", "DAMNBumperRear" },
       globalItem = nil,
       conditionModifier = 0.3,
       anim = "VehicleWorkOnMid",
@@ -2152,7 +2152,7 @@ return {
 
     {
       name = "Fix Panels Welding",
-      require = "@Panels_All",
+      require = { "@Panels_All", "DAMNBarrier" },
       globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
       conditionModifier = 0.9,
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
@@ -2174,7 +2174,7 @@ return {
 
     {
       name = "Fix Panels",
-      require = "@Panels_All",
+      require = { "@Panels_All", "DAMNBarrier" },
       globalItem = { item = "Base.Screws", uses = 5, consume = true },
       conditionModifier = 0.6,
       equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
@@ -2197,7 +2197,7 @@ return {
 
     {
       name = "Fix Panels 1",
-      require = "@Panels_All",
+      require = { "@Panels_All", "DAMNBarrier" },
       globalItem = nil,
       conditionModifier = 0.4,
       anim = "VehicleWorkOnMid",
