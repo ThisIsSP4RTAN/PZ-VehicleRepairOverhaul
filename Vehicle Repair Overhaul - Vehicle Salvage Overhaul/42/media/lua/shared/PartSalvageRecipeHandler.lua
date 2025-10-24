@@ -200,7 +200,7 @@ local function injectAllRecipeInputs()
 
   -- Contains light and battery parts
   injectRecipeInputs("Salvage Vehicle Electronics",
-    { "@Battery_All", "@LargeBattery_All", "@Light_All", "VRO.recipefiller" }
+    { "@Battery_All", "@LargeBattery_All", "@MiscElectronics_All", "@Light_All", "VRO.recipefiller" }
   )
 
   injectRecipeInputs("Salvage Wooden Vehicle Parts",

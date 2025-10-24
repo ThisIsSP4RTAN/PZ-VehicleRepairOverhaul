@@ -364,14 +364,36 @@ local function getHBR(part, invItem)
   return md.VRO_HaveBeenRepaired or 0
 end
 
--- Tooltip icon from script data (ISToolTip in 5.1 expects string path)
+-- Tooltip icon from script data (vanilla-style)
 local function setTooltipIconFromFullType(tip, fullType)
-  local sm = ScriptManager and ScriptManager.instance
-  if sm and sm.FindItem then
-    local script = sm:FindItem(fullType)
-    if script and script.getIcon and script:getIcon() then
-      tip:setTexture("Item_" .. script:getIcon())
+  if not (tip and fullType) then return end
+
+  -- Resolve the ScriptItem (global getItem works well for mod items)
+  local si = (getItem and getItem(fullType))
+          or (ScriptManager and ScriptManager.instance and (
+                (ScriptManager.instance.FindItem and ScriptManager.instance:FindItem(fullType)) or
+                (ScriptManager.instance.getItem  and ScriptManager.instance:getItem(fullType))
+             ))
+  if not si then return end
+
+  -- Preferred: use the actual Texture object
+  local tex = si.getNormalTexture and si:getNormalTexture() or nil
+  if tex then
+    if tip.setTextureDirectly then
+      tip:setTextureDirectly(tex)     -- << correct: pass Texture object
+    else
+      -- very old fall-back if setTextureDirectly isn't present
+      local name = tex.getName and tex:getName() or nil
+      if name then tip:setTexture(name) end
     end
+    return
+  end
+
+  -- Fallback: use icon name -> "Item_<icon>"
+  local icon = (si.getIcon and si:getIcon()) or (si.getTextureName and si:getTextureName())
+  if icon and icon ~= "" then
+    if not icon:find("^Item_") then icon = "Item_" .. icon end
+    tip:setTexture(icon)              -- here we pass a string as expected
   end
 end
 
@@ -908,7 +930,16 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     local nm   = displayNameFromFullType(fixer.item)
     local rgb  = (have >= need) and "0,1,0" or "1,0,0"
     pushReq(rgb, nm, have, need, false)
-    if have >= need then markSeenItemFT(fixer.item) end
+
+    local eq = mergeEquip(fixer.equip, fixing and fixing.equip or nil)
+    local sameAsEquip = false
+    if eq then
+      if eq.primary   and eq.primary   == fixer.item then sameAsEquip = true end
+      if eq.secondary and eq.secondary == fixer.item then sameAsEquip = true end
+    end
+    if sameAsEquip or (have >= need) then
+      markSeenItemFT(fixer.item)
+    end
   end
 
   -- 2) Global items (respect non-consumed tags + flags via _pickNonConsumedChoice)

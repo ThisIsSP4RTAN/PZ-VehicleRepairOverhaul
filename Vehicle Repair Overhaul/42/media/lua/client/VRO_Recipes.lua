@@ -1850,6 +1850,23 @@ return {
     },
 
     {
+      name = "Fix Misc Electronics",
+      require = "@MiscElectronics_All",
+      globalItem = nil,
+      conditionModifier = 0.6,
+      anim = "VehicleWorkOnMid",
+      time = 160,
+
+      fixers = {
+        { item = "Base.ElectronicsScrap", uses = 2, skills = { Electricity = 2, Mechanics = 1 } },
+        { item = "Base.Wire",             uses = 2, skills = { Electricity = 2, Mechanics = 1 } },
+        { item = "Base.ElectricWire",     uses = 1, skills = { Electricity = 2, Mechanics = 1 } },
+        { item = "Base.Epoxy",            uses = 1, skills = { Electricity = 1, Mechanics = 1 } },
+        { item = "Base.Glue",             uses = 2, skills = { Electricity = 1, Mechanics = 1 } },
+      },
+    },
+
+    {
       name = "Fix Roof Rack Welding",
       require = { "@RoofRack_All", "Base.TowBar" },
       globalItem = { item = "Base.BlowTorch", uses = 2, consume = true },
@@ -2151,7 +2168,7 @@ return {
 
     {
       name = "Fix Panels Welding",
-      require = { "@Panels_All", "DAMNBarrier" },
+      require = { "@Panels_All", "DAMNBarrier", "Turrent" },
       globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
       conditionModifier = 0.9,
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
@@ -2173,7 +2190,7 @@ return {
 
     {
       name = "Fix Panels",
-      require = { "@Panels_All", "DAMNBarrier" },
+      require = { "@Panels_All", "DAMNBarrier", "Turrent" },
       globalItem = { item = "Base.Screws", uses = 5, consume = true },
       conditionModifier = 0.6,
       equip = { primaryTag = "Screwdriver", flags = { "MayDegradeLight" }, showModel = true },
@@ -2196,7 +2213,7 @@ return {
 
     {
       name = "Fix Panels 1",
-      require = { "@Panels_All", "DAMNBarrier" },
+      require = { "@Panels_All", "DAMNBarrier", "Turrent" },
       globalItem = nil,
       conditionModifier = 0.4,
       anim = "VehicleWorkOnMid",

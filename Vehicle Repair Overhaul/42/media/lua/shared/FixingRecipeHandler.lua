@@ -374,6 +374,10 @@ local function injectAllFixingRequires()
         { "@Light_All" }
     )
 
+    injectFixingRequire("VRO Fix Misc Electronics",
+        { "@MiscElectronics_All" }
+    )
+
     injectFixingRequire("VRO Fix Roof Rack Welding",
         { "@RoofRack_All", "Base.TowBar" }
     )
