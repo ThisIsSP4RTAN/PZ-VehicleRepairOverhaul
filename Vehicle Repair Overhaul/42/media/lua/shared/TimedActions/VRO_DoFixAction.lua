@@ -503,6 +503,7 @@ function VRO.DoFixAction:new(args)
   o.showModel    = (args.showModel ~= false)
   o.expectedPrimary   = args.expectedPrimary
   o.expectedSecondary = args.expectedSecondary
+  o.torchUses         = tonumber(args.torchUses) or 0
   o.caloriesModifier  = 4
   o.jobType           = args.jobType or buildJobType(args.part, args.brokenItem)
 
