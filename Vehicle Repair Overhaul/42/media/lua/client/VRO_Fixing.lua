@@ -238,8 +238,22 @@ local function gatherRequiredItems(inv, fullType, needUses)
 end
 
 -- Tag helpers
-local function firstTagItem(inv, tag) return inv:getFirstTagRecurse(tag) end
-local function hasTag(inv, tag) return inv:containsTag(tag) end
+local function firstTagItem(inv, tag)
+  if inv and inv.getFirstTagRecurse then
+    return inv:getFirstTagRecurse(tag)
+  end
+  return nil
+end
+
+local function hasTag(inv, tag)
+  -- recurse into all carried containers
+  if inv and inv.getFirstTagRecurse then
+    return inv:getFirstTagRecurse(tag) ~= nil
+  end
+  -- fallback (older builds)
+  return inv and inv.containsTag and inv:containsTag(tag) or false
+end
+
 
 -- NEW: multi-tag helpers
 local function _splitTagsString(s)
@@ -406,11 +420,38 @@ end
 local function isTorchItem(it)
   if not it then return false end
   if it.hasTag and it:hasTag("BlowTorch") then return true end
-  local t = it.getType and it:getType() or ""
-  if t == "BlowTorch" then return true end
+  local t  = it.getType and it:getType() or ""
   local ft = it.getFullType and it:getFullType() or ""
-  return ft == "Base.BlowTorch"
+  return t == "BlowTorch" or ft == "Base.BlowTorch"
 end
+
+-- Need-based predicate (salvage does >=10; we generalize to >= needUses)
+local function _predicateTorchNeed(needUses)
+  needUses = math.max(1, tonumber(needUses) or 1)
+  return function(item)
+    if not item then return false end
+    if item.hasTag and item:hasTag("BlowTorch") then
+      return (item.getCurrentUses and item:getCurrentUses() >= needUses)
+          or (item.getDrainableUsesInt and item:getDrainableUsesInt() >= needUses)
+    end
+    if item.getType and item:getType() == "BlowTorch" then
+      return (item.getCurrentUses and item:getCurrentUses() >= needUses)
+    end
+    return false
+  end
+end
+
+-- Filter a “consume bundle” to ensure torches are NOT in it
+local function _filterOutTorches(bundle)
+  if not (bundle and bundle[1] ~= nil) then return bundle end
+  local out = {}
+  for i = 1, #bundle do
+    local b = bundle[i]
+    if b and not isTorchItem(b.item) then out[#out+1] = b end
+  end
+  return (#out > 0) and out or nil
+end
+
 
 -- Item must be NOT broken and strictly below max condition to be repairable from inventory
 local function isRepairableFromInventory(it)
@@ -1141,289 +1182,173 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   tip.description = desc
 end
 
-----------------------------------------------------------------
--- E) Context Menu Injection (attach to vanilla "Repair")
-----------------------------------------------------------------
-local function toPlayerInventory(playerObj, it)
-  if not it then return end
-  if it:getContainer() ~= playerObj:getInventory() then
-    if ISVehiclePartMenu and ISVehiclePartMenu.toPlayerInventory then
-      ISVehiclePartMenu.toPlayerInventory(playerObj, it)
-    else
-      playerObj:getInventory():AddItem(it)
-    end
-  end
-end
-
--- returns (chosenPrimary, chosenSecondary, equipKeep)
-local function queueEquipActions(playerObj, eq, globalItem)
-  if not eq then return end
+local function _canSatisfyAnywhere(playerObj, fixing, fixer)
+  if not (playerObj and fixing and fixer) then return false end
   local inv = playerObj:getInventory()
-  local equipKeep = {}
 
-  -- Move an item into the player inventory if needed
-  local function _ensureInPlayerInv(it)
-    if not it then return end
-    if it:getContainer() ~= inv then
-      toPlayerInventory(playerObj, it)
+  -- 1) Fixer (consumed)
+  do
+    local need = fixer.uses or 1
+    if not gatherRequiredItems(inv, fixer.item, need) then
+      return false
     end
   end
 
-  local noHandEquip =
-    not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
-  if noHandEquip then
-    local curP = playerObj:getPrimaryHandItem()
-    if curP then
-      ISTimedActionQueue.add(ISUnequipAction:new(playerObj, curP, 50))
+  -- helper: normalize to an array of global specs
+  local function _normalizeGlobals(fixr, fixg)
+    local giList = (fixr and fixr.globalItems) or (fixg and fixg.globalItems)
+    if giList and type(giList) == "table" then
+      return giList[1] and giList or { giList }
     end
-    local curS = playerObj:getSecondaryHandItem()
-    if curS and curS ~= curP then
-      ISTimedActionQueue.add(ISUnequipAction:new(playerObj, curS, 50))
-    end
+    local single = (fixr and fixr.globalItem) or (fixg and fixg.globalItem)
+    return single and { single } or nil
   end
 
-  -- Is this fullType a blowtorch? (covers Base.BlowTorch & tag)
-  local function isFullTypeBlowTorch(fullType)
-    if not fullType then return false end
-    if fullType == "Base.BlowTorch" or string.find(fullType, "BlowTorch", 1, true) then return true end
-    local sm = ScriptManager and ScriptManager.instance
-    if sm and sm.getItem then
-      local si = sm:getItem(fullType)
-      if si and si:hasTag("BlowTorch") then return true end
-    end
-    return false
-  end
+  -- 2) Globals (single or multi)
+  do
+    local list = _normalizeGlobals(fixer, fixing)
+    if list then
+      for i = 1, #list do
+        local gi    = list[i]
+        local need  = gi.uses or 1
+        local flags = normalizeFlags(gi.flags)
+        local notDull = hasFlag(flags, "IsNotDull")
 
-  -- Normalize a spec into { item=..., tag=..., tags={...}, flags=... }
-  local function _toSpec(v, inheritedFlags)
-    if not v then return nil end
-    local spec = nil
-    if type(v) == "string" then
-      -- string means concrete item fullType
-      spec = { item = v }
-    elseif type(v) == "table" and (v.item or v.tag or v.tags) then
-      spec = v
-    elseif type(v) == "table" then
-      spec = v
-    end
-    if spec then
-      -- if the spec itself didn’t define flags, inherit from equip.flags
-      local f = normalizeFlags(spec.flags or inheritedFlags)
-      if f then spec.flags = f end
-    end
-    return spec
-  end
+        if gi.consume == false then
+          -- tool-like: must exist (and pass IsNotDull + min uses when drainable)
+          local chosen = VRO_PickFromSpec(inv, gi, need)
+          if not chosen then return false end
+          if notDull and isItemDull(chosen) then return false end
+          if isDrainable(chosen) and drainableUses(chosen) < need then return false end
 
-  local function _specIsTorch(spec)
-    if not spec then return false end
-    if spec.item and isFullTypeBlowTorch(spec.item) then return true end
-    if spec.tag == "BlowTorch" then return true end
+        elseif gi.tags then
+          local it = findBestByTags(inv, gi.tags, need)
+          if not it then return false end
+          if isDrainable(it) and drainableUses(it) < need then return false end
 
-    local tags = spec.tags
-    if tags and tags[1] ~= nil then
-      for i = 1, #tags do
-        if tags[i] == "BlowTorch" then return true end
+        elseif gi.tag then
+          local it = findBestByTag(inv, gi.tag, need)
+          if not it then return false end
+          if isDrainable(it) and drainableUses(it) < need then return false end
+
+        elseif gi.item then
+          if not gatherRequiredItems(inv, gi.item, need) then return false end
+
+        else
+          return false
+        end
       end
     end
-    return false
   end
 
-  -- Choose the best torch by fuel (>= need), else fullest non-empty
-  local function findBestBlowtorch(inv, needUses)
-    if inv.getFirstEvalRecurse then
-      local it = inv:getFirstEvalRecurse(function(item)
-        return isTorchItem(item) and drainableUses(item) >= (needUses or 1)
-      end)
-      if it then return it end
+  -- 3) Wear / Equip requirements (presence anywhere)
+  do
+    local eq = mergeEquip(fixer.equip, fixing.equip)
+    if eq then
+      if eq.wearTag and not hasTag(inv, eq.wearTag) then return false end
+      if eq.wear    and not findFirstTypeRecurse(inv, eq.wear) then return false end
+
+      if eq.primaryTag   and not hasTag(inv, eq.primaryTag)   then return false end
+      if eq.primary      and not findFirstTypeRecurse(inv, eq.primary) then return false end
+
+      if eq.secondaryTag and not hasTag(inv, eq.secondaryTag) then return false end
+      if eq.secondary    and not findFirstTypeRecurse(inv, eq.secondary) then return false end
     end
-    if inv.getBestEvalRecurse then
-      local best = inv:getBestEvalRecurse(
-        function(item) return isTorchItem(item) and drainableUses(item) > 0 end,
-        function(a,b)
-          local ua = (a and a.getDrainableUsesInt) and a:getDrainableUsesInt() or drainableUses(a)
-          local ub = (b and b.getDrainableUsesInt) and b:getDrainableUsesInt() or drainableUses(b)
-          return ua - ub
-        end)
-      if best then return best end
-    end
-    local bagged = ArrayList.new()
-    inv:getAllTypeRecurse("Base.BlowTorch", bagged)
-    local best, most = nil, -1
-    for i = 1, bagged:size() do
-      local it = bagged:get(i-1)
-      local u  = drainableUses(it)
-      if u > most then most = u; best = it end
-    end
-    return best
   end
 
-  -- Helper: does an equipped item satisfy spec **and** (optionally) have min uses?
-  local function _equippedSatisfies(it, spec, minUses)
-    if not (it and spec) then return false end
-    local flags = normalizeFlags(spec.flags)
-    if hasFlag(flags, "IsNotDull") and isItemDull(it) then return false end
-
-    local match = false
-    if spec.item then
-      match = it.getFullType and it:getFullType() == spec.item
-    elseif spec.tag then
-      match = it.hasTag and it:hasTag(spec.tag)
-    elseif spec.tags then
-      match = it.hasTag and itemHasAnyTag(it, spec.tags)
+  -- 4) Skills
+  if fixer.skills then
+    for name, req in pairs(fixer.skills) do
+      if perkLevel(playerObj, name) < req then return false end
     end
-    if not match then return false end
+  end
 
-    if minUses and minUses > 0 and isDrainable(it) then
-      return drainableUses(it) >= minUses
+  return true
+end
+
+local function getWornMatchingTag(chr, tag)
+  local worn = chr and chr:getWornItems()
+  if not worn then return nil end
+  for i = 0, worn:size() - 1 do
+    local wi = worn:get(i)
+    local it = wi and wi:getItem() or nil
+    if it and it.hasTag and it:hasTag(tag) then return it end
+  end
+  return nil
+end
+
+-- Predicates for ISWorldObjectContextMenu.equip (like salvage’s blowtorch predicate)
+local function predForTag(tag, needUses, allowDull)
+  needUses = needUses or 1
+  return function(item)
+    if not (item and item.hasTag and item:hasTag(tag)) then return false end
+    if (allowDull ~= true) and isItemDull and isItemDull(item) then return false end
+    if isDrainable and isDrainable(item) then
+      return (drainableUses(item) or 0) >= needUses
     end
     return true
   end
-
-  -- Normalize specs and inherit eq.flags
-  local pSpec = _toSpec(eq.primary or (eq.primaryTag and { tag = eq.primaryTag } or nil), eq.flags)
-  local sSpec = _toSpec(eq.secondary or (eq.secondaryTag and { tag = eq.secondaryTag } or nil), eq.flags)
-
-  -- Wear can be string, tag, or a full spec table
-  local wSpec = nil
-  if type(eq.wear) == "table" then
-    wSpec = _toSpec(eq.wear, eq.flags)
-  elseif type(eq.wear) == "string" then
-    wSpec = _toSpec({ item = eq.wear }, eq.flags)
-  elseif eq.wearTag then
-    wSpec = _toSpec({ tag = eq.wearTag }, eq.flags)
-  end
-
-  -- Torch fuel requirement hint from the global requirement (so we refuse empty)
-  local needTorchUses = nil
-  do
-    local gi = globalItem
-    if gi then
-      local gTags = normalizeTagsField(gi)
-      local isTorch = false
-
-      if gi.item and isFullTypeBlowTorch(gi.item) then
-        isTorch = true
-      elseif gi.tag == "BlowTorch" then
-        isTorch = true
-      elseif gTags and gTags[1] ~= nil then
-        for i = 1, #gTags do
-          if gTags[i] == "BlowTorch" then
-            isTorch = true
-            break
-          end
-        end
-      end
-
-      if isTorch then
-        needTorchUses = gi.uses or 1
-      end
-    end
-  end
-
-  ----------------------------------------------------------------
-  -- PRIMARY
-  ----------------------------------------------------------------
-  local chosenPrimary = nil
-  if pSpec then
-    local curP = playerObj:getPrimaryHandItem()
-    local preferTorch = _specIsTorch(pSpec)
-    local minUses     = preferTorch and (needTorchUses or 1) or nil
-
-    if curP and _equippedSatisfies(curP, pSpec, minUses) then
-      -- Equipped item is valid (and, if torch, has enough fuel) -> keep it
-      chosenPrimary = curP
-    elseif preferTorch then
-      -- Prefer a torch with enough fuel; fall back to any that matches the spec
-      chosenPrimary = findBestBlowtorch(inv, needTorchUses or 1) or VRO_PickFromSpec(inv, pSpec, 1)
-    else
-      chosenPrimary = VRO_PickFromSpec(inv, pSpec, 1)
-    end
-
-    if chosenPrimary and chosenPrimary ~= curP then
-      _ensureInPlayerInv(chosenPrimary)
-      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, chosenPrimary, 50, true, false))
-    end
-
-    if chosenPrimary then
-      equipKeep[#equipKeep+1] = { item = chosenPrimary, flags = normalizeFlags(pSpec.flags) }
-    end
-  end
-
-  ----------------------------------------------------------------
-  -- SECONDARY (avoid reusing same object as primary)
-  ----------------------------------------------------------------
-  local chosenSecondary = nil
-  if sSpec then
-    local curS = playerObj:getSecondaryHandItem()
-    local function _sameAsPrimary(it) return chosenPrimary and it and it == chosenPrimary end
-    local preferTorchS = _specIsTorch(sSpec)
-    local minUsesS     = preferTorchS and (needTorchUses or 1) or nil
-
-    if curS and _equippedSatisfies(curS, sSpec, minUsesS) and not _sameAsPrimary(curS) then
-      chosenSecondary = curS
-    else
-      chosenSecondary = VRO_PickFromSpec(inv, sSpec, 1)
-      if _sameAsPrimary(chosenSecondary) then
-        -- try to find an alternate satisfying item that isn’t the primary
-        chosenSecondary = nil
-        if sSpec.tag then
-          local alt = inv:getFirstEvalRecurse(function(item)
-            return item and item ~= chosenPrimary and item.hasTag and item:hasTag(sSpec.tag)
-              and (not minUsesS or not isDrainable(item) or drainableUses(item) >= minUsesS)
-          end)
-          chosenSecondary = alt
-        elseif sSpec.item then
-          local bundle = gatherRequiredItems(inv, sSpec.item, 2)
-          if bundle and #bundle >= 2 then chosenSecondary = bundle[2].item end
-        elseif sSpec.tags then
-          local alt = inv:getFirstEvalRecurse(function(item)
-            return item and item ~= chosenPrimary and itemHasAnyTag(item, sSpec.tags)
-              and (not minUsesS or not isDrainable(item) or drainableUses(item) >= minUsesS)
-          end)
-          chosenSecondary = alt
-        end
-      end
-    end
-
-    if chosenSecondary and chosenSecondary ~= curS then
-      _ensureInPlayerInv(chosenSecondary)
-      ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, chosenSecondary, 50, false, false))
-    end
-
-    if chosenSecondary then
-      equipKeep[#equipKeep+1] = { item = chosenSecondary, flags = normalizeFlags(sSpec.flags) }
-    end
-  end
-
-  ----------------------------------------------------------------
-  -- WEAR (prefer already-worn if it satisfies)
-  ----------------------------------------------------------------
-  if wSpec then
-    local worn = (function(chr, spec)
-      local wornList = chr:getWornItems(); if not wornList then return nil end
-      for i = 0, wornList:size()-1 do
-        local wi = wornList:get(i)
-        local wItem = wi and wi:getItem() or nil
-        if wItem and _equippedSatisfies(wItem, spec, nil) then return wItem end
-      end
-      return nil
-    end)(playerObj, wSpec)
-
-    if worn then
-      equipKeep[#equipKeep+1] = { item = worn, flags = normalizeFlags(wSpec.flags) }
-    else
-      local wItem = VRO_PickFromSpec(inv, wSpec, 1)
-      if wItem and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
-        _ensureInPlayerInv(wItem)
-        ISInventoryPaneContextMenu.wearItem(wItem, playerObj:getPlayerNum())
-        equipKeep[#equipKeep+1] = { item = wItem, flags = normalizeFlags(wSpec.flags) }
-      end
-    end
-  end
-
-  if #equipKeep == 0 then equipKeep = nil end
-  return chosenPrimary, chosenSecondary, equipKeep
 end
+
+local function predForFullType(fullType, needUses, allowDull)
+  needUses = needUses or 1
+  return function(item)
+    if not (item and item.getFullType and item:getFullType() == fullType) then return false end
+    if (allowDull ~= true) and isItemDull and isItemDull(item) then return false end
+    if isDrainable and isDrainable(item) then
+      return (drainableUses(item) or 0) >= needUses
+    end
+    return true
+  end
+end
+
+-- Wear the requested wearable from ANY container
+local function wearByEquipSpec(player, eq)
+  if not (player and eq) then return end
+  local inv = player:getInventory()
+  local item = nil
+  if eq.wearTag then
+    -- prefer already worn; else first matching in any bag
+    item = getWornMatchingTag(player, eq.wearTag) or inv:getFirstTagRecurse(eq.wearTag)
+  elseif eq.wear then
+    item = findFirstTypeRecurse(inv, eq.wear)
+  end
+  if item and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
+    ISInventoryPaneContextMenu.wearItem(item, player:getPlayerNum()) -- auto-transfers if needed
+  end
+end
+
+-- Equip primary/secondary like salvage (auto-pulls from bags)
+local function equipByEquipSpec(player, eq, torchHintUses)
+  if not (player and eq and ISWorldObjectContextMenu and ISWorldObjectContextMenu.equip) then return nil, nil end
+
+  local needP = torchHintUses or 1
+  local needS = torchHintUses or 1
+
+  local chosenP, chosenS = nil, nil
+
+  -- Primary
+  if eq.primaryTag then
+    ISWorldObjectContextMenu.equip(player, player:getPrimaryHandItem(), predForTag(eq.primaryTag, needP), true)
+  elseif eq.primary then
+    ISWorldObjectContextMenu.equip(player, player:getPrimaryHandItem(), predForFullType(eq.primary, needP), true)
+  end
+
+  -- Secondary
+  if eq.secondaryTag then
+    ISWorldObjectContextMenu.equip(player, player:getSecondaryHandItem(), predForTag(eq.secondaryTag, needS), false)
+  elseif eq.secondary then
+    ISWorldObjectContextMenu.equip(player, player:getSecondaryHandItem(), predForFullType(eq.secondary, needS), false)
+  end
+
+  chosenP = player:getPrimaryHandItem()
+  chosenS = player:getSecondaryHandItem()
+  return chosenP, chosenS
+end
+
+----------------------------------------------------------------
+-- E) Context Menu Injection (attach to vanilla "Repair")
+----------------------------------------------------------------
 
 local function findRepairParentOption(context, matcherFn)
   local opts = context and context.options or nil
@@ -1688,16 +1613,27 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
         local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK
         local raw   = displayNameFromFullType(fixer.item)
         local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
-
         local option
-        if haveAll then
-          rendered = true
-          local singleFallback = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
-          local torchGlobal    = _pickTorchGlobal(multiList, singleFallback)
+        local canAnywhere = _canSatisfyAnywhere(playerObj, fixing, fixer)
+        local singleFallback = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
+        local torchGlobal    = _pickTorchGlobal(multiList, singleFallback)
 
+        if haveAll or canAnywhere then
+          rendered = true
+          glBundle = _filterOutTorches(glBundle)
           option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
             queuePathToPartArea(p, prt)
-            local chosenP, chosenS, equipKeep = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint)
+            local torchUses = torchHint and (torchHint.uses or 1) or nil
+            if torchUses and ISWorldObjectContextMenu and ISWorldObjectContextMenu.equip then
+              ISWorldObjectContextMenu.equip(
+                p,
+                p:getPrimaryHandItem(),
+                _predicateTorchNeed(torchUses),
+                true
+              )
+            end
+            wearByEquipSpec(p, eq)
+            local chosenP, chosenS = equipByEquipSpec(p, eq, torchUses)
             local tm    = resolveTime(fixr, fixg, p, brk)
             local anim  = resolveAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
@@ -1708,9 +1644,9 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
               brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
-              equipKeep=equipKeep,
               time=tm, anim=anim, sfx=sfx, successSfx=sfxOK, showModel=showM,
               expectedPrimary=chosenP, expectedSecondary=chosenS,
+              torchUses=torchUses,
             })
           end, part, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else
@@ -1980,17 +1916,30 @@ local function addInventoryFixOptions(playerObj, context, broken)
         local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK
         local raw   = displayNameFromFullType(fixer.item)
         local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
-
         local option
-        if haveAll then
-          rendered = true
-          local singleFallback = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
-          local torchGlobal    = _pickTorchGlobal(multiList, singleFallback)
+        local canAnywhere = _canSatisfyAnywhere(playerObj, fixing, fixer)
+        local singleFallback = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
+        local torchGlobal    = _pickTorchGlobal(multiList, singleFallback)
 
-          option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
-            local chosenP, chosenS, equipKeep = queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint)
+        if haveAll or canAnywhere then
+          rendered = true
+          glBundle = _filterOutTorches(glBundle)
+          option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
+            local torchUses = torchHint and (torchHint.uses or 1) or nil
+            if torchUses and ISWorldObjectContextMenu and ISWorldObjectContextMenu.equip then
+              ISWorldObjectContextMenu.equip(
+                p,
+                p:getPrimaryHandItem(),
+                _predicateTorchNeed(torchUses),
+                true -- twoHands, same as salvage
+              )
+            end
+            wearByEquipSpec(p, eq)
+            local chosenP, chosenS = equipByEquipSpec(p, eq, torchUses)
+
+            -- 3) Queue the action
             local tm    = resolveTime(fixr, fixg, p, brk)
-            local anim  = resolveInvAnim(fixr, fixg)
+            local anim  = resolveAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
             local sfxOK = resolveSuccessSound(fixr, fixg)
             local showM = resolveShowModel(fixr, fixg)
@@ -1999,9 +1948,9 @@ local function addInventoryFixOptions(playerObj, context, broken)
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
               brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
-              equipKeep=equipKeep,
               time=tm, anim=anim, sfx=sfx, successSfx=sfxOK, showModel=showM,
               expectedPrimary=chosenP, expectedSecondary=chosenS,
+              torchUses=torchUses,
             })
           end, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else

@@ -21,6 +21,14 @@ local function drainableUses(it)
   return 1
 end
 
+local function isTorchItem(it)
+  if not it then return false end
+  if it.hasTag and it:hasTag("BlowTorch") then return true end
+  local t  = it.getType and it:getType() or ""
+  local ft = it.getFullType and it:getFullType() or ""
+  return t == "BlowTorch" or ft == "Base.BlowTorch"
+end
+
 local function consumeItems(character, bundles)
   if not bundles or bundles[1] == nil then return end
   for i = 1, #bundles do
@@ -231,7 +239,7 @@ local function collectProgressItems(self)
     if not (bundle and bundle[1] ~= nil) then return end
     for i = 1, #bundle do
       local b = bundle[i]
-      if b then add(b.item) end
+      if b and b.item then add(b.item) end
     end
   end
 
@@ -244,13 +252,13 @@ local function collectProgressItems(self)
   if keep and keep[1] ~= nil then
     for i = 1, #keep do
       local k = keep[i]
-      if k then add(k.item) end
+      if k and k.item then add(k.item) end
     end
   end
 
   -- Hands we told the TA to show (in case they weren’t in keepFlagTargets)
-  add(self.expectedPrimary)
-  add(self.expectedSecondary)
+  add(self.character:getPrimaryHandItem())
+  add(self.character:getSecondaryHandItem())
 
   -- The loose broken item (inventory repair)
   add(self.brokenItem)
@@ -299,9 +307,9 @@ function VRO.DoFixAction:start()
   if anim and self.setActionAnim then self:setActionAnim(anim) end
 
   if self.setOverrideHandModels then
+    local p = self.character:getPrimaryHandItem()   or self.expectedPrimary
+    local s = self.character:getSecondaryHandItem() or self.expectedSecondary
     if self.showModel ~= false then
-      local p = self.expectedPrimary   or self.character:getPrimaryHandItem()
-      local s = self.expectedSecondary or self.character:getSecondaryHandItem()
       self:setOverrideHandModels(p, s)
     else
       self:setOverrideHandModels(nil, nil)
@@ -421,6 +429,30 @@ function VRO.DoFixAction:perform()
       broken:syncItemFields()
     end
     self.character:getEmitter():playSound("FixingItemFailed")
+  end
+
+  do
+    local uses = tonumber(self.torchUses) or 0
+    if uses > 0 then
+      -- prefer current hands post-equip; only fall back to expected* if needed
+      local torch = self.character:getPrimaryHandItem()
+      if not (torch and isTorchItem(torch)) then
+        torch = self.character:getSecondaryHandItem()
+      end
+      if not (torch and isTorchItem(torch)) then
+        if self.expectedPrimary   and isTorchItem(self.expectedPrimary)   then torch = self.expectedPrimary   end
+        if self.expectedSecondary and isTorchItem(self.expectedSecondary) then torch = self.expectedSecondary end
+      end
+
+      if torch and isTorchItem(torch) and torch.Use then
+        for i = 1, uses do
+          local empty = (torch.getCurrentUses and torch:getCurrentUses() <= 0)
+                     or (torch.getDrainableUsesInt and torch:getDrainableUsesInt() <= 0)
+          if empty then break end
+          torch:Use()
+        end
+      end
+    end
   end
 
   if self.fixerBundle then consumeItems(self.character, self.fixerBundle) end

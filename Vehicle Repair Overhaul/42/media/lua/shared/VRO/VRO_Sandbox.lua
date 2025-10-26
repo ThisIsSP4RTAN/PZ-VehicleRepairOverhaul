@@ -19,13 +19,19 @@ end
 -- If a conflicting mod is active, force the sandbox var(s) OFF at load
 local function _forceDisableEngineRebuildSandbox()
     if not _isAnyConflictingModActive() or not SandboxVars then return end
-    -- top-level key
+    -- old key
     if SandboxVars.VRO_IsEngineRebuildEnabled ~= nil then
         SandboxVars.VRO_IsEngineRebuildEnabled = false
     end
-    -- nested table key (back-compat)
     if SandboxVars.VRO and SandboxVars.VRO.IsEngineRebuildEnabled ~= nil then
         SandboxVars.VRO.IsEngineRebuildEnabled = false
+    end
+    -- new key
+    if SandboxVars.VRO_EnableEngineRebuild ~= nil then
+        SandboxVars.VRO_EnableEngineRebuild = false
+    end
+    if SandboxVars.VRO and SandboxVars.VRO.EnableEngineRebuild ~= nil then
+        SandboxVars.VRO.EnableEngineRebuild = false
     end
 end
 
@@ -35,18 +41,19 @@ if Events and Events.OnServerStarted then Events.OnServerStarted.Add(_forceDisab
 -- Returns true if the Engine Rebuild feature is enabled (default OFF)
 function VRO.IsEngineRebuildEnabled()
     -- Hard gate: conflicting mod(s) active → OFF
-    if _isAnyConflictingModActive() then
-        return false
-    end
-
+    if _isAnyConflictingModActive() then return false end
     if not SandboxVars then return false end
-    if SandboxVars.VRO_IsEngineRebuildEnabled ~= nil then
-        return SandboxVars.VRO_IsEngineRebuildEnabled == true
-    end
-    if SandboxVars.VRO and SandboxVars.VRO.IsEngineRebuildEnabled ~= nil then
-        return SandboxVars.VRO.IsEngineRebuildEnabled == true
-    end
-    return false
+
+    local sv = SandboxVars
+    -- Accept BOTH naming styles (top-level and nested):
+    local v =
+        (sv.VRO_IsEngineRebuildEnabled ~= nil and sv.VRO_IsEngineRebuildEnabled)
+        or (sv.VRO and sv.VRO.IsEngineRebuildEnabled ~= nil and sv.VRO.IsEngineRebuildEnabled)
+        or (sv.VRO_EnableEngineRebuild ~= nil and sv.VRO_EnableEngineRebuild)
+        or (sv.VRO and sv.VRO.EnableEngineRebuild ~= nil and sv.VRO.EnableEngineRebuild)
+        or false
+
+    return v == true
 end
 
 -- Prefer vanilla fixing (script recipes) vs our Lua ones (default OFF)

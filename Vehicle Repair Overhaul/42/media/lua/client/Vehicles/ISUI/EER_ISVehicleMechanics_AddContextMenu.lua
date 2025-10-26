@@ -7,15 +7,13 @@ local function VRO_IsEngineRebuildEnabled()
   if VRO and VRO.IsEngineRebuildEnabled then
     return VRO.IsEngineRebuildEnabled()
   end
-  if SandboxVars then
-    if SandboxVars.VRO_IsEngineRebuildEnabled ~= nil then
-      return SandboxVars.VRO_IsEngineRebuildEnabled == true
-    end
-    if SandboxVars.VRO and SandboxVars.VRO.IsEngineRebuildEnabled ~= nil then
-      return SandboxVars.VRO.IsEngineRebuildEnabled == true
-    end
-  end
-  return false
+  local sv = SandboxVars
+  if not sv then return false end
+  return
+    (sv.VRO_IsEngineRebuildEnabled == true)
+    or (sv.VRO and sv.VRO.IsEngineRebuildEnabled == true)
+    or (sv.VRO_EnableEngineRebuild == true)
+    or (sv.VRO and sv.VRO.EnableEngineRebuild == true)
 end
 
 local old_ISVehicleMechanics_doPartContextMenu = ISVehicleMechanics.doPartContextMenu

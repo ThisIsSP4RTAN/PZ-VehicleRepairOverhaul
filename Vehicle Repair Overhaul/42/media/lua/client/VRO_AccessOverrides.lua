@@ -7,4 +7,8 @@ return {
     GloveBox = "RearDoor",
     DAMNGunrack = "RearDoor",
   },
+  ["Base.OffRoad"] = {
+    WindowRearLeft = "TireRearLeft",
+    WindowRearRight = "TireRearRight",
+  },
 }
