@@ -379,7 +379,7 @@ local function injectAllFixingRequires()
     )
 
     injectFixingRequire("VRO Fix Roof Rack Welding",
-        { "@RoofRack_All", "Base.TowBar" }
+        { "@RoofRack_All", "Base.TowBar", "Base.92jeepYJWinch2" }
     )
 
     injectFixingRequire("VRO Fix Roof Rack",
@@ -387,7 +387,7 @@ local function injectAllFixingRequires()
     )
 
     injectFixingRequire("VRO Fix Roof Rack 1",
-        { "@RoofRack_All", "Base.TowBar", "Base.93fordCF8000Brushes" }
+        { "@RoofRack_All", "Base.TowBar", "Base.93fordCF8000Brushes", "Base.92jeepYJWinch2" }
     )
 
     injectFixingRequire("VRO Fix Bullbar Welding",
