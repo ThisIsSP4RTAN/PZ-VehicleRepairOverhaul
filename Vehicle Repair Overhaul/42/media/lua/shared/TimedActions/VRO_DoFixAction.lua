@@ -46,18 +46,15 @@ local function consumeItems(character, bundles)
             local step = it:getUseDelta()
             it:setUsedDelta(math.min(1.0, it:getUsedDelta() + step * take))
           end
-          if drainableUses(it) <= 0 then
-            local con = (it.getContainer and it:getContainer()) or (character and character:getInventory()) or nil
-            if con then con:Remove(it) end
-          end
-        else
-          local con = (it.getContainer and it:getContainer()) or (character and character:getInventory()) or nil
-          if con then con:Remove(it) end
         end
+      else
+        local con = (it.getContainer and it:getContainer()) or (character and character:getInventory()) or nil
+        if con then con:Remove(it) end
       end
     end
   end
 end
+
 
 -- HaveBeenRepaired persistence helpers (supports part modData or loose item HBR)
 local function getHBR(part, invItem)
@@ -239,7 +236,7 @@ local function collectProgressItems(self)
     if not (bundle and bundle[1] ~= nil) then return end
     for i = 1, #bundle do
       local b = bundle[i]
-      if b and b.item then add(b.item) end
+      if b then add(b.item) end
     end
   end
 
@@ -252,13 +249,13 @@ local function collectProgressItems(self)
   if keep and keep[1] ~= nil then
     for i = 1, #keep do
       local k = keep[i]
-      if k and k.item then add(k.item) end
+      if k then add(k.item) end
     end
   end
 
   -- Hands we told the TA to show (in case they weren’t in keepFlagTargets)
-  add(self.character:getPrimaryHandItem())
-  add(self.character:getSecondaryHandItem())
+  add(self.expectedPrimary)
+  add(self.expectedSecondary)
 
   -- The loose broken item (inventory repair)
   add(self.brokenItem)
@@ -307,9 +304,9 @@ function VRO.DoFixAction:start()
   if anim and self.setActionAnim then self:setActionAnim(anim) end
 
   if self.setOverrideHandModels then
-    local p = self.character:getPrimaryHandItem()   or self.expectedPrimary
-    local s = self.character:getSecondaryHandItem() or self.expectedSecondary
     if self.showModel ~= false then
+      local p = self.expectedPrimary   or self.character:getPrimaryHandItem()
+      local s = self.expectedSecondary or self.character:getSecondaryHandItem()
       self:setOverrideHandModels(p, s)
     else
       self:setOverrideHandModels(nil, nil)
@@ -362,6 +359,7 @@ function VRO.DoFixAction:perform()
   local hbr    = getHBR(part, broken)
   local failPct   = chanceOfFail(self.character, self.fixer, hbr)
   local success   = ZombRand(100) >= failPct
+  self._vroSuccess = success
   local pctRepair = condRepairedPercent(self.character, self.fixing, self.fixer, hbr, self.fixerIndex)
 
   -- Target condition (installed part or loose item)
@@ -371,7 +369,7 @@ function VRO.DoFixAction:perform()
     targetCur = math.min(part:getCondition(), targetMax)
   else
     targetMax = (broken and broken.getConditionMax and broken:getConditionMax()) or 100
-    targetCur = broken and broken:getCondition() or 0
+    targetCur = (broken and broken.getCondition and broken:getCondition()) or 0
   end
 
   if success then
@@ -387,8 +385,14 @@ function VRO.DoFixAction:perform()
     end
     if broken then
       local newVal = math.min(targetMax, targetCur + gain)
-      if broken.setConditionNoSound then broken:setConditionNoSound(newVal) else broken:setCondition(newVal) end
-      broken:syncItemFields()
+      if broken.setConditionNoSound then
+        broken:setConditionNoSound(newVal)
+      elseif broken.setCondition then
+        broken:setCondition(newVal)
+      end
+      if broken.syncItemFields then
+        broken:syncItemFields()
+      end
     end
 
     -- >>> HBR RECORDING RULES <<<
@@ -425,30 +429,32 @@ function VRO.DoFixAction:perform()
     end
     if broken then
       local newVal = math.max(0, targetCur - 1)
-      if broken.setConditionNoSound then broken:setConditionNoSound(newVal) else broken:setCondition(newVal) end
-      broken:syncItemFields()
+      if broken.setConditionNoSound then
+        broken:setConditionNoSound(newVal)
+      elseif broken.setCondition then
+        broken:setCondition(newVal)
+      end
+      if broken.syncItemFields then
+        broken:syncItemFields()
+      end
     end
-    self.character:getEmitter():playSound("FixingItemFailed")
+      self.character:getEmitter():playSound("FixingItemFailed")
   end
 
   do
     local uses = tonumber(self.torchUses) or 0
     if uses > 0 then
-      -- prefer current hands post-equip; only fall back to expected* if needed
-      local torch = self.character:getPrimaryHandItem()
+      -- Use ONLY the equipped torch (like salvage)
+      local torch = self.expectedPrimary
       if not (torch and isTorchItem(torch)) then
-        torch = self.character:getSecondaryHandItem()
+        torch = self.expectedSecondary
       end
-      if not (torch and isTorchItem(torch)) then
-        if self.expectedPrimary   and isTorchItem(self.expectedPrimary)   then torch = self.expectedPrimary   end
-        if self.expectedSecondary and isTorchItem(self.expectedSecondary) then torch = self.expectedSecondary end
-      end
-
       if torch and isTorchItem(torch) and torch.Use then
         for i = 1, uses do
-          local empty = (torch.getCurrentUses and torch:getCurrentUses() <= 0)
-                     or (torch.getDrainableUsesInt and torch:getDrainableUsesInt() <= 0)
-          if empty then break end
+          if (torch.getCurrentUses and torch:getCurrentUses() <= 0)
+          or (torch.getDrainableUsesInt and torch:getDrainableUsesInt() <= 0) then
+            break
+          end
           torch:Use()
         end
       end
@@ -457,6 +463,35 @@ function VRO.DoFixAction:perform()
 
   if self.fixerBundle then consumeItems(self.character, self.fixerBundle) end
   if self.globalBundle then consumeItems(self.character, self.globalBundle) end
+    if part and part.getInventoryItem and part: getInventoryItem() then
+    local veh = part:getVehicle()
+    local installer = 0
+    if veh and veh.getMechanicSkillInstaller then
+      installer = veh:getMechanicSkillInstaller()
+    end
+    if part.doInventoryItemStats then
+      part:doInventoryItemStats(part:getInventoryItem(), installer)
+    end
+  end
+
+  do
+    -- only on success
+    if self._vroSuccess and part then
+      local veh = part:getVehicle()
+
+      -- container parts that don't have an item container need their content clamped
+      if part.isContainer and part:isContainer() and not part:getItemContainer() then
+        local curAmt = part:getContainerContentAmount()
+        part:setContainerContentAmount(curAmt)
+      end
+
+      if veh then
+        veh:updatePartStats()
+        veh:updateBulletStats()
+        veh:transmitPartItem(part)
+      end
+    end
+  end
 
   local hi   = _highestRelevantSkill(self.character, self.fixing, self.fixer)
   local keep = self.keepFlagTargets
