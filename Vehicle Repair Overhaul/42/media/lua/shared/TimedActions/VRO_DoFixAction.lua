@@ -46,10 +46,15 @@ local function consumeItems(character, bundles)
             local step = it:getUseDelta()
             it:setUsedDelta(math.min(1.0, it:getUsedDelta() + step * take))
           end
+          local remaining = drainableUses(it)
+          if remaining <= 0 and not isTorchItem(it) then
+            local con = (it.getContainer and it:getContainer()) or (character and character:getInventory()) or nil
+            if con then con:Remove(it) end
+          end
+        else
+          local con = (it.getContainer and it:getContainer()) or (character and character:getInventory()) or nil
+          if con then con:Remove(it) end
         end
-      else
-        local con = (it.getContainer and it:getContainer()) or (character and character:getInventory()) or nil
-        if con then con:Remove(it) end
       end
     end
   end
