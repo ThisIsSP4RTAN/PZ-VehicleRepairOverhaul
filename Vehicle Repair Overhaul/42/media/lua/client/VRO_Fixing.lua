@@ -444,36 +444,29 @@ local function hasFlag(flags, name)
   return flags and flags[name] == true
 end
 
--- Always prefer direct API; fall back to sharpness values
+-- Force our own dull logic, ignoring vanilla's condition weirdness:
+-- dull = has sharpness AND (current sharpness <= maxSharpness / 3)
 local function isItemDull(it)
   if not it then return false end
 
-  -- Preferred: direct API
-  if it.isDull then
-    local ok, res = pcall(function() return it:isDull() end)
-    if ok then return res == true end
+  -- must have both getters
+  if not (it.getSharpness and it.getMaxSharpness) then
+    return false
   end
 
-  -- Fallback: infer from sharpness values
-  local getS = it.getSharpness
-  local getM = it.getMaxSharpness
-  if getS then
-    local s = 0
-    local okS, valS = pcall(function() return it:getSharpness() end)
-    if okS then s = tonumber(valS) or 0 end
+  local okS, cur = pcall(function() return it:getSharpness() end)
+  local okM, max = pcall(function() return it:getMaxSharpness() end)
 
-    if getM then
-      local okM, maxS = pcall(function() return it:getMaxSharpness() end)
-      if okM and tonumber(maxS) and tonumber(maxS) > 0 then
-        return s <= 0
-      end
-    end
-    -- If max is unavailable, zero still means dull
-    return s <= 0
+  cur = (okS and tonumber(cur)) or 0
+  max = (okM and tonumber(max)) or 0
+
+  if max <= 0 then
+    -- no meaningful max -> treat as not dull
+    return false
   end
 
-  -- Items with no sharpness concept aren’t “dull”
-  return false
+  -- match the java formula, but enforced by us no matter the condition
+  return cur <= (max / 3.0)
 end
 
 -- Return the best non-dull item that satisfies a single tag.
@@ -878,6 +871,22 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   local c1 = interpColorTag((pot or 0)/100)
   local c2 = interpColorTag((success or 0)/100)
 
+  -- only show "(Dull)" in the tooltip for items that have a real sharpness range
+  -- (this hides it on things like thread/needles that just happen to expose sharpness)
+  local function showDullInTooltip(it)
+    if not it then return false end
+    if not (it.getSharpness and it.getMaxSharpness) then
+      return false
+    end
+    local okM, max = pcall(function() return it:getMaxSharpness() end)
+    max = (okM and tonumber(max)) or 0
+    -- heuristics: real tools/weapons have a meaningful max; tiny 0.5/1.0 ones we skip
+    if max <= 1.0 then
+      return false
+    end
+    return isItemDull(it)
+  end
+
   -- Buckets we stitch together at the end
   local reqLines, oneOfBlocks, skillLines = {}, {}, {}
   local function lineStr(rgb, name, have, need, isDull)
@@ -1027,7 +1036,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
             if it then
               local have = (isDrainable(it) and math.min(drainableUses(it), need)) or 1
               local nm   = (it.getDisplayName and it:getDisplayName()) or displayNameForTags(inv, tags)
-              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, isItemDull(it))
+              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, showDullInTooltip(it))
               if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
             else
               pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need, false))
@@ -1037,7 +1046,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
             if it then
               local have = (isDrainable(it) and math.min(drainableUses(it), need)) or 1
               local nm   = (it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag)
-              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, isItemDull(it))
+              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, showDullInTooltip(it))
               if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
             else
               pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, false))
@@ -1059,7 +1068,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
                   end
                 end
 
-                local have = math.min(bestUses, need)
+                local have = bestUses
                 local rgb  = (bestUses >= need) and "0,1,0" or "1,0,0"
                 pushReq(rgb, nm, have, need, false)
                 -- don’t mark seen by fullType here; it’s fine either way
@@ -1089,7 +1098,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
         -- not worn: show present from inventory if any, else OneOf block only
         local it = findBestByTag(inv, eq.wearTag, 1)
         if it then
-          pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(eq.wearTag), 1, 1, isItemDull(it))
+          pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(eq.wearTag), 1, 1, showDullInTooltip(it))
           markSeenItemFT(it.getFullType and it:getFullType() or nil)
         else
           pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1, false))
@@ -1100,7 +1109,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
       local worn = getWornMatchingTag(player, displayNameFromFullType(eq.wear)) -- unlikely; keep inventory check
       local it   = worn or findFirstTypeRecurse(inv, eq.wear)
       local nm   = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(eq.wear)
-      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and isItemDull(it))
+      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and showDullInTooltip(it))
       if it and it.getFullType then markSeenItemFT(it:getFullType()) end
     end
   end
@@ -1115,7 +1124,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
       local cur = preferHandForItem(player, fullType, "primary")
       local it  = cur or findFirstTypeRecurse(inv, fullType)
       local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(fullType)
-      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and isItemDull(it))
+      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and showDullInTooltip(it))
       if it and it.getFullType then markSeenItemFT(it:getFullType()) end
     end
 
@@ -1125,7 +1134,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
       local it  = cur or findBestByTag(inv, tag, 1)
       if it and wasSeenFT(it:getFullType()) then return end
       if it then
-        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, isItemDull(it))
+        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, showDullInTooltip(it))
         markSeenItemFT(it:getFullType())
       else
         pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
@@ -1138,7 +1147,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
       local cur = preferHandForItem(player, fullType, "secondary")
       local it  = cur or findFirstTypeRecurse(inv, fullType)
       local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(fullType)
-      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and isItemDull(it))
+      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and showDullInTooltip(it))
       if it and it.getFullType then markSeenItemFT(it:getFullType()) end
     end
 
@@ -1148,7 +1157,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
       local it  = cur or findBestByTag(inv, tag, 1)
       if it and wasSeenFT(it:getFullType()) then return end
       if it then
-        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, isItemDull(it))
+        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, showDullInTooltip(it))
         markSeenItemFT(it:getFullType())
       else
         pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
