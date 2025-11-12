@@ -688,10 +688,11 @@ local dullTooltip = getText("Tooltip_dull")
 local function _appendOneOfTagsList(desc, inv, tags, need, _unused_forceHeader)
   need = math.max(1, tonumber(need) or 1)
 
-  local added        = {}   -- fullType -> true (avoid dupes across tags)
+  local added        = {}   -- fullType -> true
   local lines        = {}
-  local anyHave      = false
-  local anyEligible  = false
+  local anyHave      = false      -- we own at least one of the listed items
+  local anyFull      = false      -- we own at least one that fully satisfies (need <= 1 case)
+  local anyFullDull  = false      -- same, but dull
 
   local function _disp(si)
     local ft = _scriptFullType(si)
@@ -711,17 +712,45 @@ local function _appendOneOfTagsList(desc, inv, tags, need, _unused_forceHeader)
         local ft = _scriptFullType(si)
         if ft and not added[ft] then
           added[ft] = true
+
           local have = countTypeRecurse(inv, ft) > 0
           local item = have and findFirstTypeRecurse(inv, ft) or nil
-          local dull = item and isItemDull(item) or false
 
-          anyHave     = anyHave     or have
-          anyEligible = anyEligible or (have and not dull)
+          -- only show "(Dull)" for need==1 lists (tools/knives)
+          local isDullDisplay = false
+          if need == 1 and item and item.getSharpness and item.getMaxSharpness then
+            -- for tools we can just run our forced dull logic
+            isDullDisplay = isItemDull(item)
+          end
 
-          local rgb = (have and (dull and "1,1,0" or "0,1,0")) or "1,0,0"
-          local name = _disp(si)
+          anyHave = anyHave or have
+
+          -- if we actually meet the requirement (need==1 and we have it), remember it
+          if have and need == 1 then
+            if isDullDisplay then
+              anyFullDull = true
+            else
+              anyFull = true
+            end
+          end
+
+          -- per-line color
+          local rgb
+          if have then
+            if need > 1 then
+              -- thread-like case: 1/4 should be red
+              rgb = "1,0,0"
+            else
+              -- need == 1: green or yellow if dull
+              rgb = isDullDisplay and "1,1,0" or "0,1,0"
+            end
+          else
+            rgb = "1,0,0"
+          end
+
+          local name    = _disp(si)
           local haveStr = (have and "1" or "0") .. "/" .. tostring(need)
-          local suffix  = dull and (" (" .. dullTooltip .. ")") or ""
+          local suffix  = (need == 1 and isDullDisplay) and (" (" .. dullTooltip .. ")") or ""
 
           lines[#lines + 1] = string.format(
             " <INDENT:20> <RGB:%s>%s %s%s <LINE> <INDENT:0> ",
@@ -732,11 +761,20 @@ local function _appendOneOfTagsList(desc, inv, tags, need, _unused_forceHeader)
   end
 
   if #lines > 0 then
-    local headerRGB = anyEligible and "0,1,0" or (anyHave and "1,1,0" or "1,0,0")
+    local headerRGB
+    if anyFull then
+      headerRGB = "0,1,0"    -- we can fully satisfy with at least one
+    elseif anyFullDull then
+      headerRGB = "1,1,0"    -- we can satisfy, but only with dull
+    elseif anyHave then
+      headerRGB = "1,0,0"    -- we have some, but not enough
+    else
+      headerRGB = "1,0,0"    -- we have none
+    end
+
     desc = desc .. string.format(" <RGB:%s>%s <LINE> ", headerRGB, getText("IGUI_CraftUI_OneOf"))
     for i = 1, #lines do
-      local L = lines[i]
-      desc = desc .. L
+      desc = desc .. lines[i]
     end
   end
   return desc
@@ -829,6 +867,7 @@ local function mergeEquip(fixEq, recEq)
   out.wearTag      = pick(fixEq.wearTag,      recEq.wearTag)
   out.wear         = pick(fixEq.wear,         recEq.wear)
   out.showModel    = pick(fixEq.showModel,    recEq.showModel)
+  out.flags        = pick(fixEq.flags,        recEq.flags)
   return out
 end
 local function resolveAnim(fixer, fixing) return pick(fixer.anim, fixing.anim) end
@@ -1035,167 +1074,183 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
             local it = findBestByTags(inv, tags, need)
             if it then
               local have = (isDrainable(it) and math.min(drainableUses(it), need)) or 1
-              local nm   = (it.getDisplayName and it:getDisplayName()) or displayNameForTags(inv, tags)
-              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, showDullInTooltip(it))
-              if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
+              local enough = (have >= need)
+
+              if enough then
+                -- we can satisfy it outright -> show the single line
+                local nm = (it.getDisplayName and it:getDisplayName()) or displayNameForTags(inv, tags)
+                pushReq("0,1,0", nm, have, need, showDullInTooltip(it))
+                if it.getFullType then markSeenItemFT(it:getFullType()) end
+              else
+                -- we have *some* but not enough -> show only the One-of list
+                pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need, false))
+              end
             else
+              -- no matching item at all -> show list
               pushOneOfBlock(_appendOneOfTagsList("", inv, tags, need, false))
             end
             elseif gi.tag then
-            local it = findBestByTag(inv, gi.tag, need)
-            if it then
-              local have = (isDrainable(it) and math.min(drainableUses(it), need)) or 1
-              local nm   = (it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag)
-              pushReq((have >= need) and "0,1,0" or "1,0,0", nm, have, need, showDullInTooltip(it))
-              if have >= need and it.getFullType then markSeenItemFT(it:getFullType()) end
-            else
-              pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, false))
-            end
-            elseif gi.item then
-              local nm   = displayNameFromFullType(gi.item)
+              local it = findBestByTag(inv, gi.tag, need)
+              if it then
+                local have = (isDrainable(it) and math.min(drainableUses(it), need)) or 1
+                local enough = (have >= need)
 
-              -- SPECIAL CASE: blowtorch should show the *best single* torch, not total
-              if gi.item == "Base.BlowTorch" then
-                -- find the blowtorch with the most usable fuel
-                local bagged = ArrayList.new()
-                inv:getAllTypeRecurse("Base.BlowTorch", bagged)
-                local bestUses = 0
-                for bi = 0, bagged:size() - 1 do
-                  local it = bagged:get(bi)
-                  local u  = drainableUses(it)
-                  if u > bestUses then
-                    bestUses = u
-                  end
+                if enough then
+                  local nm = (it.getDisplayName and it:getDisplayName()) or displayNameForTag(inv, gi.tag)
+                  pushReq("0,1,0", nm, have, need, showDullInTooltip(it))
+                  if it.getFullType then markSeenItemFT(it:getFullType()) end
+                else
+                  -- partial: only show the one-of list
+                  pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, false))
                 end
-
-                local have = bestUses
-                local rgb  = (bestUses >= need) and "0,1,0" or "1,0,0"
-                pushReq(rgb, nm, have, need, false)
-                -- don’t mark seen by fullType here; it’s fine either way
               else
-                -- normal (non-blowtorch) item: keep existing behavior
-                local have = invHaveForFullType(gi.item, need)
-                local rgb  = (have >= need) and "0,1,0" or "1,0,0"
-                pushReq(rgb, nm, have, need, false)
-                if have >= need then markSeenItemFT(gi.item) end
+                pushOneOfBlock(_appendOneOfTagsList("", inv, { gi.tag }, need, false))
+              end
+              elseif gi.item then
+                local nm   = displayNameFromFullType(gi.item)
+
+                -- SPECIAL CASE: blowtorch should show the *best single* torch, not total
+                if gi.item == "Base.BlowTorch" then
+                  -- find the blowtorch with the most usable fuel
+                  local bagged = ArrayList.new()
+                  inv:getAllTypeRecurse("Base.BlowTorch", bagged)
+                  local bestUses = 0
+                  for bi = 0, bagged:size() - 1 do
+                    local it = bagged:get(bi)
+                    local u  = drainableUses(it)
+                    if u > bestUses then
+                      bestUses = u
+                    end
+                  end
+
+                  local have = bestUses
+                  local rgb  = (bestUses >= need) and "0,1,0" or "1,0,0"
+                  pushReq(rgb, nm, have, need, false)
+                  -- don’t mark seen by fullType here; it’s fine either way
+                  else
+                  -- normal (non-blowtorch) item: keep existing behavior
+                  local have = invHaveForFullType(gi.item, need)
+                  local rgb  = (have >= need) and "0,1,0" or "1,0,0"
+                  pushReq(rgb, nm, have, need, false)
+                  if have >= need then markSeenItemFT(gi.item) end
+                end
               end
             end
           end
         end
       end
-    end
 
-  -- 3) Wear requirement — prefer already-worn items that satisfy the spec
-  do
-    local eq = mergeEquip(fixer.equip, fixing.equip)
-    if eq.wearTag then
-      local worn = getWornMatchingTag(player, eq.wearTag)
-      if worn then
-        local nm = worn:getDisplayName() or fallbackNameForTag(eq.wearTag)
-        pushReq("0,1,0", nm, 1, 1, false)
-        markSeenItemFT(worn.getFullType and worn:getFullType() or nil)
-      else
-        -- not worn: show present from inventory if any, else OneOf block only
-        local it = findBestByTag(inv, eq.wearTag, 1)
-        if it then
-          pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(eq.wearTag), 1, 1, showDullInTooltip(it))
-          markSeenItemFT(it.getFullType and it:getFullType() or nil)
-        else
-          pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1, false))
+      -- 3) Wear requirement — prefer already-worn items that satisfy the spec
+      do
+        local eq = mergeEquip(fixer.equip, fixing.equip)
+        if eq.wearTag then
+          local worn = getWornMatchingTag(player, eq.wearTag)
+          if worn then
+            local nm = worn:getDisplayName() or fallbackNameForTag(eq.wearTag)
+            pushReq("0,1,0", nm, 1, 1, false)
+            markSeenItemFT(worn.getFullType and worn:getFullType() or nil)
+          else
+            -- not worn: show present from inventory if any, else OneOf block only
+            local it = findBestByTag(inv, eq.wearTag, 1)
+            if it then
+              pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(eq.wearTag), 1, 1, showDullInTooltip(it))
+              markSeenItemFT(it.getFullType and it:getFullType() or nil)
+            else
+              pushOneOfBlock(_appendOneOfTagsList("", inv, { eq.wearTag }, 1, false))
+            end
+          end
+          elseif eq.wear then
+            -- specific wearable by fullType
+            local worn = getWornMatchingTag(player, displayNameFromFullType(eq.wear)) -- unlikely; keep inventory check
+            local it   = worn or findFirstTypeRecurse(inv, eq.wear)
+            local nm   = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(eq.wear)
+            pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and showDullInTooltip(it))
+            if it and it.getFullType then markSeenItemFT(it:getFullType()) end
+          end
+        end
+
+      -- 4) Primary / Secondary — prefer current hands when they satisfy the spec
+      do
+        local eq = mergeEquip(fixer.equip, fixing.equip)
+
+        local function showPrimaryByItem(fullType)
+          if not fullType then return end
+          if wasSeenFT(fullType) then return end
+          local cur = preferHandForItem(player, fullType, "primary")
+          local it  = cur or findFirstTypeRecurse(inv, fullType)
+          local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(fullType)
+          pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and showDullInTooltip(it))
+          if it and it.getFullType then markSeenItemFT(it:getFullType()) end
+        end
+
+        local function showPrimaryByTag(tag)
+          if not tag then return end
+          local cur = preferHandForTag(player, tag, "primary")
+          local it  = cur or findBestByTag(inv, tag, 1)
+          if it and wasSeenFT(it:getFullType()) then return end
+          if it then
+            pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, showDullInTooltip(it))
+            markSeenItemFT(it:getFullType())
+          else
+            pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
+          end
+        end
+
+        local function showSecondaryByItem(fullType)
+          if not fullType then return end
+          if wasSeenFT(fullType) then return end
+          local cur = preferHandForItem(player, fullType, "secondary")
+          local it  = cur or findFirstTypeRecurse(inv, fullType)
+          local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(fullType)
+          pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and showDullInTooltip(it))
+          if it and it.getFullType then markSeenItemFT(it:getFullType()) end
+        end
+
+        local function showSecondaryByTag(tag)
+          if not tag then return end
+          local cur = preferHandForTag(player, tag, "secondary")
+          local it  = cur or findBestByTag(inv, tag, 1)
+          if it and wasSeenFT(it:getFullType()) then return end
+          if it then
+            pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, showDullInTooltip(it))
+            markSeenItemFT(it:getFullType())
+          else
+            pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
+          end
+        end
+
+        if eq.primary then showPrimaryByItem(eq.primary)
+        elseif eq.primaryTag then showPrimaryByTag(eq.primaryTag) end
+
+        if eq.secondary and eq.secondary ~= eq.primary then
+          showSecondaryByItem(eq.secondary)
+        elseif eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
+          showSecondaryByTag(eq.secondaryTag)
         end
       end
-    elseif eq.wear then
-      -- specific wearable by fullType
-      local worn = getWornMatchingTag(player, displayNameFromFullType(eq.wear)) -- unlikely; keep inventory check
-      local it   = worn or findFirstTypeRecurse(inv, eq.wear)
-      local nm   = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(eq.wear)
-      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and showDullInTooltip(it))
-      if it and it.getFullType then markSeenItemFT(it:getFullType()) end
-    end
-  end
 
-  -- 4) Primary / Secondary — prefer current hands when they satisfy the spec
-  do
-    local eq = mergeEquip(fixer.equip, fixing.equip)
-
-    local function showPrimaryByItem(fullType)
-      if not fullType then return end
-      if wasSeenFT(fullType) then return end
-      local cur = preferHandForItem(player, fullType, "primary")
-      local it  = cur or findFirstTypeRecurse(inv, fullType)
-      local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(fullType)
-      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and showDullInTooltip(it))
-      if it and it.getFullType then markSeenItemFT(it:getFullType()) end
-    end
-
-    local function showPrimaryByTag(tag)
-      if not tag then return end
-      local cur = preferHandForTag(player, tag, "primary")
-      local it  = cur or findBestByTag(inv, tag, 1)
-      if it and wasSeenFT(it:getFullType()) then return end
-      if it then
-        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, showDullInTooltip(it))
-        markSeenItemFT(it:getFullType())
-      else
-        pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
+      -- 5) Skills (always last)
+      if fixer.skills then
+        for name, req in pairs(fixer.skills) do
+          local lvl = perkLevel(player, name)
+          local ok  = lvl >= req
+          local perkLabel = (getText and getText("IGUI_perks_" .. name)) or name
+          if perkLabel == ("IGUI_perks_" .. name) then perkLabel = name end
+          pushSkill(ok and "0,1,0" or "1,0,0", perkLabel, lvl, req)
+        end
       end
-    end
 
-    local function showSecondaryByItem(fullType)
-      if not fullType then return end
-      if wasSeenFT(fullType) then return end
-      local cur = preferHandForItem(player, fullType, "secondary")
-      local it  = cur or findFirstTypeRecurse(inv, fullType)
-      local nm  = (it and it.getDisplayName and it:getDisplayName()) or displayNameFromFullType(fullType)
-      pushReq(it and "0,1,0" or "1,0,0", nm, it and 1 or 0, 1, it and showDullInTooltip(it))
-      if it and it.getFullType then markSeenItemFT(it:getFullType()) end
-    end
+      -- Stitch all sections together
+      desc = desc .. table.concat(reqLines)
 
-    local function showSecondaryByTag(tag)
-      if not tag then return end
-      local cur = preferHandForTag(player, tag, "secondary")
-      local it  = cur or findBestByTag(inv, tag, 1)
-      if it and wasSeenFT(it:getFullType()) then return end
-      if it then
-        pushReq("0,1,0", it:getDisplayName() or fallbackNameForTag(tag), 1, 1, showDullInTooltip(it))
-        markSeenItemFT(it:getFullType())
-      else
-        pushOneOfBlock(_appendOneOfTagsList("", inv, { tag }, 1, false))
+      if oneOfBlocks and oneOfBlocks[1] ~= nil then
+        for i = 1, #oneOfBlocks do
+          desc = desc .. " " .. oneOfBlocks[i]
+        end
       end
-    end
 
-    if eq.primary then showPrimaryByItem(eq.primary)
-    elseif eq.primaryTag then showPrimaryByTag(eq.primaryTag) end
-
-    if eq.secondary and eq.secondary ~= eq.primary then
-      showSecondaryByItem(eq.secondary)
-    elseif eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
-      showSecondaryByTag(eq.secondaryTag)
-    end
-  end
-
-  -- 5) Skills (always last)
-  if fixer.skills then
-    for name, req in pairs(fixer.skills) do
-      local lvl = perkLevel(player, name)
-      local ok  = lvl >= req
-      local perkLabel = (getText and getText("IGUI_perks_" .. name)) or name
-      if perkLabel == ("IGUI_perks_" .. name) then perkLabel = name end
-      pushSkill(ok and "0,1,0" or "1,0,0", perkLabel, lvl, req)
-    end
-  end
-
-  -- Stitch all sections together
-  desc = desc .. table.concat(reqLines)
-
-  if oneOfBlocks and oneOfBlocks[1] ~= nil then
-    for i = 1, #oneOfBlocks do
-      desc = desc .. " " .. oneOfBlocks[i]
-    end
-  end
-
-  desc = desc .. table.concat(skillLines)
-  tip.description = desc
+      desc = desc .. table.concat(skillLines)
+      tip.description = desc
 end
 
 ----------------------------------------------------------------
