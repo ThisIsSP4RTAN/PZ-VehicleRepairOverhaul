@@ -8,6 +8,34 @@
 require "Vehicles/ISUI/ISVehicleMenu"
 require "luautils"
 
+local function _tag(id)
+    if id == nil then return nil end
+    -- already an ItemTag?
+    if type(id) == "userdata" and id.getId then return id end
+
+    local function _rl(s)
+        s = tostring(s)
+        if not s:find(":", 1, true) then s = "base:" .. s end
+        if ResourceLocation and ResourceLocation.of then
+            return ResourceLocation.of(s)
+        elseif ResourceLocation and ResourceLocation.new then
+            local ns, path = s:match("^([^:]+):(.+)$")
+            return ResourceLocation.new(ns or "base", path or s)
+        end
+        return nil
+    end
+
+    if ItemTag and ItemTag.get then
+        local rl = _rl(id)
+        if rl then
+            local ok, tag = pcall(function() return ItemTag.get(rl) end)
+            if ok and tag then return tag end
+        end
+    end
+    -- fallback for older builds
+    return id
+end
+
 local enableSalvage = ISVehicleMenu.FillMenuOutsideVehicle
 -- Prefer an already-worn item that matches a tag (e.g., WeldingMask)
 local function getWornMatchingTag(chr, tag)
@@ -16,7 +44,7 @@ local function getWornMatchingTag(chr, tag)
     for i = 0, worn:size()-1 do
         local wi = worn:get(i)
         local it = wi and wi:getItem() or nil
-        if it and it.hasTag and it:hasTag(tag) then return it end
+        if it and it.hasTag and it:hasTag(_tag(tag)) then return it end
     end
     return nil
 end
@@ -24,10 +52,11 @@ end
 local function _getScriptsForTag(tag)
     local sm = ScriptManager and ScriptManager.instance
     if not sm then return nil end
+    local T = _tag(tag)
     if sm.getItemsTag then
-        return sm:getItemsTag(tag)            -- ArrayList<ScriptItem>
+        return sm:getItemsTag(T)
     elseif sm.getAllItemsWithTag then
-        return sm:getAllItemsWithTag(tag)     -- ArrayList<ScriptItem>
+        return sm:getAllItemsWithTag(T)
     end
     return nil
 end
@@ -63,7 +92,7 @@ end
 
 local function predicateBlowTorch(item)
     return (item ~= nil) and
-            (item:hasTag("BlowTorch") or item:getType() == "BlowTorch") and
+            ((item.hasTag and item:hasTag(_tag("BlowTorch"))) or item:getType() == "BlowTorch") and
             (item:getCurrentUses() >= 10)
 end
 
@@ -100,7 +129,7 @@ function ISVehicleMenu.onVehicleSalvage(player, vehicle)
         -- Prefer already-worn protective gear if it satisfies WeldingMask
         local wornMask = getWornMatchingTag(player, "WeldingMask")
         if not wornMask then
-            local mask = player:getInventory():getFirstTagRecurse("WeldingMask")
+            local mask = player:getInventory():getFirstTagRecurse(_tag("WeldingMask"))
             if mask then
                 ISInventoryPaneContextMenu.wearItem(mask, player:getPlayerNum())
             end
@@ -162,7 +191,7 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
             toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. displayName .. " 1/1"
         else
             -- Fall back to inventory
-            local maskItem  = inventory:getFirstTagRecurse(maskTag)
+            local maskItem = inventory:getFirstTagRecurse(_tag(maskTag))
             if maskItem then
                 local displayName = (maskItem.getDisplayName and maskItem:getDisplayName()) or getText("ContextMenu_WeldingMask") or "Welder Mask"
                 toolTip.description = toolTip.description .. " <LINE> <RGB:0,1,0> " .. displayName .. " 1/1"

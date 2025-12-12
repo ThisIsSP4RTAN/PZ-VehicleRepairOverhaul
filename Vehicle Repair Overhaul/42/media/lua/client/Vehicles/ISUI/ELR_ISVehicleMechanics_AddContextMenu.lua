@@ -4,20 +4,48 @@ require "Vehicles/ISUI/ISVehicleMechanics"
 
 local _Original_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
 
+local function _tag(id)
+  if id == nil then return nil end
+  if type(id) == "userdata" and id.getId then return id end
+
+  local function _rl(s)
+    s = tostring(s)
+    if not s:find(":", 1, true) then s = "base:" .. s end
+    if ResourceLocation and ResourceLocation.of then
+      return ResourceLocation.of(s)
+    elseif ResourceLocation and ResourceLocation.new then
+      local ns, path = s:match("^([^:]+):(.+)$")
+      return ResourceLocation.new(ns or "base", path or s)
+    end
+    return nil
+  end
+
+  if ItemTag and ItemTag.get then
+    local rl = _rl(id)
+    if rl then
+      local ok, tag = pcall(function() return ItemTag.get(rl) end)
+      if ok and tag then return tag end
+    end
+  end
+  return id
+end
+
 -- Prefer an already-equipped item that matches a tag (primary or secondary)
 local function getEquippedMatchingTag(chr, tag)
     if not chr then return nil end
+    local T = _tag(tag)
     local p = chr:getPrimaryHandItem()
-    if p and p.hasTag and p:hasTag(tag) then return p end
+    if p and p.hasTag and p:hasTag(T) then return p end
     local s = chr:getSecondaryHandItem()
-    if s and s.hasTag and s:hasTag(tag) then return s end
+    if s and s.hasTag and s:hasTag(T) then return s end
     return nil
 end
 
 -- Minimal "One of:" builder for a single tag (red list when none present)
 local function appendOneOfForTag(desc, tag)
     local sm = ScriptManager and ScriptManager.instance
-    local arr = sm and (sm.getItemsTag and sm:getItemsTag(tag) or sm.getAllItemsWithTag and sm:getAllItemsWithTag(tag))
+    local T = _tag(tag)
+	local arr = sm and (sm.getItemsTag and sm:getItemsTag(T) or sm.getAllItemsWithTag and sm:getAllItemsWithTag(T))
     if not (arr and arr.size and arr:size() > 0) then
         return desc .. string.format(" <RGB:1,0,0>%s 0/1 <LINE>", tag)
     end
@@ -114,7 +142,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y, context)
 	if currentCondition >= 100
 		or not allPartsPresent
 		or (self.chr:getPerkLevel(Perks.Electricity) < requiredSkillLevel)
-		or not inv:containsTag("Screwdriver") then
+		or not inv:containsTag(_tag("Screwdriver")) then
 		parent.notAvailable = true
 	else
 		parent.notAvailable = false
@@ -173,7 +201,7 @@ function ISVehicleMechanics:ELR_doMenuTooltip(part, option, lua, requiredParts, 
 			local inv   = self.chr:getInventory()
 			local tag   = "Screwdriver"
 			local cur   = getEquippedMatchingTag(self.chr, tag)
-			local item  = cur or inv:getFirstTagRecurse(tag)
+			local item  = cur or inv:getFirstTagRecurse(_tag(tag))
 			if item then
 				local name = (item.getDisplayName and item:getDisplayName()) or "Screwdriver"
 				tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. name .. " 1/1 <LINE>"

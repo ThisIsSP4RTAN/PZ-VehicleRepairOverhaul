@@ -2,6 +2,32 @@ require "Vehicles/ISUI/ISVehicleMechanics"
 
 local old_ISVehicleMechanics_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
 
+local function _tag(id)
+  if id == nil then return nil end
+  if type(id) == "userdata" and id.getId then return id end
+
+  local function _resLoc(s)
+    s = tostring(s)
+    if not s:find(":", 1, true) then s = "base:" .. s end
+    if ResourceLocation and ResourceLocation.of then
+      return ResourceLocation.of(s)
+    elseif ResourceLocation and ResourceLocation.new then
+      local ns, path = s:match("^([^:]+):(.+)$")
+      return ResourceLocation.new(ns or "base", path or s)
+    end
+    return nil
+  end
+
+  if ItemTag and ItemTag.get then
+    local rl = _resLoc(id)
+    if rl then
+      local ok, tag = pcall(function() return ItemTag.get(rl) end)
+      if ok and tag then return tag end
+    end
+  end
+  return id
+end
+
 -- Prefer an already-worn item that matches a tag (e.g., WeldingMask)
 local function getWornMatchingTag(chr, tag)
     local worn = chr and chr:getWornItems()
@@ -9,7 +35,7 @@ local function getWornMatchingTag(chr, tag)
     for i = 0, worn:size()-1 do
         local wi = worn:get(i)
         local it = wi and wi:getItem() or nil
-        if it and it.hasTag and it:hasTag(tag) then return it end
+        if it and it.hasTag and it:hasTag(_tag(tag)) then return it end
     end
     return nil
 end
@@ -17,10 +43,18 @@ end
 -- Build a red "One of:" list for a single tag when none are present
 local function appendOneOfForTag(desc, tag)
     local sm = ScriptManager and ScriptManager.instance
-    local arr = sm and (sm.getItemsTag and sm:getItemsTag(tag) or sm.getAllItemsWithTag and sm:getAllItemsWithTag(tag))
-    if not (arr and arr.size and arr:size() > 0) then
-        return desc .. string.format(" <RGB:1,0,0>%s 0/1 <LINE>", tag)
-    end
+	local T  = _tag(tag)
+	local arr = nil
+	if sm and T then
+		if sm.getItemsTag then
+			arr = sm:getItemsTag(T)
+		elseif sm.getAllItemsWithTag then
+			arr = sm:getAllItemsWithTag(T)
+		end
+	end
+	if not (arr and arr.size and arr:size() > 0) then
+		return desc .. string.format(" <RGB:1,0,0>%s 0/1 <LINE>", tag)
+	end
     desc = desc .. string.format(" <RGB:1,0,0>%s <LINE>", getText("IGUI_CraftUI_OneOf"))
     for i = 1, arr:size() do
         local si  = arr:get(i-1)
@@ -37,14 +71,14 @@ end
 -- Copied from ISUI/ISWorldObjectContextMenu for finding a blowtorch with enough propane and modified for desired uses
 local function EHR_predicateBlowTorch(item)
     return (item ~= nil) and
-            (item:hasTag("BlowTorch") or item:getType() == "BlowTorch") and
-            (item:getCurrentUses() >= 10)
+            ((item.hasTag and item:hasTag(_tag("BlowTorch"))) or item:getType() == "BlowTorch" ) and
+			(item.getCurrentUses and item:getCurrentUses() >= 10)
 end
 -- Used to find a blowtorch that is not empty
 local function predicateNotEmptyBlowtorch(item)
     return (item ~= nil) and
-            (item:hasTag("BlowTorch") or item:getType() == "BlowTorch") and
-            (item:getCurrentUses() >= 10)
+            ((item.hasTag and item:hasTag(_tag("BlowTorch"))) or item:getType() == "BlowTorch" ) and
+			(item.getCurrentUses and item:getCurrentUses() >= 10)
 end
 
 -- Used to find the drainable that has the most uses
@@ -131,7 +165,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 		-- Prefer already-worn WeldingMask; else first in inventory
 		local mask = getWornMatchingTag(playerObj, "WeldingMask")
 		if not mask then
-			mask = playerObj:getInventory():getFirstTagRecurse("WeldingMask")
+		mask = playerObj:getInventory():getFirstTagRecurse(_tag("WeldingMask"))
 		end
 
 		if currentCondition < 100 and allPartsPresent and self.chr:getPerkLevel(Perks.Mechanics) >= requiredMechanicsSkillLevel and self.chr:getPerkLevel(Perks.MetalWelding) >= requiredMetalworkingSkillLevel and blowtorch ~= nil and mask ~= nil then
@@ -203,7 +237,7 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 			do
 			local inv  = self.chr:getInventory()
 			local tag  = "WeldingMask"
-			local item = getWornMatchingTag(self.chr, tag) or inv:getFirstTagRecurse(tag)
+			local item = getWornMatchingTag(self.chr, tag) or inv:getFirstTagRecurse(_tag(tag))
 
 			if item then
 				local name = (item.getDisplayName and item:getDisplayName()) or getText("ContextMenu_WeldingMask") or "Welder Mask"

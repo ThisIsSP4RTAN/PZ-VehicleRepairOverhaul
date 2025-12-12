@@ -1,6 +1,6 @@
 require("recipecode");
 
-function Recipe.OnGiveXP.Tailoring5(recipe, ingredients, result, player)
+--[[ function Recipe.OnGiveXP.Tailoring5(recipe, ingredients, result, player)
     player:getXp():AddXP(Perks.Tailoring, 5);
 end
 
@@ -22,10 +22,10 @@ end
 
 function Recipe.OnGiveXP.Mechanics20(recipe, ingredients, result, player)
     player:getXp():AddXP(Perks.Mechanics, 20);
-end
+end ]]
 
 
-function Recipe.OnCreate.SalvageModuleReturnsSmall(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsSmall(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -53,7 +53,7 @@ function Recipe.OnCreate.SalvageModuleReturnsSmall(items, result, player)
 
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsFabrics(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsFabrics(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -78,7 +78,7 @@ function Recipe.OnCreate.SalvageModuleReturnsFabrics(items, result, player)
 
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsSmallElectrics(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsSmallElectrics(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -103,7 +103,7 @@ function Recipe.OnCreate.SalvageModuleReturnsSmallElectrics(items, result, playe
 
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsLargeMetals(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsLargeMetals(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -138,7 +138,7 @@ function Recipe.OnCreate.SalvageModuleReturnsLargeMetals(items, result, player)
 
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsArmourLargeMetals(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsArmourLargeMetals(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -163,7 +163,7 @@ function Recipe.OnCreate.SalvageModuleReturnsArmourLargeMetals(items, result, pl
 
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsSuspension(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsSuspension(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -190,7 +190,7 @@ function Recipe.OnCreate.SalvageModuleReturnsSuspension(items, result, player)
 
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsTires(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsTires(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -215,7 +215,7 @@ function Recipe.OnCreate.SalvageModuleReturnsTires(items, result, player)
 
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsLeathers(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsLeathers(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -238,7 +238,7 @@ function Recipe.OnCreate.SalvageModuleReturnsLeathers(items, result, player)
 
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsSoftTops(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsSoftTops(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -260,7 +260,7 @@ function Recipe.OnCreate.SalvageModuleReturnsSoftTops(items, result, player)
     end
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsMufflers(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsMufflers(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.MetalWelding))
@@ -284,7 +284,7 @@ function Recipe.OnCreate.SalvageModuleReturnsMufflers(items, result, player)
     end
 end
 
-function Recipe.OnCreate.SalvageModuleReturnsWooden(items, result, player)
+function RecipeCodeOnCreate.SalvageModuleReturnsWooden(items, result, player)
 
     local isoPlayer = instanceof(player, "IsoPlayer") and player or getSpecificPlayer(0)
     local skill = (isoPlayer:getPerkLevel(Perks.Mechanics) + isoPlayer:getPerkLevel(Perks.Woodwork))

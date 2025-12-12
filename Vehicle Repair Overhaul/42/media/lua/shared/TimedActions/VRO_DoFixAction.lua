@@ -23,8 +23,19 @@ end
 
 local function isTorchItem(it)
   if not it then return false end
-  if it.hasTag and it:hasTag("BlowTorch") then return true end
-  local t  = it.getType and it:getType() or ""
+
+  -- 42.13+ :hasTag expects an ItemTag; try it safely if registry is present
+  if it.hasTag and ItemTag and (ResourceLocation and (ResourceLocation.of or ResourceLocation.new)) then
+    local rl = ResourceLocation.of and ResourceLocation.of("base:BlowTorch")
+             or (ResourceLocation.new and ResourceLocation.new("base","BlowTorch"))
+    if rl then
+      local ok, tag = pcall(function() return ItemTag.get(rl) end)
+      if ok and tag and it:hasTag(tag) then return true end
+    end
+  end
+
+  -- Fallbacks that also work on older builds
+  local t  = it.getType     and it:getType()     or ""
   local ft = it.getFullType and it:getFullType() or ""
   return t == "BlowTorch" or ft == "Base.BlowTorch"
 end
@@ -109,8 +120,9 @@ local function chanceOfFail(chr, fixer, hbr)
     end
   end
   fail = fail + (hbr + 1) * 2
-  if chr:HasTrait("Lucky")   then fail = fail - 5 end
-  if chr:HasTrait("Unlucky") then fail = fail + 5 end
+  -- 42.13: Lucky/Unlucky removed upstream; leave disabled until reintroduced.
+  -- if chr:hasTrait(CharacterTrait.LUCKY)   then fail = fail - 5 end
+  -- if chr:hasTrait(CharacterTrait.UNLUCKY) then fail = fail + 5 end
   if fail < 0 then fail = 0 elseif fail > 100 then fail = 100 end
   return fail
 end
@@ -400,7 +412,7 @@ function VRO.DoFixAction:perform()
       end
     end
 
-    -- >>> HBR RECORDING RULES <<<
+    -- >>> HBR RECORDING RULES <<< -- Might revisit in the future as a sandbox option
     -- * Loose inventory repairs always record HBR on the item.
     -- * Installed parts only record HBR when they have a real inventory item with a module-qualified full type.
     -- local shouldRecordHBR =

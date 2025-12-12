@@ -2295,12 +2295,12 @@ return {
       require = "@FixAFlat_All",
       globalItem = nil,
       conditionModifier = 0.9,
-      equip = { primary = "Base.FixAFlat", showModel = false },
+      equip = { primary = "VRO.FixAFlat", showModel = false },
       anim = "VehicleWorkOnTire",
       time = 160,
 
       fixers = {
-        { item = "Base.FixAFlat", uses = 1, },
+        { item = "VRO.FixAFlat", uses = 1, },
       },
     },
   }

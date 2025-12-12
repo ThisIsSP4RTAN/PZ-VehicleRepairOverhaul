@@ -35,6 +35,42 @@ end
 ----------------------------------------------------------------
 -- A) Helpers
 ----------------------------------------------------------------
+-- Registry-aware tag resolver (42.13+). Accepts "Screwdriver" or "base:Screwdriver".
+-- Returns an ItemTag userdata when possible; otherwise falls back to the raw id.
+local function _tag(id)
+  if id == nil then return nil end
+  -- Already an ItemTag?
+  if type(id) == "userdata" and id.getId then return id end
+
+  -- Build a ResourceLocation for ItemTag.get(...)
+  local function _resLoc(s)
+    -- ensure "ns:path" form
+    s = tostring(s)
+    if not s:find(":", 1, true) then s = "base:" .. s end
+    if ResourceLocation and ResourceLocation.of then
+      -- 42.13+ helper that accepts "ns:path"
+      return ResourceLocation.of(s)
+    elseif ResourceLocation and ResourceLocation.new then
+      -- Construct manually with (namespace, path)
+      local ns, path = s:match("^([^:]+):(.+)$")
+      ns, path = ns or "base", path or s
+      return ResourceLocation.new(ns, path)
+    end
+    return nil
+  end
+
+  if ItemTag and ItemTag.get then
+    local rl = _resLoc(id)
+    if rl then
+      local ok, tag = pcall(function() return ItemTag.get(rl) end)
+      if ok and tag then return tag end
+    end
+  end
+
+  -- Old builds / fallback
+  return id
+end
+
 -- Does this fullType exist in ScriptManager?
 local function isScriptedItem(fullType)
   if not fullType then return false end
@@ -238,54 +274,33 @@ local function gatherRequiredItems(inv, fullType, needUses)
 end
 
 -- Tag helpers
-local function firstTagItem(inv, tag) return inv:getFirstTagRecurse(tag) end
-local function hasTag(inv, tag) return inv:containsTag(tag) end
-
--- NEW: multi-tag helpers
-local function _splitTagsString(s)
-  local out = {}
-  for t in string.gmatch(s, "([^,%s]+)") do out[#out+1] = t end
-  return out
-end
-
-local function normalizeTagsField(gi)
-  if not gi then return nil end
-  if gi.tags ~= nil then
-    if type(gi.tags) == "string" then
-      local arr = _splitTagsString(gi.tags)
-      return (#arr > 0) and arr or nil
-    elseif type(gi.tags) == "table" then
-      -- assume array of strings
-      if gi.tags[1] then return gi.tags end
-    end
-  end
-  if gi.tag ~= nil and type(gi.tag) == "string" then
-    return { gi.tag }
-  end
-  return nil
-end
+local function firstTagItem(inv, tag) return inv:getFirstTagRecurse(_tag(tag)) end
+local function hasTag(inv, tag)       return inv:containsTag(_tag(tag)) end
 
 local function itemHasAnyTag(it, tags)
   if not (it and it.hasTag and tags) then return false end
   for i = 1, #tags do
-  local t = tags[i]
-  if it:hasTag(t) then return true end
-end
+    if it:hasTag(_tag(tags[i])) then return true end
+  end
   return false
 end
 
--- Best single item by *one* tag (favor meeting needUses for drainables; else fullest)
+-- Best single item by one tag
 local function findBestByTag(inv, tag, needUses)
   needUses = needUses or 1
+  local T = _tag(tag)
+
   if inv.getFirstEvalRecurse then
     local it = inv:getFirstEvalRecurse(function(item)
-      return item and item.hasTag and item:hasTag(tag) and (not isDrainable(item) or drainableUses(item) >= needUses)
+      return item and item.hasTag and item:hasTag(T)
+         and (not isDrainable(item) or drainableUses(item) >= needUses)
     end)
     if it then return it end
   end
+
   if inv.getBestEvalRecurse then
     local best = inv:getBestEvalRecurse(
-      function(item) return item and item.hasTag and item:hasTag(tag) end,
+      function(item) return item and item.hasTag and item:hasTag(T) end,
       function(a,b)
         local ua = isDrainable(a) and drainableUses(a) or 1
         local ub = isDrainable(b) and drainableUses(b) or 1
@@ -293,18 +308,22 @@ local function findBestByTag(inv, tag, needUses)
       end)
     if best then return best end
   end
+
   return firstTagItem(inv, tag)
 end
 
--- NEW: best item by ANY of multiple tags
+-- Best item by ANY of multiple tags
 local function findBestByTags(inv, tags, needUses)
   needUses = needUses or 1
+
   if inv.getFirstEvalRecurse then
     local it = inv:getFirstEvalRecurse(function(item)
-      return item and item.hasTag and itemHasAnyTag(item, tags) and (not isDrainable(item) or drainableUses(item) >= needUses)
+      return item and item.hasTag and itemHasAnyTag(item, tags)
+         and (not isDrainable(item) or drainableUses(item) >= needUses)
     end)
     if it then return it end
   end
+
   if inv.getBestEvalRecurse then
     local best = inv:getBestEvalRecurse(
       function(item) return item and item.hasTag and itemHasAnyTag(item, tags) end,
@@ -312,13 +331,12 @@ local function findBestByTags(inv, tags, needUses)
         local ua = isDrainable(a) and drainableUses(a) or 1
         local ub = isDrainable(b) and drainableUses(b) or 1
         return ua - ub
-      end
-    )
+      end)
     if best then return best end
   end
+
   for i = 1, #tags do
-    local t = tags[i]
-    local it = firstTagItem(inv, t)
+    local it = firstTagItem(inv, tags[i])
     if it then return it end
   end
   return nil
@@ -405,7 +423,7 @@ end
 -- Blowtorch helpers
 local function isTorchItem(it)
   if not it then return false end
-  if it.hasTag and it:hasTag("BlowTorch") then return true end
+  if it.hasTag and it:hasTag(_tag("BlowTorch")) then return true end
   local t = it.getType and it:getType() or ""
   if t == "BlowTorch" then return true end
   local ft = it.getFullType and it:getFullType() or ""
@@ -437,6 +455,59 @@ local function normalizeFlags(f)
     end
     return (n > 0) and m or nil
   end
+  return nil
+end
+
+-- Normalize a tag field into an array of tag *ids* (strings).
+-- Accepts:
+--   - { tags = { "Thread", "Screwdriver", ... } }
+--   - { tag  = "Thread" }
+--   - { "Thread", "Screwdriver" }         -- raw array
+--   - "Thread"                             -- single string
+--   - ItemTag userdata (42.13): returns its id without the "ns:" prefix
+local function normalizeTagsField(spec)
+  if spec == nil then return nil end
+
+  -- table form
+  if type(spec) == "table" then
+    -- { tags = {...} }
+    if spec.tags and type(spec.tags) == "table" then
+      local out = {}
+      for i = 1, #spec.tags do
+        local t = spec.tags[i]
+        if t ~= nil then out[#out + 1] = tostring(t) end
+      end
+      return (#out > 0) and out or nil
+    end
+    -- { tag = "Foo" }
+    if spec.tag ~= nil then
+      return { tostring(spec.tag) }
+    end
+    -- raw array { "Foo", "Bar" }
+    if spec[1] ~= nil then
+      local out = {}
+      for i = 1, #spec do
+        local t = spec[i]
+        if t ~= nil then out[#out + 1] = tostring(t) end
+      end
+      return (#out > 0) and out or nil
+    end
+    return nil
+  end
+
+  -- single string
+  if type(spec) == "string" then
+    return { spec }
+  end
+
+  -- ItemTag userdata (42.13)
+  if type(spec) == "userdata" and spec.getId then
+    local id = tostring(spec:getId())      -- e.g., "base:Screwdriver"
+    local colon = string.find(id, ":", 1, true)
+    if colon then id = string.sub(id, colon + 1) end
+    return { id }
+  end
+
   return nil
 end
 
@@ -473,23 +544,24 @@ end
 -- Prefers items with enough drainable uses; otherwise the fullest non-empty.
 local function findBestByTagNotDull(inv, tag, needUses)
   needUses = needUses or 1
+  local T = _tag(tag)  -- 42.13: convert "Scissors" -> ItemTag
 
-  -- Fast path: first match that is not dull and has enough uses (if drainable)
+  -- Fast path
   if inv.getFirstEvalRecurse then
     local it = inv:getFirstEvalRecurse(function(item)
       return item
-        and item.hasTag and item:hasTag(tag)
+        and item.hasTag and item:hasTag(T)
         and not isItemDull(item)
         and (not isDrainable(item) or drainableUses(item) >= needUses)
     end)
     if it then return it end
   end
 
-  -- Best path: among non-dull matches, pick the one with most usable “uses”
+  -- Best path
   if inv.getBestEvalRecurse then
     local best = inv:getBestEvalRecurse(
       function(item)
-        return item and item.hasTag and item:hasTag(tag) and not isItemDull(item)
+        return item and item.hasTag and item:hasTag(T) and not isItemDull(item)
       end,
       function(a, b)
         local ua = isDrainable(a) and drainableUses(a) or 1
@@ -500,7 +572,6 @@ local function findBestByTagNotDull(inv, tag, needUses)
     if best then return best end
   end
 
-  -- Nothing non-dull for this tag
   return nil
 end
 
@@ -621,7 +692,7 @@ local function perkLevel(chr, perkName)
   return chr:getPerkLevel(perk)
 end
 
-local function chanceOfFail(brokenItem, chr, fixing, fixer, hbr)
+local function chanceOfFail(brokenItem, chr, fixing, fixer, hbr, playerObj)
   local fail = 3.0
   if fixer.skills then
     for name,req in pairs(fixer.skills) do
@@ -631,8 +702,9 @@ local function chanceOfFail(brokenItem, chr, fixing, fixer, hbr)
     end
   end
   fail = fail + (hbr + 1) * 2
-  if chr:HasTrait("Lucky")   then fail = fail - 5 end
-  if chr:HasTrait("Unlucky") then fail = fail + 5 end
+  -- 42.13: Lucky/Unlucky removed upstream; leave disabled until reintroduced.
+  -- if playerObj:hasTrait(CharacterTrait.LUCKY)   then fail = fail - 5 end
+  -- if playerObj:hasTrait(CharacterTrait.UNLUCKY)  then fail = fail + 5 end
   if fail < 0 then fail = 0 elseif fail > 100 then fail = 100 end
   return fail
 end
@@ -655,11 +727,13 @@ end
 local function _getScriptsForTag(tag)
   local sm = ScriptManager and ScriptManager.instance
   if not sm then return nil end
-  -- PZ exposes one of these depending on build; try both gracefully
+  local T = _tag(tag)  -- <-- convert "Thread" / "WeldingMask" -> ItemTag
+
+  -- PZ exposes one of these depending on build; try both
   if sm.getItemsTag then
-    return sm:getItemsTag(tag)              -- ArrayList<ScriptItem>
+    return sm:getItemsTag(T)              -- ArrayList<ScriptItem>
   elseif sm.getAllItemsWithTag then
-    return sm:getAllItemsWithTag(tag)       -- ArrayList<ScriptItem>
+    return sm:getAllItemsWithTag(T)       -- ArrayList<ScriptItem>
   end
   return nil
 end
@@ -973,7 +1047,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
     for i = 0, worn:size()-1 do
       local wi = worn:get(i)
       local it = wi and wi:getItem() or nil
-      if it and it.hasTag and it:hasTag(tag) then return it end
+      if it and it.hasTag and it:hasTag(_tag(tag)) then return it end
     end
     return nil
   end
@@ -981,7 +1055,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   -- Prefer current hand item if it satisfies a tag/fullType (primary or secondary)
   local function preferHandForTag(chr, tag, which) -- which = "primary"|"secondary"
     local cur = (which == "primary") and chr:getPrimaryHandItem() or chr:getSecondaryHandItem()
-    if cur and cur.hasTag and cur:hasTag(tag) then return cur end
+    if cur and cur.hasTag and cur:hasTag(_tag(tag)) then return cur end
     return nil
   end
   local function preferHandForItem(chr, fullType, which)
@@ -1282,7 +1356,7 @@ local function _equippedSatisfies(it, spec, needUses)
   if spec.tags and spec.tags[1] then
     for i = 1, #spec.tags do
       local t = spec.tags[i]
-      if it.hasTag and it:hasTag(t) then
+      if it.hasTag and it:hasTag(_tag(t)) then
         return true
       end
     end
@@ -1291,7 +1365,7 @@ local function _equippedSatisfies(it, spec, needUses)
 
   -- single tag
   if spec.tag then
-    return it.hasTag and it:hasTag(spec.tag)
+    return it.hasTag and it:hasTag(_tag(spec.tag))
   end
 
   -- explicit item fullType
@@ -1646,7 +1720,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
     -- WEAR (already fixed to be recursive)
     if eq.wearTag then
-      local hasWear = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(eq.wearTag)) or hasTag(inv, eq.wearTag)
+      local hasWear = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.wearTag))) or hasTag(inv, eq.wearTag)
       ok = ok and (hasWear ~= nil)
     elseif eq.wear then
       ok = ok and (findFirstTypeRecurse(inv, eq.wear) ~= nil)
@@ -1654,7 +1728,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
     -- PRIMARY (make tag check recursive too)
     if eq.primaryTag then
-      local hasPrim = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(eq.primaryTag)) or hasTag(inv, eq.primaryTag)
+      local hasPrim = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.primaryTag))) or hasTag(inv, eq.primaryTag)
       ok = ok and (hasPrim ~= nil)
     elseif eq.primary then
       ok = ok and (findFirstTypeRecurse(inv, eq.primary) ~= nil)
@@ -1662,7 +1736,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
     -- SECONDARY (make tag check recursive too, and don’t recheck same tag)
     if eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
-      local hasSec = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(eq.secondaryTag)) or hasTag(inv, eq.secondaryTag)
+      local hasSec = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.secondaryTag))) or hasTag(inv, eq.secondaryTag)
       ok = ok and (hasSec ~= nil)
     elseif eq.secondary and eq.secondary ~= eq.primary then
       ok = ok and (findFirstTypeRecurse(inv, eq.secondary) ~= nil)
@@ -1751,7 +1825,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
         local eq = mergeEquip(fixer.equip, fixing.equip)
         local wearOK = true
         if eq.wearTag then
-          local hasWear = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(eq.wearTag)) or hasTag(inv, eq.wearTag)
+          local hasWear = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.wearTag))) or hasTag(inv, eq.wearTag)
           wearOK = (hasWear ~= nil)
         elseif eq.wear then
           wearOK = (findFirstTypeRecurse(inv, eq.wear) ~= nil)
@@ -2084,7 +2158,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
         local eq = mergeEquip(fixer.equip, fixing.equip)
         local wearOK = true
         if eq.wearTag then
-          local hasWear = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(eq.wearTag)) or hasTag(inv, eq.wearTag)
+          local hasWear = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.wearTag))) or hasTag(inv, eq.wearTag)
           wearOK = (hasWear ~= nil)
         elseif eq.wear then
           wearOK = (findFirstTypeRecurse(inv, eq.wear) ~= nil)

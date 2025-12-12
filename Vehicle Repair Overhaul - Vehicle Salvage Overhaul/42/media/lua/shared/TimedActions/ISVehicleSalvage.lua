@@ -11,9 +11,30 @@ require "TimedActions/ISBaseTimedAction"
 ISVehicleSalvage = ISBaseTimedAction:derive("ISVehicleSalvage")
 
 local function predicateBlowTorch(item)
-    return (item ~= nil) and
-            (item:hasTag("BlowTorch") or item:getType() == "BlowTorch") and
-            (item:getCurrentUses() >= 10)
+    if not item then return false end
+
+    -- 42.13+: :hasTag expects an ItemTag, not a string
+    if item.hasTag and ItemTag and (ResourceLocation and (ResourceLocation.of or ResourceLocation.new)) then
+        local rl = (ResourceLocation.of and ResourceLocation.of("base:BlowTorch"))
+                or (ResourceLocation.new and ResourceLocation.new("base","BlowTorch"))
+        if rl then
+            local ok, tag = pcall(function() return ItemTag.get(rl) end)
+            if ok and tag and item:hasTag(tag) then
+                local uses = (item.getCurrentUses and item:getCurrentUses()) or 0
+                return uses >= 10
+            end
+        end
+    end
+
+    -- Fallback for pre-registry builds (or if registry lookup fails)
+    local t  = item.getType     and item:getType()     or ""
+    local ft = item.getFullType and item:getFullType() or ""
+    if (t == "BlowTorch") or (ft == "Base.BlowTorch") then
+        local uses = (item.getCurrentUses and item:getCurrentUses()) or 0
+        return uses >= 10
+    end
+
+    return false
 end
 
 function ISVehicleSalvage:isValid()

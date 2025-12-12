@@ -1,5 +1,6 @@
 ItemName_DE = {
-     ItemName_FixAFlat.FixAFlat = "Reifenreparaturspray",
+     ItemName_VRO.FixAFlat = "Reifenreparaturspray",
+     ItemName_VRO.recipefiller = "empty recipe filler",
      ItemName_TW.MetalParts = "Metallschrottteile",
      ItemName_TW.Spring = "Metallfeder",
 }

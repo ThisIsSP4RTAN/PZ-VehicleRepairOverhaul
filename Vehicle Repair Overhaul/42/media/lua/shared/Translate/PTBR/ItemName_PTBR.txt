@@ -1,5 +1,6 @@
 ItemName_PTBR = {
-	ItemName_FixAFlat.FixAFlat = "Tinta Spray para Pneus",
+	ItemName_VRO.FixAFlat = "Tinta Spray para Pneus",
+    ItemName_VRO.recipefiller = "empty recipe filler",
 	ItemName_TW.MetalParts = "Partes de metal",
 	ItemName_TW.Spring = "Mola",
 }
