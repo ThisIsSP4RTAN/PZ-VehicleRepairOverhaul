@@ -50,24 +50,23 @@ function ELRRepairLightbar:perform()
 		self.item:setJobDelta(0)
 	end
 
-	-- Server-side lightbar condition update via command
-	sendClientCommand(self.character, 'ELR_vehicle', 'repairLightbar', {
-		vehicle        = self.part:getVehicle():getId(),
-		part           = self.part:getId(),
-		repairBlocks   = self.repairBlocks,
-		targetCondition= self.targetCondition,
-		repairParts    = self.requiredParts
-	})
+	local args = {
+		vehicle         = self.part:getVehicle():getId(),
+		part            = self.part:getId(),
+		repairBlocks    = self.repairBlocks,
+		targetCondition = self.targetCondition,
+		repairParts     = {}
+	}
 
-	-- Consume the required parts once the action is complete
-    for itemType, count in pairs(self.requiredParts) do
-        for i = 1, count do
-            local item = self.character:getInventory():FindAndReturn(itemType)
-            if item then
-                self.character:getInventory():Remove(item)
-            end
-        end
-    end
+	for k, v in pairs(self.requiredParts or {}) do
+		local ft = tostring(k)
+		if not ft:find("%.") then ft = "Base." .. ft end
+		args.repairParts[ft] = (args.repairParts[ft] or 0) + (tonumber(v) or 0)
+	end
+
+	sendClientCommand(self.character, 'ELR_vehicle', 'repairLightbar', args)
+
+	-- Do NOT consume locally; server removes items authoritatively.
 	ISBaseTimedAction.perform(self)
 end
 

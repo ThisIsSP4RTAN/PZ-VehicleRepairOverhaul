@@ -1,4 +1,4 @@
----@diagnostic disable: param-type-mismatch
+---@diagnostic disable: param-type-mismatch, undefined-field
 
 require "Vehicles/ISUI/ISVehicleMechanics"
 
@@ -294,7 +294,7 @@ function ISVehicleMechanics.ELR_onRepairLightbar(playerObj, part, repairBlocks, 
 	-- Prefer the screwdriver already equipped (primary or secondary); else first in inventory
 	local screwdriver = getEquippedMatchingTag(playerObj, "Screwdriver")
 	if not screwdriver then
-		screwdriver = playerObj:getInventory():getFirstTagRecurse("Screwdriver")
+		screwdriver = playerObj:getInventory():getFirstTagRecurse(_tag("Screwdriver"))
 	end
 
 	-- Only equip if neither hand already holds it (avoid swapping if we’re already using it)

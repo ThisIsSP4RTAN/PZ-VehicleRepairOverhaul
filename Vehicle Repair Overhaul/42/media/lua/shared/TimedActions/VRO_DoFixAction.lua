@@ -142,76 +142,6 @@ local function condRepairedPercent(chr, fixing, fixer, hbr, fixerIndex)
   return base
 end
 
--- Keep-flag application (mirror vanilla)
-local function _normalizeFlags(f)
-  if f == nil then return nil end
-
-  -- Map-like table: keep as-is (no iteration needed here)
-  if type(f) == "table" and f[1] == nil then
-    return f
-  end
-
-  -- Array-of-strings → { flag=true, ... } using indexing
-  if type(f) == "table" then
-    local m, n = {}, 0
-    for i = 1, #f do
-      local k = f[i]
-      if type(k) == "string" then
-        m[k] = true
-        n = n + 1
-      end
-    end
-    return (n > 0) and m or nil  -- no `next`
-  end
-  return nil
-end
-
-local function _perkLevel(chr, name)
-  return (perkLevel and perkLevel(chr, name)) or 0
-end
-
-local function _maintenanceMod(chr)
-  local m = _perkLevel(chr, "Maintenance")
-  local w = (chr and chr.getWeaponLevel and (chr:getWeaponLevel() or 0)) or 0
-  return m + math.floor(w/2)
-end
-
-local function _highestRelevantSkill(chr, fixing, fixer)
-  local maxv = 0
-  local tbl  = (fixer and fixer.skills) or (fixing and fixing.skills) or nil
-  if tbl then
-    for n,_ in pairs(tbl) do maxv = math.max(maxv, _perkLevel(chr, n)) end
-  end
-  return maxv
-end
-
-local function _applyKeepFlags(chr, item, flags, hiSkill)
-  if not (item and flags) then return end
-  local fl = _normalizeFlags(flags)
-  if not fl then return end
-
-  local skill = (hiSkill or 0) + _maintenanceMod(chr)
-
-  local function dmg(factor)
-    if item.damageCheck then item:damageCheck(skill, factor, false) end
-  end
-  local function sharp()
-    if item.hasSharpness and item:hasSharpness() and item.sharpnessCheck then
-      item:sharpnessCheck(skill, 1.0, false)
-    else
-      dmg(6.0)
-    end
-  end
-
-  if     fl.MayDegradeHeavy     then dmg(1.0)
-  elseif fl.MayDegrade          then dmg(2.0)
-  elseif fl.MayDegradeLight     then dmg(3.0)
-  elseif fl.MayDegradeVeryLight then dmg(6.0)
-  end
-
-  if fl.SharpnessCheck then sharp() end
-end
-
 local function defaultAnimForPart(part)
   if not part then return "VehicleWorkOnMid" end
   if part.getWheelIndex and part:getWheelIndex() ~= -1 then return "VehicleWorkOnTire" end
@@ -234,6 +164,56 @@ local function buildJobType(part, brokenItem)
     return label .. "" .. name
   end
   return label
+end
+
+-- Turn a bundle list into fullType->count, counting uses for drainables.
+local function _bundleToTypeCounts(bundle)
+  local out = {}
+  if not (bundle and bundle[1] ~= nil) then return out end
+  for i = 1, #bundle do
+    local b = bundle[i]
+    if b and b.item and (b.takeUses or 0) > 0 then
+      local it = b.item
+      local ft = (it.getFullType and it:getFullType())
+              or (it.getType and ("Base."..it:getType()))
+      if ft then
+        local add = 1
+        if isDrainable and isDrainable(it) then
+          add = b.takeUses or 0
+        end
+        out[ft] = (out[ft] or 0) + add
+      end
+    end
+  end
+  return out
+end
+
+local function _mergeCounts(a, b)
+  local out = {}
+  for k,v in pairs(a or {}) do out[k] = (out[k] or 0) + (v or 0) end
+  for k,v in pairs(b or {}) do out[k] = (out[k] or 0) + (v or 0) end
+  return out
+end
+
+-- Gather keep-flag targets so the server can apply degrade/sharpness checks.
+-- We hint which exact item to pick (hands) and fallback to fullType if needed.
+local function _packKeepFlags(self, list)
+  local out = {}
+  if not (list and list[1] ~= nil) then return out end
+  for i = 1, #list do
+    local k = list[i]
+    if k and k.item and k.flags then
+      local it = k.item
+      local ft = (it.getFullType and it:getFullType()) or (it.getType and ("Base."..it:getType()))
+      out[#out+1] = {
+        fullType    = ft,
+        inPrimary   = (self.expectedPrimary   == it) or (self.character:getPrimaryHandItem()   == it),
+        inSecondary = (self.expectedSecondary == it) or (self.character:getSecondaryHandItem() == it),
+        flags       = k.flags,
+      }
+    end
+  end
+  return out
 end
 
 ----------------------------------------------------------------
@@ -371,169 +351,140 @@ function VRO.DoFixAction:stop()
 end
 
 function VRO.DoFixAction:perform()
-  local part   = self.part
-  local broken = self.brokenItem
-  local hbr    = getHBR(part, broken)
-  local failPct   = chanceOfFail(self.character, self.fixer, hbr)
-  local success   = ZombRand(100) >= failPct
-  self._vroSuccess = success
-  local pctRepair = condRepairedPercent(self.character, self.fixing, self.fixer, hbr, self.fixerIndex)
-
-  -- Target condition (installed part or loose item)
-  local targetMax, targetCur
-  if part then
-    targetMax = (part.getConditionMax and part:getConditionMax()) or 100
-    targetCur = math.min(part:getCondition(), targetMax)
-  else
-    targetMax = (broken and broken.getConditionMax and broken:getConditionMax()) or 100
-    targetCur = (broken and broken.getCondition and broken:getCondition()) or 0
-  end
-
-  if success then
-    local missing = math.max(0, targetMax - targetCur)
-    local gain    = math.floor((missing * (pctRepair / 100.0)) + 0.5)
-    if gain < 1 then gain = 1 end
-
-    if part then
-      part:setCondition(math.min(targetMax, targetCur + gain))
-      if part.getVehicle and part:getVehicle() and part:getVehicle().transmitPartCondition then
-        part:getVehicle():transmitPartCondition(part)
-      end
-    end
-    if broken then
-      local newVal = math.min(targetMax, targetCur + gain)
-      if broken.setConditionNoSound then
-        broken:setConditionNoSound(newVal)
-      elseif broken.setCondition then
-        broken:setCondition(newVal)
-      end
-      if broken.syncItemFields then
-        broken:syncItemFields()
-      end
-    end
-
-    -- >>> HBR RECORDING RULES <<< -- Might revisit in the future as a sandbox option
-    -- * Loose inventory repairs always record HBR on the item.
-    -- * Installed parts only record HBR when they have a real inventory item with a module-qualified full type.
-    -- local shouldRecordHBR =
-    --   (broken ~= nil) or
-    --   (part ~= nil and _partHasModuleItem(part))
-
-    -- if shouldRecordHBR then
-    setHBR(part, broken, hbr + 1)
-    -- end
-
-    if self._soundHandle then
-      self.character:getEmitter():stopSound(self._soundHandle)
-      self._soundHandle = nil
-    end
-    if self.successSfx then
-      self.character:getEmitter():playSound(self.successSfx)
-    end
-
-    if self.fixer and self.fixer.skills then
-      for perkName,_ in pairs(self.fixer.skills) do
-        local perk = resolvePerk(perkName)
-        if perk then self.character:getXp():AddXP(perk, ZombRand(3,6)) end
-      end
-    end
-  else
-    if part and targetCur > 0 then
-      part:setCondition(targetCur - 1)
-      if part.getVehicle and part:getVehicle() and part:getVehicle().transmitPartCondition then
-        part:getVehicle():transmitPartCondition(part)
-      end
-    end
-    if broken then
-      local newVal = math.max(0, targetCur - 1)
-      if broken.setConditionNoSound then
-        broken:setConditionNoSound(newVal)
-      elseif broken.setCondition then
-        broken:setCondition(newVal)
-      end
-      if broken.syncItemFields then
-        broken:syncItemFields()
-      end
-    end
-      self.character:getEmitter():playSound("FixingItemFailed")
-  end
-
-  do
-    local uses = tonumber(self.torchUses) or 0
-    if uses > 0 then
-      -- Use ONLY the equipped torch (like salvage)
-      local torch = self.expectedPrimary
-      if not (torch and isTorchItem(torch)) then
-        torch = self.expectedSecondary
-      end
-      if torch and isTorchItem(torch) and torch.Use then
-        for i = 1, uses do
-          if (torch.getCurrentUses and torch:getCurrentUses() <= 0)
-          or (torch.getDrainableUsesInt and torch:getDrainableUsesInt() <= 0) then
-            break
-          end
-          torch:Use()
-        end
-      end
-    end
-  end
-
-  if self.fixerBundle then consumeItems(self.character, self.fixerBundle) end
-  if self.globalBundle then consumeItems(self.character, self.globalBundle) end
-    if part and part.getInventoryItem and part: getInventoryItem() then
-    local veh = part:getVehicle()
-    local installer = 0
-    if veh and veh.getMechanicSkillInstaller then
-      installer = veh:getMechanicSkillInstaller()
-    end
-    if part.doInventoryItemStats then
-      part:doInventoryItemStats(part:getInventoryItem(), installer)
-    end
-  end
-
-  do
-    -- only on success
-    if self._vroSuccess and part then
-      local veh = part:getVehicle()
-
-      -- container parts that don't have an item container need their content clamped
-      if part.isContainer and part:isContainer() and not part:getItemContainer() then
-        local curAmt = part:getContainerContentAmount()
-        part:setContainerContentAmount(curAmt)
-      end
-
-      if veh then
-        veh:updatePartStats()
-        veh:updateBulletStats()
-        veh:transmitPartItem(part)
-      end
-    end
-  end
-
-  local hi   = _highestRelevantSkill(self.character, self.fixing, self.fixer)
-  local keep = self.keepFlagTargets
-  if keep and keep[1] ~= nil then
-    for i = 1, #keep do
-      local k = keep[i]
-      if k then _applyKeepFlags(self.character, k.item, k.flags, hi) end
-    end
-  end
-
-  -- Clear all progress bars
-  local items = self._progressItems
-  if items and items[1] ~= nil then
-    for i = 1, #items do
-      local it = items[i]
+  -- CLIENT: stop bars/sounds/models (no mutations)
+  if self._progressItems and self._progressItems[1] ~= nil then
+    for i = 1, #self._progressItems do
+      local it = self._progressItems[i]
       if it and it.setJobDelta then it:setJobDelta(0) end
     end
   end
 
-  if self._soundHandle then self.character:getEmitter():stopSound(self._soundHandle) end
+  if self._soundHandle then
+    self.character:getEmitter():stopSound(self._soundHandle)
+    self._soundHandle = nil
+  end
+
+  if self.successSfx then
+    self.character:getEmitter():playSound(self.successSfx)
+  end
+
+  if self.fixer and self.fixer.skills then
+    for perkName,_ in pairs(self.fixer.skills) do
+      local perk = resolvePerk(perkName)
+        if perk then self.character:getXp():AddXP(perk, ZombRand(3,6)) end
+      end
+    end
+
   if self._didOverride and self.setOverrideHandModels then
-    self:setOverrideHandModels(nil,nil)
+    self:setOverrideHandModels(nil, nil)
     self._didOverride = nil
   end
+
+  local veh = self.part and self.part:getVehicle() or nil
+
+  if veh and self.part then
+    -- ===== Vehicle part → server does the mutation =====
+    local args = {}
+
+    args.vehicleId  = veh:getId()
+    args.partId     = self.part:getId()
+
+    -- HBR (seed) – ok if 0; server increments after success
+    do
+      local md = self.part:getModData()
+      args.hbr = (md and md.VRO_HaveBeenRepaired) or 0
+    end
+
+    args.fixerIndex    = self.fixerIndex or 1
+    args.fixingCondMod = (self.fixing and self.fixing.conditionModifier) or 1.0
+    args.fixerSkills   = (self.fixer and self.fixer.skills) or (self.fixing and self.fixing.skills) or nil
+
+    -- Torch info: only drain chosen torch on server; never delete when empty
+    args.torchUses        = tonumber(self.torchUses) or 0
+    local inPrimaryTorch  = (self.expectedPrimary and isTorchItem(self.expectedPrimary)) and true or false
+    args.torchFromPrimary = inPrimaryTorch
+
+    -- Aggregate non-torch consumables by fullType → required "uses" or count
+    local c1 = _bundleToTypeCounts(self.fixerBundle)
+    local c2 = _bundleToTypeCounts(self.globalBundle)
+    args.consumeMap = _mergeCounts(c1, c2)
+
+    args.keepFlags = _packKeepFlags(self, self.keepFlagTargets)
+    sendClientCommand(self.character, 'VRO_vehicle', 'doFix', args)
+    else
+      -- ===== Loose inventory item → server does the mutation now =====
+      local args = {}
+      local bi   = self.brokenItem
+      if not bi or not bi.getFullType then
+        ISBaseTimedAction.perform(self); return
+      end
+
+      args.itemFullType = bi:getFullType()
+
+      -- HBR seed from item if available
+      if bi.getHaveBeenRepaired then
+        args.hbr = bi:getHaveBeenRepaired() or 0
+      else
+        local md = bi:getModData()
+        args.hbr = (md and md.VRO_HaveBeenRepaired) or 0
+      end
+
+      args.fixerIndex    = self.fixerIndex or 1
+      args.fixingCondMod = (self.fixing and self.fixing.conditionModifier) or 1.0
+      args.fixerSkills   = (self.fixer and self.fixer.skills) or (self.fixing and self.fixing.skills) or nil
+
+      -- Torch info
+      args.torchUses        = tonumber(self.torchUses) or 0
+      local inPrimaryTorch  = (self.expectedPrimary and isTorchItem(self.expectedPrimary)) and true or false
+      args.torchFromPrimary = inPrimaryTorch
+
+      -- Aggregate the consumables we planned to consume
+      local c1 = _bundleToTypeCounts(self.fixerBundle)
+      local c2 = _bundleToTypeCounts(self.globalBundle)
+      args.consumeMap = _mergeCounts(c1, c2)
+      args.keepFlags = _packKeepFlags(self, self.keepFlagTargets)
+
+      sendClientCommand(self.character, 'VRO_vehicle', 'doFixInventory', args)
+    end
+
+
   ISBaseTimedAction.perform(self)
+end
+
+function VRO.DoFixAction:_completeInventoryRepair()
+  local chr     = self.character
+  local broken  = self.brokenItem
+  local fixing  = self.fixing or {}
+  local fixer   = self.fixer or {}
+  if not (broken and broken.getCondition) then return end
+
+  local hbr     = getHBR(nil, broken)
+  local failPct = chanceOfFail(chr, fixer, hbr)
+  local success = ZombRand(100) >= failPct
+  local pct     = condRepairedPercent(chr, fixing, fixer, hbr, self.fixerIndex)
+
+  local max  = (broken.getConditionMax and broken:getConditionMax()) or 100
+  local cur  = (broken.getCondition   and broken:getCondition())    or 0
+
+  if success then
+    local missing = math.max(0, max - cur)
+    local gain    = math.floor((missing * (pct / 100.0)) + 0.5)
+    if gain < 1 then gain = 1 end
+    if broken.setConditionNoSound then
+      broken:setConditionNoSound(math.min(max, cur + gain))
+    else
+      broken:setCondition(math.min(max, cur + gain))
+    end
+    setHBR(nil, broken, (hbr or 0) + 1)
+  else
+    local newVal = math.max(0, cur - 1)
+    if broken.setConditionNoSound then broken:setConditionNoSound(newVal)
+    else broken:setCondition(newVal) end
+  end
+
+  -- Consume the exact bundles we selected
+  consumeItems(chr, self.fixerBundle)
+  consumeItems(chr, self.globalBundle)
 end
 
 function VRO.DoFixAction:new(args)

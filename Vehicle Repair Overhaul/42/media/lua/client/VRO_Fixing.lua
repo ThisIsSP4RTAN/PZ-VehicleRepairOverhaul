@@ -2234,6 +2234,14 @@ local function addInventoryFixOptions(playerObj, context, broken)
             local showM = resolveShowModel(fixr, fixg)
             local noHands = not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
             if noHands then showM = false end
+
+            if brk and brk.getContainer then
+              local inv = p and p.getInventory and p:getInventory() or nil
+              if not inv or brk:getContainer() ~= inv then
+                ISInventoryPaneContextMenu.transferIfNeeded(p, brk)
+              end
+            end
+
             ISTimedActionQueue.add(VRO.DoFixAction:new{
               character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
               brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,

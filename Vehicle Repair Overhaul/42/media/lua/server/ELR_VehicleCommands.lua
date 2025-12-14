@@ -12,36 +12,92 @@ local noise = function(msg)
 	end
 end
 
+local function _partMaxCondition(part)
+  if not part then return 100 end
+  -- Some parts have this, many don't:
+  if part.getConditionMax then
+    local ok, val = pcall(function() return part:getConditionMax() end)
+    if ok and type(val) == "number" and val > 0 then return val end
+  end
+  -- Most reliable: ask the installed inventory item
+  local inv = part.getInventoryItem and part:getInventoryItem() or nil
+  if inv and inv.getConditionMax then
+    local ok, val = pcall(function() return inv:getConditionMax() end)
+    if ok and type(val) == "number" and val > 0 then return val end
+  end
+  return 100
+end
+
+local function _removeFullTypeCount(player, fullType, count)
+  if not (player and fullType and count and count > 0) then return end
+  local inv = player:getInventory()
+  if not inv then return end
+  local coll = ArrayList.new()
+  inv:getAllTypeRecurse(fullType, coll)
+  local remain = count
+  for i = 0, coll:size() - 1 do
+    if remain <= 0 then break end
+    local it  = coll:get(i)
+    local con = it and it:getContainer() or nil
+    if con then
+      con:Remove(it)
+      if sendRemoveItemFromContainer then
+        sendRemoveItemFromContainer(con, it)
+      end
+      remain = remain - 1
+    end
+  end
+end
+
 function ELR_Commands.repairLightbar(player, args)
 	local vehicle = getVehicleById(args.vehicle)
-	if vehicle then
-		local part = vehicle:getPartById("lightbar")
+	if not vehicle then return end
 
-		if not part then
-			noise('no such part lightbar')
-			return
+	local part = vehicle:getPartById("lightbar")
+	if not part then return end
+
+	-- Apply condition with the real max
+	local maxC = _partMaxCondition(part)
+	local tgt  = math.min(maxC, tonumber(args.targetCondition) or maxC)
+	part:setCondition(tgt)
+
+	-- Count a repair and mirror to the installed item
+	local md = part:getModData()
+	md.VRO_HaveBeenRepaired = (md.VRO_HaveBeenRepaired or 0) + 1
+
+	local inv = part.getInventoryItem and part:getInventoryItem() or nil
+	if inv then
+		if inv.setCondition then inv:setCondition(part:getCondition()) end
+		if inv.setHaveBeenRepaired then
+			inv:setHaveBeenRepaired(md.VRO_HaveBeenRepaired or 0)
+		else
+			local imd = inv:getModData()
+			imd.VRO_HaveBeenRepaired = md.VRO_HaveBeenRepaired or 0
 		end
-
-
-		part:setCondition(args.targetCondition)
-
-		player:sendObjectChange('addXp', { perk = Perks.Electricity:index(), xp = args.repairBlocks, noMultiplier = false })
-
-		for partType,partCount in pairs(args["repairParts"]) do
-			player:sendObjectChange('removeItemType', { type = partType, count = partCount })
-		end
-
-		vehicle:updatePartStats()
-		vehicle:updateBulletStats()
-		vehicle:transmitPartCondition(part)
-		vehicle:transmitPartItem(part)
-		vehicle:transmitPartModData(part)
-
-
-		player:sendObjectChange('mechanicActionDone', { success = true, vehicleId = vehicle:getId(), partId = part:getId(), itemId = -1, installing = true })
-	else
-		noise('no such vehicle id='..tostring(args.vehicle))
+		if inv.syncItemFields then inv:syncItemFields() end
 	end
+
+	-- Server-side removal of required parts
+	for fullType, count in pairs(args.repairParts or {}) do
+	local n = tonumber(count) or 0
+		if n > 0 then
+			_removeFullTypeCount(player, fullType, n)
+	  	end
+	end
+
+	vehicle:updatePartStats()
+	vehicle:updateBulletStats()
+	vehicle:transmitPartCondition(part)
+	vehicle:transmitPartItem(part)
+	vehicle:transmitPartModData(part)
+
+	player:sendObjectChange('mechanicActionDone', {
+		success   = true,
+		vehicleId = vehicle:getId(),
+		partId    = part:getId(),
+		itemId    = -1,
+		installing= true
+	})
 end
 
 function ELR_Commands.setLightbarLightsMode(player, args)

@@ -63,18 +63,21 @@ function EHRRepairHeater:perform()
     end
 	self.blowtorch:setJobDelta(0)
 
-	-- Repair the heater using our custom client command
-	sendClientCommand(self.character, 'EHR_vehicle', 'repairHeater', { vehicle = self.part:getVehicle():getId(), part = self.part:getId(), targetCondition = self.targetCondition, repairParts = self.requiredParts })
+	local args = {
+		vehicle         = self.part:getVehicle():getId(),
+		part            = self.part:getId(),
+		targetCondition = self.targetCondition,
+		repairParts     = {}
+	}
 
-    -- Consume the required parts once the action is complete
-    for itemType, count in pairs(self.requiredParts) do
-        for i = 1, count do
-            local item = self.character:getInventory():FindAndReturn(itemType)
-            if item then
-                self.character:getInventory():Remove(item)
-            end
-        end
-    end
+	for k, v in pairs(self.requiredParts or {}) do
+		local full = tostring(k)
+		if not full:find("%.") then full = "Base." .. full end
+		args.repairParts[full] = (args.repairParts[full] or 0) + (tonumber(v) or 0)
+	end
+
+	sendClientCommand(self.character, 'EHR_vehicle', 'repairHeater', args)
+
 	ISBaseTimedAction.perform(self)
 end
 

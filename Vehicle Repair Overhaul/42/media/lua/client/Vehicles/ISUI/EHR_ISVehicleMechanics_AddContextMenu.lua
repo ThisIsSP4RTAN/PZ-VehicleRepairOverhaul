@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field, param-type-mismatch
 require "Vehicles/ISUI/ISVehicleMechanics"
 
 local old_ISVehicleMechanics_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
