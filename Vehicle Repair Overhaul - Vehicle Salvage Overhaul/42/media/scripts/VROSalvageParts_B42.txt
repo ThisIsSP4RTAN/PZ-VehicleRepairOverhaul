@@ -19,7 +19,7 @@ module Base
 		{
 
 	       item 4 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -42,7 +42,7 @@ module Base
 		{
 
 	       item 5 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -65,7 +65,7 @@ module Base
 		{
 
 	       item 4 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -88,7 +88,7 @@ module Base
 		{
 
 	       item 4 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -111,7 +111,7 @@ module Base
 		{
 
 	       item 5 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -131,7 +131,7 @@ module Base
 		inputs
 		{
 
-			item 1 tags[Saw] mode:keep flags[MayDegradeLight;Prop1],
+			item 1 tags[base:saw] mode:keep flags[MayDegradeLight;Prop1],
 		}
 		outputs
 		{
@@ -154,7 +154,7 @@ module Base
 		{
 
 	       item 5 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -175,7 +175,7 @@ module Base
 		{
 
 	       item 3 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -198,7 +198,7 @@ module Base
 		{
 
 	       item 5 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -221,7 +221,7 @@ module Base
 		{
 
 	       item 4 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -244,7 +244,7 @@ module Base
 		{
 
 	       item 3 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -266,7 +266,7 @@ module Base
 		inputs
 		{
 
-	       item 1 tags[Scissors;SharpKnife] mode:keep flags[IsNotDull;MayDegradeLight],
+	       item 1 tags[base:scissors;base:sharpknife] mode:keep flags[IsNotDull;MayDegradeLight],
 		}
 		outputs
 		{
@@ -289,7 +289,7 @@ module Base
 		{
 
 	       item 2 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -312,7 +312,7 @@ module Base
 		{
 
 	       item 3 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -334,7 +334,7 @@ module Base
 		inputs
 		{
 
-	       item 1 tags[Scissors;SharpKnife] mode:keep flags[IsNotDull;MayDegradeLight],
+	       item 1 tags[base:scissors;base:sharpknife] mode:keep flags[IsNotDull;MayDegradeLight],
 		}
 		outputs
 		{
@@ -355,7 +355,7 @@ module Base
 		{
 
 	       item 3 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -377,7 +377,7 @@ module Base
 		inputs
 		{
 
-	       item 1 tags[Scissors;SharpKnife] mode:keep flags[IsNotDull;MayDegradeLight],
+	       item 1 tags[base:scissors;base:sharpknife] mode:keep flags[IsNotDull;MayDegradeLight],
 		}
 		outputs
 		{
@@ -400,7 +400,7 @@ module Base
 		{
 
 	       item 3 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -423,7 +423,7 @@ module Base
 		{
 
 	       item 5 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
@@ -446,11 +446,10 @@ module Base
 		{
 
 	       item 2 [Base.BlowTorch],
-	       item 1 tags[WeldingMask] mode:keep,
+	       item 1 tags[base:weldingmask] mode:keep,
 		}
 		outputs
 		{
 		}
 	}
-
 }
