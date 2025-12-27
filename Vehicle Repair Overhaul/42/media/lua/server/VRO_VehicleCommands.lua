@@ -37,6 +37,50 @@ local function isTorchItem(it)
   return t == "BlowTorch" or ft == "Base.BlowTorch"
 end
 
+-- Count total "uses" for a fullType across all stacks (drainables = uses, others = 1 each)
+local function _countUsesForFullType(player, fullType)
+  if not (player and fullType) then return 0 end
+  local inv = player:getInventory()
+  if not inv then return 0 end
+  local bag = ArrayList.new()
+  inv:getAllTypeRecurse(fullType, bag)
+  local have = 0
+  for i = 0, bag:size() - 1 do
+    local it = bag:get(i)
+    if isDrainable(it) then
+      have = have + drainableUses(it)
+    else
+      have = have + 1
+    end
+  end
+  return have
+end
+
+-- Single-torch rule: the chosen hand torch must meet the required uses
+local function _torchMeetsRequirement(player, needUses, fromPrimary)
+  local need = tonumber(needUses) or 0
+  if need <= 0 then return true end
+  local torch = fromPrimary and player:getPrimaryHandItem() or player:getSecondaryHandItem()
+  return torch and isTorchItem(torch) and (drainableUses(torch) >= need) or false
+end
+
+-- Validate we still have enough to proceed (server authority).
+-- Skips "Base.BlowTorch" in consumeMap (torch handled via torchUses).
+local function _requirementsOK(player, torchUses, torchFromPrimary, consumeMap)
+  if not _torchMeetsRequirement(player, torchUses, torchFromPrimary) then
+    return false
+  end
+  consumeMap = consumeMap or {}
+  for fullType, need in pairs(consumeMap) do
+    local n = tonumber(need) or 0
+    if n > 0 and fullType ~= "Base.BlowTorch" then
+      local have = _countUsesForFullType(player, fullType)
+      if have < n then return false end
+    end
+  end
+  return true
+end
+
 local function resolvePerk(name)
   if not name or not Perks then return nil end
   return Perks[name] or (Perks.FromString and Perks.FromString(name)) or nil
@@ -290,6 +334,11 @@ VRO_CMDS.doFixInventory = function(player, args)
   local torchUses  = tonumber(args.torchUses or 0)
   local consumeMap = args.consumeMap or {}
 
+  if not _requirementsOK(player, torchUses, args.torchFromPrimary, consumeMap) then
+    log("doFixInventory: requirements missing; abort")
+    return
+  end
+
   local it = _pickInventoryTarget(player, fullType)
   if not it then log("doFixInventory: no item "..tostring(fullType)); return end
 
@@ -369,6 +418,11 @@ VRO_CMDS.doFix = function(player, args)
   if not vehicle then log("no vehicle id="..tostring(vehicleId)); return end
   local part = vehicle:getPartById(partId)
   if not part then log("no part id="..tostring(partId)); return end
+
+  if not _requirementsOK(player, torchUses, args.torchFromPrimary, consumeMap) then
+    log("doFix: requirements missing; abort")
+    return
+  end
 
   -- roll + compute on server
   local fail = chanceOfFail(player, skills, hbr)

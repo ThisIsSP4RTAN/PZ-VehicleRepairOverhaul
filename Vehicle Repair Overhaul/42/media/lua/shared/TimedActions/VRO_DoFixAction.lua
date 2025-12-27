@@ -260,14 +260,97 @@ local function collectProgressItems(self)
   return list
 end
 
+-- Sum total available "uses" for a fullType (counts stacks and drainables)
+local function _countUsesForFullType(inv, fullType)
+  if not (inv and fullType) then return 0 end
+  local bagged = ArrayList.new()
+  inv:getAllTypeRecurse(fullType, bagged)
+  if bagged:isEmpty() then return 0 end
+  local have = 0
+  for i = 0, bagged:size() - 1 do
+    local it = bagged:get(i)
+    if isDrainable(it) then
+      have = have + drainableUses(it)
+    else
+      have = have + 1
+    end
+  end
+  return have
+end
+
+-- How many torch uses do we require? (derive from the bundles we planned)
+local function _calcTorchUsesFromBundles(self)
+  local function from(bundle)
+    local tot = 0
+    if not (bundle and bundle[1] ~= nil) then return 0 end
+    for i = 1, #bundle do
+      local b = bundle[i]
+      if b and b.item and isTorchItem(b.item) then
+        tot = tot + (b.takeUses or 0)
+      end
+    end
+    return tot
+  end
+  return from(self.globalBundle) + from(self.fixerBundle)
+end
+
+-- Do we currently have a single blowtorch with >= need uses?
+local function _hasTorchWithUses(inv, need)
+  if (need or 0) <= 0 then return true end
+  local bag = ArrayList.new()
+  inv:getAllTypeRecurse("Base.BlowTorch", bag)
+  local best = 0
+  for i = 0, bag:size() - 1 do
+    best = math.max(best, drainableUses(bag:get(i)))
+    if best >= need then return true end
+  end
+  return false
+end
+
+-- Rebuild the consume map from our planned bundles and check availability NOW.
+-- Returns true when everything needed still exists in the player's inventory.
+local function _hasEnoughNow(self)
+  local inv = self.character and self.character:getInventory()
+  if not inv then return false end
+
+  -- What we originally planned to consume (computed exactly like perform())
+  local c1 = _bundleToTypeCounts(self.fixerBundle)
+  local c2 = _bundleToTypeCounts(self.globalBundle)
+  local needMap = _mergeCounts(c1, c2)
+
+  -- Torch requirement (single-torch rule)
+  local torchNeed = tonumber(self.torchUses) or _calcTorchUsesFromBundles(self)
+  if torchNeed > 0 and not _hasTorchWithUses(inv, torchNeed) then
+    return false
+  end
+
+  -- Non-torch consumables: fullType → uses/count
+  for fullType, need in pairs(needMap) do
+    if fullType ~= "Base.BlowTorch" then
+      local have = _countUsesForFullType(inv, fullType)
+      if have < (need or 0) then
+        return false
+      end
+    else
+      -- already enforced by the single-torch rule above
+    end
+  end
+
+  return true
+end
+
 ----------------------------------------------------------------
 -- Timed Action (shared)
 ----------------------------------------------------------------
 VRO.DoFixAction = ISBaseTimedAction:derive("VRO_DoFixAction")
 
 function VRO.DoFixAction:isValid()
-  if self.part and self.part:getVehicle() then return true end
-  if self.brokenItem then return true end
+  if self.part and self.part:getVehicle() then
+    return _hasEnoughNow(self)
+  end
+  if self.brokenItem then
+    return _hasEnoughNow(self)
+  end
   return false
 end
 
@@ -280,6 +363,11 @@ end
 function VRO.DoFixAction:update()
   local veh = self.part and self.part:getVehicle()
   if veh then self.character:faceThisObject(veh) end
+
+  if not _hasEnoughNow(self) then
+    self:forceStop()
+    return
+  end
 
   -- Drive all progress bars
   local items = self._progressItems
@@ -299,6 +387,10 @@ end
 function VRO.DoFixAction:start()
   local anim = self.actionAnim or defaultAnimForPart(self.part)
   if anim and self.setActionAnim then self:setActionAnim(anim) end
+    if not _hasEnoughNow(self) then
+    self:forceStop()
+    return
+  end
 
   if self.setOverrideHandModels then
     if self.showModel ~= false then
@@ -384,6 +476,10 @@ function VRO.DoFixAction:perform()
 
   if veh and self.part then
     -- ===== Vehicle part → server does the mutation =====
+    if not _hasEnoughNow(self) then
+      ISBaseTimedAction.perform(self); return
+    end
+
     local args = {}
 
     args.vehicleId  = veh:getId()
@@ -413,6 +509,10 @@ function VRO.DoFixAction:perform()
     sendClientCommand(self.character, 'VRO_vehicle', 'doFix', args)
     else
       -- ===== Loose inventory item → server does the mutation now =====
+      if not _hasEnoughNow(self) then
+        ISBaseTimedAction.perform(self); return
+      end
+
       local args = {}
       local bi   = self.brokenItem
       if not bi or not bi.getFullType then
@@ -446,7 +546,6 @@ function VRO.DoFixAction:perform()
 
       sendClientCommand(self.character, 'VRO_vehicle', 'doFixInventory', args)
     end
-
 
   ISBaseTimedAction.perform(self)
 end
