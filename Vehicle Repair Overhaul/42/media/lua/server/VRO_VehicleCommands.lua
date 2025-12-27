@@ -18,7 +18,7 @@ local function drainableUses(it)
   if not it then return 0 end
   if not isDrainable(it) then return 0 end
   if it.getDrainableUsesInt then return it:getDrainableUsesInt() end
-  if it.getCurrentUses      then return it:getCurrentUses()      end
+  if it.getCurrentUses      then return it:getCurrentUses() end
   return 0
 end
 
@@ -189,7 +189,7 @@ local function _persistInstalledPart(vehicle, part)
   -- Mirror part -> installed inventory item (if any)
   local inv = part.getInventoryItem and part:getInventoryItem() or nil
   if inv then
-    if inv.setCondition        then inv:setCondition(part:getCondition()) end
+    if inv.setCondition then inv:setCondition(part:getCondition()) end
     -- Mirror "times repaired" from part modData to item (native API if present)
     local pmd = part:getModData()
     local hbr = (pmd and pmd.VRO_HaveBeenRepaired) or 0
@@ -437,7 +437,7 @@ VRO_CMDS.doFix = function(player, args)
     local gain = math.floor((missing * (pct / 100.0)) + 0.5)
     if gain < 1 then gain = 1 end
     part:setCondition(math.min(targetMax, targetCur + gain))
-    -- increment HBR in modData (matches your client/storage scheme)
+
     local md = part:getModData()
     md.VRO_HaveBeenRepaired = (md.VRO_HaveBeenRepaired or 0) + 1
     _persistInstalledPart(vehicle, part)
@@ -484,11 +484,11 @@ VRO_CMDS.doFix = function(player, args)
   end
 
   player:sendObjectChange('mechanicActionDone', {
-    success   = success,
-    vehicleId = vehicleId or -1,
-    partId    = partId or "",
-    itemId    = -1,
-    installing= true
+    success    = success,
+    vehicleId  = vehicleId or -1,
+    partId     = partId or "",
+    itemId     = -1,
+    installing = true
   })
 end
 

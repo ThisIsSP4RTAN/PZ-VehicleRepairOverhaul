@@ -86,14 +86,15 @@ end
 
 -- Returns true only if the part has a real inventory item with a module-qualified full type
 -- (e.g., "Base.Something"). Parts like TruckBed (no item) will return false.
-local function _partHasModuleItem(part)
+
+--[[ local function _partHasModuleItem(part)
   if not part then return false end
   if not (part.getInventoryItem and part:getInventoryItem()) then return false end
   local inv = part:getInventoryItem()
   local ft  = inv and inv.getFullType and inv:getFullType() or nil
   -- Must contain a '.' to be a module-qualified type (e.g., "Base.Foo")
   return (ft ~= nil) and (string.find(ft, ".", 1, true) ~= nil)
-end
+end ]]
 
 -- Perk helpers + repair math
 local function resolvePerk(perkName)
@@ -335,7 +336,6 @@ local function _hasEnoughNow(self)
       -- already enforced by the single-torch rule above
     end
   end
-
   return true
 end
 
@@ -588,21 +588,21 @@ end
 
 function VRO.DoFixAction:new(args)
   local o = ISBaseTimedAction.new(self, args.character)
-  o.stopOnWalk   = true
-  o.stopOnRun    = true
-  o.character    = args.character
-  o.part         = args.part
-  o.fixing       = args.fixing
-  o.fixer        = args.fixer
-  o.fixerIndex   = args.fixerIndex or 1
-  o.brokenItem   = args.brokenItem
-  o.fixerBundle  = args.fixerBundle
-  o.globalBundle = args.globalBundle
-  o.maxTime      = args.time or 150
-  o.actionAnim   = args.anim
-  o.fxSound      = args.sfx
-  o.successSfx   = args.successSfx
-  o.showModel    = (args.showModel ~= false)
+  o.stopOnWalk        = true
+  o.stopOnRun         = true
+  o.character         = args.character
+  o.part              = args.part
+  o.fixing            = args.fixing
+  o.fixer             = args.fixer
+  o.fixerIndex        = args.fixerIndex or 1
+  o.brokenItem        = args.brokenItem
+  o.fixerBundle       = args.fixerBundle
+  o.globalBundle      = args.globalBundle
+  o.maxTime           = args.time or 150
+  o.actionAnim        = args.anim
+  o.fxSound           = args.sfx
+  o.successSfx        = args.successSfx
+  o.showModel         = (args.showModel ~= false)
   o.expectedPrimary   = args.expectedPrimary
   o.expectedSecondary = args.expectedSecondary
   o.torchUses         = tonumber(args.torchUses) or 0
