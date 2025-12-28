@@ -10,6 +10,8 @@ local function _mergeLists(dst, src)
   end
 end
 
+VRO._salvageInputsInjected = false
+
 local function _loadSharedPartListsOnce()
   if VRO._partListsLoaded then return end
   VRO._partListsLoaded = true
@@ -114,7 +116,9 @@ local function injectRecipeInputs(recipeName, itemListOrToken)
 end
 
 -- Always add "VRO.recipefiller" as an input to prevent exploiting empty recipes
-local function injectAllRecipeInputs()
+local function injectAllRecipeInputsOnce()
+  if VRO._salvageInputsInjected then return end
+  VRO._salvageInputsInjected = true
 
   injectRecipeInputs("Salvage Vehicle Doors",
     { "@Door_All", "VRO.recipefiller" }
@@ -216,7 +220,7 @@ local function injectAllRecipeInputs()
   )
 end
 
-Events.OnInitWorld.Add(injectAllRecipeInputs)
+Events.OnInitWorld.Add(injectAllRecipeInputsOnce)
 if isServer() then
-    Events.OnGameBoot.Add(injectAllRecipeInputs)
+    Events.OnGameBoot.Add(injectAllRecipeInputsOnce)
 end
