@@ -149,7 +149,6 @@ local function _merge(dst, src)
 end
 
 local function VRO_LoadAccessOverrides()
-  -- Prefer namespaced path; fall back to legacy filename if you haven’t moved it yet
   local ok, mod = pcall(require, "VRO/AccessOverrides")
   if not ok or type(mod) ~= "table" then
     ok, mod = pcall(require, "VRO_AccessOverrides")
@@ -1537,7 +1536,7 @@ local function queueEquipActions(playerObj, eq, torchHint)
   end
 
   ----------------------------------------------------------------
-  -- 4) WEAR  (this is the one that was biting you)
+  -- 4) WEAR
   ----------------------------------------------------------------
   if wSpec then
     -- prefer something already worn that matches
@@ -1674,7 +1673,6 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
       local gi = list[i]; if type(gi) ~= "table" then allOK = false; break end
 
       if gi.consume == false then
-        -- use _pickNonConsumedChoice to select the actual tool and carry flags
         local chosen, flags = _pickNonConsumedChoice(inv, gi)
         if chosen then
           keepFlat[#keepFlat+1] = { item = chosen, flags = flags }
@@ -1718,7 +1716,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
     if not eq then return true end
     local ok = true
 
-    -- WEAR (already fixed to be recursive)
+    -- WEAR
     if eq.wearTag then
       local hasWear = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.wearTag))) or hasTag(inv, eq.wearTag)
       ok = ok and (hasWear ~= nil)
@@ -1726,7 +1724,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
       ok = ok and (findFirstTypeRecurse(inv, eq.wear) ~= nil)
     end
 
-    -- PRIMARY (make tag check recursive too)
+    -- PRIMARY
     if eq.primaryTag then
       local hasPrim = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.primaryTag))) or hasTag(inv, eq.primaryTag)
       ok = ok and (hasPrim ~= nil)
@@ -1734,7 +1732,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
       ok = ok and (findFirstTypeRecurse(inv, eq.primary) ~= nil)
     end
 
-    -- SECONDARY (make tag check recursive too, and don’t recheck same tag)
+    -- SECONDARY
     if eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
       local hasSec = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.secondaryTag))) or hasTag(inv, eq.secondaryTag)
       ok = ok and (hasSec ~= nil)
@@ -2007,9 +2005,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
 
     for i = 1, #list do
       local gi = list[i]; if type(gi) ~= "table" then allOK = false; break end
-
       if gi.consume == false then
-        -- Use the shared chooser so de-dulling & flags are consistent everywhere
         local chosen, flags = _pickNonConsumedChoice(inv, gi)
         if chosen then
           keepFlat[#keepFlat+1] = { item = chosen, flags = flags }
@@ -2079,10 +2075,8 @@ local function addInventoryFixOptions(playerObj, context, broken)
       for i = 1, #list do
         local gi = list[i]
         if gi then
-          -- direct tag
           if gi.tag == "BlowTorch" then return gi end
 
-          -- tags array
           local gTags = normalizeTagsField(gi)
           if gTags and gTags[1] ~= nil then
             for j = 1, #gTags do
@@ -2090,7 +2084,6 @@ local function addInventoryFixOptions(playerObj, context, broken)
             end
           end
 
-          -- item full type / name contains "BlowTorch"
           local it = gi.item
           if it and (it == "Base.BlowTorch" or (type(it) == "string" and string.find(it, "BlowTorch", 1, true))) then
             return gi
@@ -2111,14 +2104,12 @@ local function addInventoryFixOptions(playerObj, context, broken)
         local fixer = fixers[idx]
         local inv = playerObj:getInventory()
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
-        -- global items (list or single), multi-tag aware
         local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle, glKeep = true, nil, nil
 
         if multiList then
           glOK, glBundle, glKeep = _gatherMultiGlobals(inv, multiList)
         else
-          -- single global fallback (wrap into same bundles/logic)
           local gi = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
           if gi then
             if gi.consume == false then
@@ -2175,28 +2166,20 @@ local function addInventoryFixOptions(playerObj, context, broken)
         end
 
         local equipOK = _equipRequirementsOK(inv, eq)
-
-        -- figure out if THIS recipe actually wants a blowtorch and if we have one torch
-        -- with enough uses right now
         local singleFallback = (fixer and fixer.globalItem) or (fixing and fixing.globalItem)
         local torchGlobal    = _pickTorchGlobal(multiList, singleFallback)
-
-        -- only enforce torch if this global is ACTUALLY a blowtorch
         local torchOK = true
         if torchGlobal then
           local isTorch = false
 
-          -- item form
           if torchGlobal.item == "Base.BlowTorch" then
             isTorch = true
           end
 
-          -- single tag form
           if torchGlobal.tag == "BlowTorch" then
             isTorch = true
           end
 
-          -- multi-tag form
           local gtags = normalizeTagsField(torchGlobal)
           if gtags then
             for i = 1, #gtags do
