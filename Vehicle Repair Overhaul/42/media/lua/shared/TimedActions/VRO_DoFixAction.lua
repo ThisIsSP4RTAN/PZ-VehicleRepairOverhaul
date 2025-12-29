@@ -420,6 +420,14 @@ function VRO.DoFixAction:start()
   if self.fxSound then
     self._soundHandle = self.character:getEmitter():playSound(self.fxSound)
   end
+
+  if self.fxSound and (self.fxSound ~= "Sewing") then
+    local radius = 12
+    if self.fxSound == "BlowTorch" and self.character.getWeldingSoundMod then
+      radius = 20 * self.character:getWeldingSoundMod()
+    end
+    addSound(self.character, self.character:getX(), self.character:getY(), self.character:getZ(), radius, radius)
+  end
 end
 
 function VRO.DoFixAction:stop()
@@ -463,9 +471,12 @@ function VRO.DoFixAction:perform()
   if self.fixer and self.fixer.skills then
     for perkName,_ in pairs(self.fixer.skills) do
       local perk = resolvePerk(perkName)
-        if perk then self.character:getXp():AddXP(perk, ZombRand(3,6)) end
+      if perk then
+        local xp = ZombRand(3,6)
+        sendAddXp(self.character, perk, xp, true)
       end
     end
+  end
 
   if self._didOverride and self.setOverrideHandModels then
     self:setOverrideHandModels(nil, nil)

@@ -61,6 +61,14 @@ function ISVehicleSalvage:start()
     self:setActionAnim("BlowTorch")
     self:setOverrideHandModels(self.item, nil)
     self.sound = self.character:playSound("BlowTorch")
+
+    if self.sound ~= 0 and (self.actionAnim ~= "SewingCloth") then
+        local radius = 20
+        if self.character.getWeldingSoundMod then
+            radius = 20 * self.character:getWeldingSoundMod()
+        end
+        addSound(self.character, self.character:getX(), self.character:getY(), self.character:getZ(), radius, radius)
+    end
 end
 
 function ISVehicleSalvage:stop()
@@ -124,7 +132,7 @@ function ISVehicleSalvage:perform()
     for i=1,10 do   --Propane uses--
         self.item:Use();
     end
-    self.character:getXp():AddXP(Perks.MetalWelding, totalXp);
+    sendAddXp(self.character, Perks.MetalWelding, totalXp, true)
     sendClientCommand(self.character, "vehicle", "remove", { vehicle = self.vehicle:getId() })
     self.item:setJobDelta(0);
     -- needed to remove from queue / start next.
