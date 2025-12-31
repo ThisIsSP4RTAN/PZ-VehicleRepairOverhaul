@@ -298,12 +298,27 @@ end
 -- Do we currently have a single blowtorch with >= need uses?
 local function _hasTorchWithUses(inv, need)
   if (need or 0) <= 0 then return true end
-  local bag = ArrayList.new()
-  inv:getAllTypeRecurse("Base.BlowTorch", bag)
-  local best = 0
-  for i = 0, bag:size() - 1 do
-    best = math.max(best, drainableUses(bag:get(i)))
-    if best >= need then return true end
+  if not inv then return false end
+
+  -- Prefer a safe predicate search (works across nested containers).
+  if inv.getFirstEvalRecurse then
+    local function pred(it)
+      return isTorchItem(it) and (drainableUses(it) >= need)
+    end
+    local found = inv:getFirstEvalRecurse(pred)
+    return found ~= nil
+  end
+
+  if inv.getItems then
+    local items = inv:getItems()
+    if items and items.size then
+      for i = 0, items:size() - 1 do
+        local it = items:get(i)
+        if isTorchItem(it) and (drainableUses(it) >= need) then
+          return true
+        end
+      end
+    end
   end
   return false
 end
@@ -319,7 +334,7 @@ local function _hasEnoughNow(self)
   local c2 = _bundleToTypeCounts(self.globalBundle)
   local needMap = _mergeCounts(c1, c2)
 
-  -- Torch requirement (single-torch rule)
+  -- Torch requirement (single-torch rule comes ONLY from the bundles)
   local torchNeed = tonumber(self.torchUses) or _calcTorchUsesFromBundles(self)
   if torchNeed > 0 and not _hasTorchWithUses(inv, torchNeed) then
     return false
@@ -332,8 +347,6 @@ local function _hasEnoughNow(self)
       if have < (need or 0) then
         return false
       end
-    else
-      -- already enforced by the single-torch rule above
     end
   end
   return true

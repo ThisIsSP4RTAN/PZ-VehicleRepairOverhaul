@@ -674,6 +674,42 @@ local function hasTorchWithUses(inv, need)
   return false
 end
 
+-- Normalize single/multi global items into a list used by both menus & tooltips.
+local function _normalizeGlobals(fixr, fixg)
+  local giList = (fixr and fixr.globalItems) or (fixg and fixg.globalItems)
+  if giList and type(giList) == "table" then
+    return giList[1] and giList or { giList }
+  end
+  local single = (fixr and fixr.globalItem) or (fixg and fixg.globalItem)
+  return single and { single } or nil
+end
+
+-- Return BlowTorch uses required for this repair (0 if not a welding repair).
+local function _weldingUses(fixer, fixing)
+  local giList = _normalizeGlobals(fixer, fixing)
+  if type(giList) ~= "table" then return 0 end
+  for i = 1, #giList do
+    local gi = giList[i]
+    if type(gi) == "table" then
+      if gi.item == "Base.BlowTorch" then
+        return tonumber(gi.uses) or 1
+      end
+      if gi.tag == "BlowTorch" then
+        return tonumber(gi.uses) or 1
+      end
+      local tags = normalizeTagsField(gi)
+      if tags then
+        for j = 1, #tags do
+          if tags[j] == "BlowTorch" then
+            return tonumber(gi.uses) or 1
+          end
+        end
+      end
+    end
+  end
+  return 0
+end
+
 ----------------------------------------------------------------
 -- B) Perks + math
 ----------------------------------------------------------------
@@ -1090,17 +1126,6 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
 
   -- 2) Global items (respect non-consumed tags + flags via _pickNonConsumedChoice)
   do
-    -- Support recipe- or fixer-level single/multi globals; defer to helper used by menus
-    local function _normalizeGlobals(fixr, fixg)
-      local giList = (fixr and fixr.globalItems) or (fixg and fixg.globalItems)
-      if giList and type(giList) == "table" then
-        if giList[1] then return giList else return { giList } end
-      end
-      local single = (fixr and fixr.globalItem) or (fixg and fixg.globalItem)
-      if single then return { single } end
-      return nil
-    end
-
     local effList = _normalizeGlobals(fixer, fixing)
     if effList and type(effList) == "table" then
       for i = 1, #effList do
@@ -1649,17 +1674,6 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   if not parent then parent = self.context:addOption(repairTxt, nil, nil) end
   local sub = ensureSubMenu(self.context, parent); if not sub then return end
 
-  -- normalize single-or-list globals to an array
-  local function _normalizeGlobals(fixr, fixg)
-    local giList = (fixr and fixr.globalItems) or (fixg and fixg.globalItems)
-    if giList and type(giList) == "table" then
-      if giList[1] then return giList else return { giList } end
-    end
-    local single = (fixr and fixr.globalItem) or (fixg and fixg.globalItem)
-    if single then return { single } end
-    return nil
-  end
-
   local function _gatherMultiGlobals(inv, list)
     if not list then return true, nil, nil end
     if type(list) == "table" and not list[1] and (list.item or list.tag or list.tags) then
@@ -1893,6 +1907,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
               return
             end
 
+            local torchUses = _weldingUses(fixer, fixing)
             local tm    = resolveTime(fixr, fixg, p, brk)
             local anim  = resolveAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
@@ -1905,7 +1920,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
               brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
               equipKeep=equipKeep,time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
               showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
-              torchUses=(torchHint and torchHint.uses) or 0,
+              torchUses=torchUses,
             })
           end, part, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else
@@ -1979,17 +1994,6 @@ local function addInventoryFixOptions(playerObj, context, broken)
   local parent = findRepairParentOption(context, function(n) return n == expectedLabel end)
   if not parent then parent = context:addOption(expectedLabel, nil, nil) end
   local sub = ensureSubMenu(context, parent); if not sub then return end
-
-  -- Normalize single-or-list globals to an array
-  local function _normalizeGlobals(fixr, fixg)
-    local giList = (fixr and fixr.globalItems) or (fixg and fixg.globalItems)
-    if giList and type(giList) == "table" then
-      if giList[1] then return giList else return { giList } end
-    end
-    local single = (fixr and fixr.globalItem) or (fixg and fixg.globalItem)
-    if single then return { single } end
-    return nil
-  end
 
   -- Gather globals into two bundles:
   --   * consumeFlat (for consumed uses)
@@ -2210,6 +2214,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
               return
             end
 
+            local torchUses = _weldingUses(fixer, fixing)
             local tm    = resolveTime(fixr, fixg, p, brk)
             local anim  = resolveInvAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
@@ -2230,7 +2235,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
               brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
               equipKeep=equipKeep, time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
               showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
-              torchUses=(torchHint and torchHint.uses) or 0,
+              torchUses=torchUses,
             })
           end, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else
