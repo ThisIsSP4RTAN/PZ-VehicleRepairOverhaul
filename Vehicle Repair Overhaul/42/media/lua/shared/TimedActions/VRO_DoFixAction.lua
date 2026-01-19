@@ -481,12 +481,14 @@ function VRO.DoFixAction:perform()
     self.character:getEmitter():playSound(self.successSfx)
   end
 
-  if self.fixer and self.fixer.skills then
-    for perkName,_ in pairs(self.fixer.skills) do
-      local perk = resolvePerk(perkName)
-      if perk then
-        local xp = ZombRand(3,6)
-        sendAddXp(self.character, perk, xp, true)
+  if self.fixer and self.fixer.skills and self.character and self.character.getXp then
+    local xpSys = self.character:getXp()
+    if xpSys and xpSys.AddXP then
+      for perkName,_ in pairs(self.fixer.skills) do
+        local perk = resolvePerk(perkName)
+        if perk then
+          xpSys:AddXP(perk, ZombRand(3,6))
+        end
       end
     end
   end

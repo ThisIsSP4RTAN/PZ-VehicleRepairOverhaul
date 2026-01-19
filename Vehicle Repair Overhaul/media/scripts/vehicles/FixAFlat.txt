@@ -38,5 +38,4 @@ module FixAFlat
            ConditionModifier : 0.9,
     	   Fixer : FixAFlat=1,
     	}
-
 }
