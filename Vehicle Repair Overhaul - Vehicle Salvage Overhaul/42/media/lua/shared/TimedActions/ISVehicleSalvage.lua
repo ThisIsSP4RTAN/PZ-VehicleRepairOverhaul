@@ -158,7 +158,7 @@ function ISVehicleSalvage:new(character, vehicle)
     self.__index = self
     o.character = character
     o.vehicle = vehicle
-    o.maxTime = 3000 - (character:getPerkLevel(Perks.MetalWelding) * 20);
+    o.maxTime = 2000 --[[ Might make this configurable in the future ]]- (self.character:getPerkLevel(Perks.MetalWelding) * 20);
     if character:isTimedActionInstant() then o.maxTime = 10 end
     return o
 end
