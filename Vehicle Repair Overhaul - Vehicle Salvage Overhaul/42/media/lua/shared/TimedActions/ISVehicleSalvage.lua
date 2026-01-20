@@ -132,10 +132,11 @@ function ISVehicleSalvage:perform()
     for i=1,10 do   --Propane uses--
         self.item:Use();
     end
-    local xpSys = self.character and self.character.getXp and self.character:getXp()
-    if xpSys and xpSys.AddXP then
-    xpSys:AddXP(Perks.MetalWelding, totalXp)
-    end
+    -- Mirror XP to the server so it persists in MP
+    sendClientCommand(self.character, "vro_salvage", "addXp", {
+    perk   = "MetalWelding",
+    amount = totalXp})
+
     sendClientCommand(self.character, "vehicle", "remove", { vehicle = self.vehicle:getId() })
     self.item:setJobDelta(0);
     -- needed to remove from queue / start next.

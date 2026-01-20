@@ -91,6 +91,20 @@ function ELR_Commands.repairLightbar(player, args)
 	vehicle:transmitPartItem(part)
 	vehicle:transmitPartModData(part)
 
+  do
+    local xp = ZombRand(3,6)
+    if addXp then
+      addXp(player, Perks.Electricity, xp)
+      addXp(player, Perks.Mechanics,   xp)
+    else
+      local xps = player and player.getXp and player:getXp()
+      if xps and xps.AddXP then
+        xps:AddXP(Perks.Electricity, xp)
+        xps:AddXP(Perks.Mechanics,   xp)
+      end
+    end
+  end
+
 	player:sendObjectChange('mechanicActionDone', {
 		success   = true,
 		vehicleId = vehicle:getId(),

@@ -59,6 +59,32 @@ local function _rollAwardsToTarget(target, asContainer, isoPlayerOrNil, pool)
   end
 end
 
+function Commands.addXp(player, args)
+  if not (player and args) then return end
+  local amt = tonumber(args.amount) or 0
+  if amt <= 0 then return end
+
+  -- Resolve perk robustly
+  local perk = nil
+  if args.perk then
+    if Perks and Perks.FromString then
+      local ok, p = pcall(function() return Perks.FromString(tostring(args.perk)) end)
+      if ok then perk = p end
+    end
+    if not perk and Perks then
+      perk = Perks[tostring(args.perk)]
+    end
+  end
+  if not perk then return end
+
+  if addXp then
+    addXp(player, perk, amt)
+  else
+    local xp = player.getXp and player:getXp()
+    if xp and xp.AddXP then xp:AddXP(perk, amt) end
+  end
+end
+
 local POOLS = {
   Small = {
     rolls = 3,

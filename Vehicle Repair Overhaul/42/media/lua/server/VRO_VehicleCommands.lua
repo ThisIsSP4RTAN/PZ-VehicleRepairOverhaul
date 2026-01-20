@@ -395,6 +395,20 @@ VRO_CMDS.doFixInventory = function(player, args)
       end
     end
   end
+
+  if skills then
+    for perkName,_ in pairs(skills) do
+      local perk = resolvePerk(perkName)
+      if perk then
+        if addXp then
+          addXp(player, perk, ZombRand(3,6))
+        else
+          local xp = player and player.getXp and player:getXp()
+          if xp and xp.AddXP then xp:AddXP(perk, ZombRand(3,6)) end
+        end
+      end
+    end
+  end
 end
 
 -- ========= Main command (vehicle-part repairs) =========
@@ -478,6 +492,21 @@ VRO_CMDS.doFix = function(player, args)
         if it then
           _applyKeepFlags(player, it, spec.flags, hi)
           if it.syncItemFields then it:syncItemFields() end
+        end
+      end
+    end
+  end
+
+
+  if args.fixerSkills then
+    for perkName,_ in pairs(args.fixerSkills) do
+      local perk = resolvePerk(perkName)
+      if perk then
+        if addXp then
+          addXp(player, perk, ZombRand(3,6))
+        else
+          local xp = player and player.getXp and player:getXp()
+          if xp and xp.AddXP then xp:AddXP(perk, ZombRand(3,6)) end
         end
       end
     end

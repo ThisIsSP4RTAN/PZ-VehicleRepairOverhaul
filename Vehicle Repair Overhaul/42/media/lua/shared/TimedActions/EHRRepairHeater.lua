@@ -75,9 +75,6 @@ function EHRRepairHeater:perform()
 		if not full:find("%.") then full = "Base." .. full end
 		args.repairParts[full] = (args.repairParts[full] or 0) + (tonumber(v) or 0)
 	end
-	local xp = ZombRand(3,6)
-	sendAddXp(self.character, Perks.MetalWelding, xp, true)
-	sendAddXp(self.character, Perks.Mechanics, xp, true)
 	sendClientCommand(self.character, 'EHR_vehicle', 'repairHeater', args)
 
 	ISBaseTimedAction.perform(self)

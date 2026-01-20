@@ -39,37 +39,27 @@ function ISRebuildEngine:stop()
 end
 
 function ISRebuildEngine:perform()
-	ISBaseTimedAction.perform(self)
-	self.item:setJobDelta(0)
+    ISBaseTimedAction.perform(self)
+    self.item:setJobDelta(0)
 
-	local engineRepairLevel = self.vehicle:getScript():getEngineRepairLevel();
+    local engineRepairLevel   = self.vehicle:getScript():getEngineRepairLevel()
+    local requiredEngineParts = engineRepairLevel * 5
 
-	local skill = self.character:getPerkLevel(Perks.Mechanics) - engineRepairLevel;
-	local numberOfParts = self.character:getInventory():getNumberOfItem("EngineParts", false, true);
+    -- Show the repair immediately (SP responsiveness)
+    self.part:setCondition(100.0)
 
+    -- Vanilla repairPart (keeps vanilla sync happy)
+    sendClientCommand(self.character, "vehicle", "repairPart", {
+        vehicle = self.part:getVehicle():getId(),
+        part    = self.part:getId(),
+    })
 
-	-- Set how many Spare Engine Parts are required to rebuild the engine on this vehicle. Equal to 5 * the Mechanics skill level required 
-	--   to work on the engine.
-	local requiredEngineParts = engineRepairLevel * 5;
-
---	local args = { vehicle = self.vehicle:getId(), condition = self.part:getCondition(), skillLevel = skill, numberOfParts = numberOfParts }
---	args.giveXP = self.character:getMechanicsItem(self.part:getVehicle():getMechanicalID() .. "2") == nil
---	sendClientCommand(self.character, 'vehicle', 'repairEngine', args)
-
-	-- Engine is rebuilt, so its condition should now be full as well.
-	self.part:setCondition(100.0);	
-
-	-- This function is how the Indie Stone code sets the engine to maximum quality as part of the debug/cheat menus. So we use this rather than 
-	--   setting the individual stats so that any additional support code (e.g. client/server code) also runs.
-	sendClientCommand(self.character, "vehicle", "repairPart", { vehicle = self.part:getVehicle():getId(), part = self.part:getId() });
-
-	local inventory = self.character:getInventory();
-
-	for i=1,requiredEngineParts do
-		inventory:RemoveOneOf("EngineParts");
-	end
-
-	self.character:getXp():AddXP(Perks.Mechanics, 50);
+    -- Our server command (quality + consume EngineParts + sync)
+    sendClientCommand(self.character, "EER_vehicle", "rebuildEngine", {
+        vehicleId     = self.vehicle:getId(),
+        targetQuality = 100,
+        consumeParts  = requiredEngineParts,
+    })
 end
 
 function ISRebuildEngine:new(character, part, item, time)

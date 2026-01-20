@@ -63,8 +63,6 @@ function ELRRepairLightbar:perform()
 		if not ft:find("%.") then ft = "Base." .. ft end
 		args.repairParts[ft] = (args.repairParts[ft] or 0) + (tonumber(v) or 0)
 	end
-	local xp = ZombRand(3,6)
-	sendAddXp(self.character, Perks.Electricity, xp, true)
 	sendClientCommand(self.character, 'ELR_vehicle', 'repairLightbar', args)
 
 	-- Do NOT consume locally; server removes items authoritatively.
