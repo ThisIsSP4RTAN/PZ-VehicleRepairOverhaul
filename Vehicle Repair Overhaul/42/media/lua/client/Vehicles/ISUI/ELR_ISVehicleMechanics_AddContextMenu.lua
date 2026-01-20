@@ -139,10 +139,14 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y, context)
 	end
 
 	-- Set availability first so tooltip colors are correct
+	local hasScrew =
+    getEquippedMatchingTag(self.chr, "Screwdriver")
+    or (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag("Screwdriver")))
+
 	if currentCondition >= 100
 		or not allPartsPresent
 		or (self.chr:getPerkLevel(Perks.Electricity) < requiredSkillLevel)
-		or not inv:containsTag(_tag("Screwdriver")) then
+		or not hasScrew then
 		parent.notAvailable = true
 	else
 		parent.notAvailable = false
