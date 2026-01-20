@@ -124,7 +124,7 @@ function ISVehicleMechanics:EER_doMenuTooltip(part, option, lua, name)
 		local hasWrenchLike = _getEquippedOrAnyWrenchLike(self.chr) ~= nil
 		local wrenchName   = ScriptManager.instance:getItem("Base.Wrench"):getDisplayName()
 		local ratchetName  = ScriptManager.instance:getItem("Base.Ratchet") and ScriptManager.instance:getItem("Base.Ratchet"):getDisplayName() or "Ratchet"
-		local label = string.format("%s / %s", wrenchName, ratchetName)
+		local label = string.format("%s", wrenchName)
 
 		if hasWrenchLike then
 		tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. label .. " 1/1 <LINE>"
