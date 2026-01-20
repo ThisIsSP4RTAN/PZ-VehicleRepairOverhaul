@@ -17,6 +17,32 @@ local function VRO_IsEngineRebuildEnabled()
 end
 
 local old_ISVehicleMechanics_doPartContextMenu = ISVehicleMechanics.doPartContextMenu
+	local function _getEquippedOrAnyWrenchLike(chr)
+	if not chr then return nil end
+
+	local function isMatch(it)
+		if not it then return false end
+		local ft = it.getFullType and it:getFullType() or ""
+		return ft == "Base.Wrench" or ft == "Base.Ratchet"
+	end
+
+	-- Check hands first (fast path)
+	local pri = chr:getPrimaryHandItem()
+	if isMatch(pri) then return pri end
+	local sec = chr:getSecondaryHandItem()
+	if isMatch(sec) then return sec end
+
+	-- Then search all containers (backpacks, etc.)
+	local inv = chr:getInventory()
+	if not inv then return nil end
+	if inv.getFirstTypeRecurse then
+		local it = inv:getFirstTypeRecurse("Base.Wrench")
+		if it then return it end
+		it = inv:getFirstTypeRecurse("Base.Ratchet")
+		if it then return it end
+	end
+		return nil
+	end
 
 function ISVehicleMechanics:doPartContextMenu(part, x,y)
 	if UIManager.getSpeedControls():getCurrentGameSpeed() == 0 then return; end
@@ -41,6 +67,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 	--   6. The player's Mechanics skill level is currently higher than the skill level required to 
 	--         perform mechanics actions on the vehicle's engine (engineRepairLevel value)
 	--   7. The player currently has a wrench
+
 	if not VRO_IsEngineRebuildEnabled() then return end
 	if part:getId() == "Engine" and not VehicleUtils.RequiredKeyNotFound(part, self.chr) then
 		if part:getVehicle():getEngineQuality() < 100 then
@@ -50,7 +77,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x,y)
 			-- Calculate the number of Spare Engine Parts required to perform our action of rebuilding the engine
 			local requiredEngineParts = engineRepairLevel * 5;
 
-			if part:getCondition() >= 90 and self.chr:getInventory():getNumberOfItem("EngineParts", false, true) >= requiredEngineParts and self.chr:getPerkLevel(Perks.Mechanics) >= engineRepairLevel and self.chr:getInventory():contains("Wrench") then
+			if part:getCondition() >= 90 and self.chr:getInventory():getNumberOfItem("EngineParts", false, true) >= requiredEngineParts and self.chr:getPerkLevel(Perks.Mechanics) >= engineRepairLevel and (_getEquippedOrAnyWrenchLike(self.chr) ~= nil) then
 				option = self.context:addOption(getText("IGUI_EER_RebuildEngine"), playerObj, ISVehicleMechanics.EER_onRebuildEngine, part);
 				self:EER_doMenuTooltip(part, option, "EER_rebuildengine");
 			else
@@ -94,11 +121,15 @@ function ISVehicleMechanics:EER_doMenuTooltip(part, option, lua, name)
 		end
 		tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Mechanics") .. " " .. self.chr:getPerkLevel(Perks.Mechanics) .. "/" .. engineRepairLevel .. " <LINE>";
 		rgb = " <RGB:0,1,0>";
-		local item = ScriptManager.instance:getItem("Base.Wrench");
-		if not self.chr:getInventory():contains("Wrench") then
-			tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. item:getDisplayName() .. " 0/1 <LINE>";
+		local hasWrenchLike = _getEquippedOrAnyWrenchLike(self.chr) ~= nil
+		local wrenchName   = ScriptManager.instance:getItem("Base.Wrench"):getDisplayName()
+		local ratchetName  = ScriptManager.instance:getItem("Base.Ratchet") and ScriptManager.instance:getItem("Base.Ratchet"):getDisplayName() or "Ratchet"
+		local label = string.format("%s / %s", wrenchName, ratchetName)
+
+		if hasWrenchLike then
+		tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. label .. " 1/1 <LINE>"
 		else
-			tooltip.description = tooltip.description .. " <RGB:0,1,0>" .. item:getDisplayName() .. " 1/1 <LINE>";
+		tooltip.description = tooltip.description .. " <RGB:1,0,0>" .. label .. " 0/1 <LINE>"
 		end
 
 		local item = ScriptManager.instance:getItem("Base.EngineParts");
@@ -124,8 +155,8 @@ function ISVehicleMechanics.EER_onRebuildEngine(playerObj, part)
 		ISVehicleMenu.onExit(playerObj)
 	end
 
-	local typeToItem = VehicleUtils.getItems(playerObj:getPlayerNum())
-	local item = typeToItem["Base.Wrench"][1]
+	local item = _getEquippedOrAnyWrenchLike(playerObj)
+	if not item then return end
 	ISVehiclePartMenu.toPlayerInventory(playerObj, item)
 
 	ISTimedActionQueue.add(ISPathFindAction:pathToVehicleArea(playerObj, part:getVehicle(), part:getArea()))
