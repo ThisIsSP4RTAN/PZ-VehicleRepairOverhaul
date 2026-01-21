@@ -480,5 +480,4 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.V100Tire3","Base.V100Axle2","Base.V101Tire2","Base.V102Tire2","Base.V103Tire2","Base.V103Axle2","Base.M113Tire8","Base.BRDM2Tire","Base.M923Axle2","Base.M12CTire2","Base.OldTire2","Base.OldTire3","Base.OldTire8","Base.R32Tire0","Base.R32Tire1","Base.R32Tire2",
     "Base.R32TireA","Base.M12Tire2",
   }
-
 return VRO.PartLists

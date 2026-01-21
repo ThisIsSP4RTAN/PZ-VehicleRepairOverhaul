@@ -222,5 +222,5 @@ end
 
 Events.OnInitWorld.Add(injectAllRecipeInputsOnce)
 if isServer() then
-    Events.OnGameBoot.Add(injectAllRecipeInputsOnce)
+  Events.OnGameBoot.Add(injectAllRecipeInputsOnce)
 end

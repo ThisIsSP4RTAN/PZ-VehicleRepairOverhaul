@@ -132,7 +132,6 @@ function ISVehicleSalvage:perform()
     for i=1,10 do   --Propane uses--
         self.item:Use();
     end
-    -- Mirror XP to the server so it persists in MP
     sendClientCommand(self.character, "vro_salvage", "addXp", {
     perk   = "MetalWelding",
     amount = totalXp})
@@ -158,7 +157,7 @@ function ISVehicleSalvage:new(character, vehicle)
     self.__index = self
     o.character = character
     o.vehicle = vehicle
-    o.maxTime = 2000 --[[ Might make this configurable in the future ]]- (self.character:getPerkLevel(Perks.MetalWelding) * 20);
+    o.maxTime = 2000 --[[ Might make this configurable in the future ]]- (character:getPerkLevel(Perks.MetalWelding) * 20);
     if character:isTimedActionInstant() then o.maxTime = 10 end
     return o
 end

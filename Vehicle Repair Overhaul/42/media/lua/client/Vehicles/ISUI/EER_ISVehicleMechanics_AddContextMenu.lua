@@ -44,32 +44,32 @@ local old_ISVehicleMechanics_doPartContextMenu = ISVehicleMechanics.doPartContex
 		return nil
 	end
 
-function ISVehicleMechanics:doPartContextMenu(part, x,y)
-	if UIManager.getSpeedControls():getCurrentGameSpeed() == 0 then return; end
+	function ISVehicleMechanics:doPartContextMenu(part, x,y)
+		if UIManager.getSpeedControls():getCurrentGameSpeed() == 0 then return; end
 
-	local playerObj = getSpecificPlayer(self.playerNum);
-	local option;
+		local playerObj = getSpecificPlayer(self.playerNum);
+		local option;
 
-	-- Call the old version of this function to handle all other parts and actions
-	old_ISVehicleMechanics_doPartContextMenu(self, part, x, y);
+		-- Call the old version of this function to handle all other parts and actions
+		old_ISVehicleMechanics_doPartContextMenu(self, part, x, y);
 
 
-	-- Add the option for rebuilding the engine to the context menu if all of the conditions are met
+		-- Add the option for rebuilding the engine to the context menu if all of the conditions are met
 
-	-- Conditions:
-	--   1. The vehicle part we are looking at is the Engine
-	--   2. We either have the vehicle key or it is not required to access the engine
-	--   3. The Engine Quality is not already 100
-	--   4. The Engine Condition is over 90%
-	--   5. We have the required number of Spare Engine Parts, which is equal to 5 times the 
-	--         Mechanics skill level required to work on this vehicle's engine (will vary 
-	--         based on vehicle type as defined by the engineRepairLevel value)
-	--   6. The player's Mechanics skill level is currently higher than the skill level required to 
-	--         perform mechanics actions on the vehicle's engine (engineRepairLevel value)
-	--   7. The player currently has a wrench
+		-- Conditions:
+		--   1. The vehicle part we are looking at is the Engine
+		--   2. We either have the vehicle key or it is not required to access the engine
+		--   3. The Engine Quality is not already 100
+		--   4. The Engine Condition is over 90%
+		--   5. We have the required number of Spare Engine Parts, which is equal to 5 times the 
+		--         Mechanics skill level required to work on this vehicle's engine (will vary 
+		--         based on vehicle type as defined by the engineRepairLevel value)
+		--   6. The player's Mechanics skill level is currently higher than the skill level required to 
+		--         perform mechanics actions on the vehicle's engine (engineRepairLevel value)
+		--   7. The player currently has a wrench
 
-	if not VRO_IsEngineRebuildEnabled() then return end
-	if part:getId() == "Engine" and not VehicleUtils.RequiredKeyNotFound(part, self.chr) then
+		if not VRO_IsEngineRebuildEnabled() then return end
+		if part:getId() == "Engine" and not VehicleUtils.RequiredKeyNotFound(part, self.chr) then
 		if part:getVehicle():getEngineQuality() < 100 then
 			-- Get the Mechanics skill level that is required to perform engine repair actions on this vehicle type
 			local engineRepairLevel = part:getVehicle():getScript():getEngineRepairLevel();

@@ -69,5 +69,3 @@ function ELRTurnOffLightbar:new(character, isCharacterOutside, vehicleId)
 	o.maxTime = 50
 	return o
 end
-
-

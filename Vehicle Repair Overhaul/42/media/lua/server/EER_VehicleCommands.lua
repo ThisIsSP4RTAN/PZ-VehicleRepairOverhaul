@@ -11,6 +11,21 @@ local function noise(msg)
   end
 end
 
+local function _partMaxCondition(part)
+  if not part then return 100 end
+  if part.getConditionMax then
+    local ok, val = pcall(function() return part:getConditionMax() end)
+    if ok and type(val) == "number" and val > 0 then return val end
+  end
+
+  local inv = part.getInventoryItem and part:getInventoryItem() or nil
+  if inv and inv.getConditionMax then
+    local ok, val = pcall(function() return inv:getConditionMax() end)
+    if ok and type(val) == "number" and val > 0 then return val end
+  end
+  return 100
+end
+
 local function _removeFullTypeCount(player, fullType, count)
   if not (player and fullType and count and count > 0) then return end
   local inv = player:getInventory()
@@ -72,18 +87,8 @@ function EER_Commands.rebuildEngine(player, args)
 
   pcall(function() vehicle:setEngineFeature(quality, loud, force) end)
 
-    do
-    local target = 100
-    -- Prefer the real max if available
-    local ok, maxC = pcall(function()
-        if part.getConditionMax then return part:getConditionMax() end
-        return 100
-    end)
-    if ok and tonumber(maxC) then target = math.min(100, maxC) end
-
-    pcall(function() part:setCondition(target) end)
-    end
-
+  local target = math.min(100, _partMaxCondition(part))
+  pcall(function() part:setCondition(target) end)
 
   local need = tonumber(args.consumeParts) or 0
   if need > 0 then

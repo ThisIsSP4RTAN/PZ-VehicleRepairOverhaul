@@ -222,8 +222,8 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 				end
 			end
 
-			-- Blowtorch line (always show; red if missing/insufficient)
-			do
+		-- Blowtorch line (always show; red if missing/insufficient)
+		do
 			local scriptItem  = ScriptManager.instance:getItem("Base.BlowTorch")
 			local displayName = (scriptItem and getItemDisplayName and getItemDisplayName("Base.BlowTorch"))
 							or (scriptItem and scriptItem.getDisplayName and scriptItem:getDisplayName())
@@ -233,9 +233,9 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 			local color    = (usesLeft >= 10) and " <RGB:0,1,0>" or " <RGB:1,0,0>"
 			option.toolTip.description = option.toolTip.description ..
 				color .. displayName .. " " .. tostring(usesLeft) .. "/10 <LINE>"
-			end
+		end
 
-			do
+		do
 			local inv  = self.chr:getInventory()
 			local tag  = "WeldingMask"
 			local item = getWornMatchingTag(self.chr, tag) or inv:getFirstTagRecurse(_tag(tag))
@@ -248,53 +248,53 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 				option.toolTip.description = appendOneOfForTag(option.toolTip.description, tag)
 			end
 
-				if self.chr:getPerkLevel(Perks.MetalWelding) < requiredMetalworkingSkillLevel then
-					rgb = " <RGB:1,0,0>"
-				end
-				tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_MetalWelding") .. " " .. self.chr:getPerkLevel(Perks.MetalWelding) .. "/" .. requiredMetalworkingSkillLevel .. " <LINE>"
-				rgb = " <RGB:0,1,0>"
+			if self.chr:getPerkLevel(Perks.MetalWelding) < requiredMetalworkingSkillLevel then
+				rgb = " <RGB:1,0,0>"
+			end
+			tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_MetalWelding") .. " " .. self.chr:getPerkLevel(Perks.MetalWelding) .. "/" .. requiredMetalworkingSkillLevel .. " <LINE>"
+			rgb = " <RGB:0,1,0>"
 
-				if self.chr:getPerkLevel(Perks.Mechanics) < requiredMechanicsSkillLevel then
-					rgb = " <RGB:1,0,0>"
-				end
-				tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Mechanics") .. " " .. self.chr:getPerkLevel(Perks.Mechanics) .. "/" .. requiredMechanicsSkillLevel .. " <LINE>"
-				rgb = " <RGB:0,1,0>"
+			if self.chr:getPerkLevel(Perks.Mechanics) < requiredMechanicsSkillLevel then
+				rgb = " <RGB:1,0,0>"
+			end
+			tooltip.description = tooltip.description .. rgb .. getText("IGUI_perks_Mechanics") .. " " .. self.chr:getPerkLevel(Perks.Mechanics) .. "/" .. requiredMechanicsSkillLevel .. " <LINE>"
+			rgb = " <RGB:0,1,0>"
 
-				if option.notAvailable then
-					tooltip.description = tooltip.description .. " <LINE><RGB:1,0,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
-				else
-					tooltip.description = tooltip.description .. " <LINE><RGB:0,1,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
-				end
+			if option.notAvailable then
+				tooltip.description = tooltip.description .. " <LINE><RGB:1,0,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
+			else
+				tooltip.description = tooltip.description .. " <LINE><RGB:0,1,0>" .. getText("Tooltip_EHR_NewCondition") .. ": " .. targetCondition .. "%"
 			end
 		end
 	end
+end
 
-	function ISVehicleMechanics.EHR_onRepairHeater(playerObj, part, requiredParts, blowtorch, mask, targetCondition, requiredMechanicsSkillLevel, requiredMetalworkingSkillLevel)
-		if playerObj:getVehicle() then
-			ISVehicleMenu.onExit(playerObj)
-		end
-
-		-- Have the character wear the welder mask (only if not already worn)
-		if mask and (not mask.isEquipped or not mask:isEquipped()) then
-			ISInventoryPaneContextMenu.wearItem(mask, playerObj:getPlayerNum());
-		end
-
-		-- Have the character walk to the engine
-		ISTimedActionQueue.add(ISPathFindAction:pathToVehicleArea(playerObj, part:getVehicle(), "Engine"))
-
-		-- If the blowtorch to be used isn't equipped in the primary hand, then equip it
-		if playerObj:getPrimaryHandItem() ~= blowtorch then
-			ISVehiclePartMenu.toPlayerInventory(playerObj, blowtorch)
-			ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, blowtorch, 50, true, false))
-		end
-
-		-- Have the character wear the welder mask
-		if mask then
-			ISInventoryPaneContextMenu.wearItem(mask, playerObj:getPlayerNum());
-		end
-
-		local timeToRepair = math.max(50, 170 - math.max(0, (10 * (playerObj:getPerkLevel(Perks.MetalWelding) - requiredMetalworkingSkillLevel))))
-
-		-- Queue our custom TimedAction to repair the heater
-		ISTimedActionQueue.add(EHRRepairHeater:new(playerObj, part, blowtorch, mask, timeToRepair, requiredParts, targetCondition))
+function ISVehicleMechanics.EHR_onRepairHeater(playerObj, part, requiredParts, blowtorch, mask, targetCondition, requiredMechanicsSkillLevel, requiredMetalworkingSkillLevel)
+	if playerObj:getVehicle() then
+		ISVehicleMenu.onExit(playerObj)
 	end
+
+	-- Have the character wear the welder mask (only if not already worn)
+	if mask and (not mask.isEquipped or not mask:isEquipped()) then
+		ISInventoryPaneContextMenu.wearItem(mask, playerObj:getPlayerNum());
+	end
+
+	-- Have the character walk to the engine
+	ISTimedActionQueue.add(ISPathFindAction:pathToVehicleArea(playerObj, part:getVehicle(), "Engine"))
+
+	-- If the blowtorch to be used isn't equipped in the primary hand, then equip it
+	if playerObj:getPrimaryHandItem() ~= blowtorch then
+		ISVehiclePartMenu.toPlayerInventory(playerObj, blowtorch)
+		ISTimedActionQueue.add(ISEquipWeaponAction:new(playerObj, blowtorch, 50, true, false))
+	end
+
+	-- Have the character wear the welder mask
+	if mask then
+		ISInventoryPaneContextMenu.wearItem(mask, playerObj:getPlayerNum());
+	end
+
+	local timeToRepair = math.max(50, 170 - math.max(0, (10 * (playerObj:getPerkLevel(Perks.MetalWelding) - requiredMetalworkingSkillLevel))))
+
+	-- Queue our custom TimedAction to repair the heater
+	ISTimedActionQueue.add(EHRRepairHeater:new(playerObj, part, blowtorch, mask, timeToRepair, requiredParts, targetCondition))
+end

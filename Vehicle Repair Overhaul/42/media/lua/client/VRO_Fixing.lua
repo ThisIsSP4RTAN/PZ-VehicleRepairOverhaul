@@ -1584,8 +1584,7 @@ local function queueEquipActions(playerObj, eq, torchHint)
     else
       -- pull it from ANY container, move to player inv, then wear it
       local wItem = VRO_PickFromSpec(inv, wSpec, 1)
-      if wItem and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then
-        _ensureInPlayerInv(wItem)                 -- <== this is the important part
+      if wItem and ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.wearItem then _ensureInPlayerInv(wItem)
         ISInventoryPaneContextMenu.wearItem(wItem, playerObj:getPlayerNum())
         equipKeep[#equipKeep+1] = { item = wItem, flags = normalizeFlags(wSpec.flags) }
       end
