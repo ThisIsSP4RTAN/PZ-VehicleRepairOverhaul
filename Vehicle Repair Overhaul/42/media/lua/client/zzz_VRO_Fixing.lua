@@ -1669,8 +1669,12 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
   self.context = self.context or ISContextMenu.get(self.playerNum, x + self:getAbsoluteX(), y + self:getAbsoluteY())
   local repairTxt = getText("ContextMenu_Repair")
+  local createdRepairParent = false
   local parent = findRepairParentOption(self.context, function(n) return n == repairTxt end)
-  if not parent then parent = self.context:addOption(repairTxt, nil, nil) end
+  if not parent then
+    parent = self.context:addOption(repairTxt, nil, nil)
+    createdRepairParent = true
+  end
   local sub = ensureSubMenu(self.context, parent); if not sub then return end
 
   local function _gatherMultiGlobals(inv, list)
@@ -1933,8 +1937,24 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
     end
   end
 
-  if parent and not rendered and isSubmenuEmpty(parent) then
+  if parent and createdRepairParent and not rendered and isSubmenuEmpty(parent) then
     parent.notAvailable = true
+  end
+
+  if self.context and self.context.setVisible then
+    -- If we successfully added at least one option under "Repair",
+    -- numOptions will now be > 1 — force the context back visible.
+    if self.context.numOptions and self.context.numOptions > 1 then
+      self.context:setVisible(true)
+
+      local jp = JoypadState.players[self.playerNum + 1]
+      if jp then
+        self.context.mouseOver = 1
+        self.context.origin = self
+        jp.focus = self.context
+        updateJoypadFocus(jp)
+      end
+    end
   end
 end
 
