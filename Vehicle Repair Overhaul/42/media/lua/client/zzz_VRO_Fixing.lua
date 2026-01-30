@@ -1630,6 +1630,21 @@ local function isSubmenuEmpty(parent)
   return true
 end
 
+local function submenuHasEnabled(sub)
+  if not sub then return false end
+  local n, opts = sub.numOptions or 0, sub.options
+  if n <= 0 or not opts then return false end
+  for i = 1, n do
+    local opt = opts[i]
+    if opt and not opt.isDivider then
+      if (not opt.notAvailable) or opt.subOption then
+        return true
+      end
+    end
+  end
+  return false
+end
+
 ----------------------------------------------------------------
 -- F) Mechanics window (vanilla-style submenu; attach to existing)
 ----------------------------------------------------------------
@@ -1956,6 +1971,17 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
       end
     end
   end
+
+  do
+    local hasEnabled = submenuHasEnabled(sub)
+    if hasEnabled then
+      parent.notAvailable = nil
+    else
+      parent.notAvailable = true
+      parent.onSelect = nil
+      parent.target   = nil
+    end
+  end
 end
 
 ----------------------------------------------------------------
@@ -2271,12 +2297,23 @@ local function addInventoryFixOptions(playerObj, context, broken)
   if parent and not rendered and isSubmenuEmpty(parent) then
     parent.notAvailable = true
   end
+
+  do
+    local hasEnabled = submenuHasEnabled(sub)
+    if hasEnabled then
+      parent.notAvailable = nil
+    else
+      parent.notAvailable = true
+      parent.onSelect = nil
+      parent.target   = nil
+    end
+  end
 end
 
 local function OnFillInventoryObjectContextMenu(playerNum, context, items)
   local playerObj = getSpecificPlayer(playerNum); if not playerObj then return end
   local item = resolveInvItemFromContext(items)
-  if not isRepairableFromInventory(item) then return end   -- mirror vanilla: only when damaged
+  if not isRepairableFromInventory(item) then return end
   addInventoryFixOptions(playerObj, context, item)
 end
 
