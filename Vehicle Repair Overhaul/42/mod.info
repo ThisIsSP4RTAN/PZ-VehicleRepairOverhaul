@@ -4,6 +4,6 @@ poster=poster.png
 icon=icon.png
 versionMin=42.12.0
 id=VehicleRepairOverhaul
-loadModBefore=\VehicleSalvageOverhaulB42,\ProjectSummerCar,\Ivmakk_RestoreEngineQuality
+loadModBefore=\ProjectSummerCar,\Ivmakk_RestoreEngineQuality
 incompatible=\SimpleAutoParts
 author=hehehemann, SP4RTAN
