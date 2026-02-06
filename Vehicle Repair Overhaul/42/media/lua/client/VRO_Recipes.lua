@@ -1959,7 +1959,7 @@ return {
 
     {
       name = "Fix Bullbar Welding",
-      require = { "@Bullbar_All", "Base.M113FrontWindow1", "Base.M113FrontWindow2", "Base.M113FrontWindow3", "Base.M923SpareMount1", "Base.MH_MkII_guntower1",
+      require = { "@Bullbar_All", "Base.M113FrontWindow1", "Base.M113FrontWindow2", "Base.M113FrontWindow3", "Base.MH_MkII_guntower1",
                   "Base.MH_MkII_guntower2", "Base.MH_MkII_guntower3", "Base.M998SpareMount_Item", "Base.M998SpareTireMount_Item", "Base.M35TarpFrame2",
                   "Base.ShermanDriveSprocket2", "Base.ShermanRearSprocket2", "Base.ShermanHatch2", "DAMNBumperRear" },
       globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
@@ -1989,7 +1989,7 @@ return {
 
     {
       name = "Fix Bullbar",
-      require = { "@Bullbar_All", "Base.M113FrontWindow1", "Base.M113FrontWindow2", "Base.M113FrontWindow3", "Base.M923SpareMount1", "Base.MH_MkII_guntower1",
+      require = { "@Bullbar_All", "Base.M113FrontWindow1", "Base.M113FrontWindow2", "Base.M113FrontWindow3", "Base.MH_MkII_guntower1",
                   "Base.MH_MkII_guntower2", "Base.MH_MkII_guntower3", "Base.M998SpareMount_Item", "Base.M998SpareTireMount_Item", "Base.M35TarpFrame2",
                   "Base.ShermanDriveSprocket2", "Base.ShermanRearSprocket2", "Base.ShermanHatch2", "DAMNBumperRear" },
       globalItem = { item = "Base.Screws", uses = 10, consume = true },
