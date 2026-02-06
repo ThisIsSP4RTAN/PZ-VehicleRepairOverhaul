@@ -1,20 +1,26 @@
 require "VRO_PartLists"
 
 local VROPartScanner = {} -- set to false to run scanner
-VROPartScanner._ran = true
+VROPartScanner._ran = false
 
 -- =========================
 -- TOGGLES
 -- =========================
 
--- If true, do NOT print candidates that appear to come from BaseGame/vanilla.
+-- If true, do NOT print candidates that appear to come from BaseGame/vanilla
 VROPartScanner.EXCLUDE_VANILLA = true
 
--- If true, use KEYWORDS to filter matches; if false, scan everything (still respects exclusions).
+-- If true, use KEYWORDS to filter matches; if false, scan everything (still respects exclusions)
 VROPartScanner.USE_KEYWORDS = false
 
--- If true, only include ScriptItems whose DisplayCategory is VehicleMaintenance.
+-- If true, only include ScriptItems whose DisplayCategory is VehicleMaintenance
 VROPartScanner.ONLY_VEHICLE_MAINTENANCE = true
+
+-- If true, include tags in output (when available)
+VROPartScanner.SHOW_TAGS = true
+
+-- If >0, limit tags printed per item
+VROPartScanner.MAX_TAGS = 0
 
 -- =========================
 -- FILTER LISTS
@@ -140,17 +146,11 @@ end
 local function _tryMethod(obj, methodName)
   if not obj then return nil end
   local ok, v = pcall(function()
-    return obj[methodName] and obj[methodName](obj) or nil
-  end)
-  if ok and v ~= nil and v ~= "" then return v end
-
-  ok, v = pcall(function()
     local f = obj[methodName]
     if f then return f(obj) end
     return nil
   end)
   if ok and v ~= nil and v ~= "" then return v end
-
   return nil
 end
 
@@ -172,18 +172,14 @@ local function _buildPartSetFromVRO()
     return nil
   end
 
-  local set = {}
-  local total = 0
-
+  local set, total = {}, 0
   for _, list in pairs(partLists) do
     if type(list) == "table" then
       for i = 1, #list do
         local ft = list[i]
-        if type(ft) == "string" and ft ~= "" then
-          if not set[ft] then
-            set[ft] = true
-            total = total + 1
-          end
+        if type(ft) == "string" and ft ~= "" and not set[ft] then
+          set[ft] = true
+          total = total + 1
         end
       end
     end
@@ -226,6 +222,80 @@ local function _isVehicleMaintenanceCategory(si)
   return s == "vehiclemaintenance"
 end
 
+-- Tags extraction: best-effort
+local function _collectTagsFromTagObject(tagObj, out)
+  if not tagObj then return end
+
+  -- If it's a string already
+  if type(tagObj) == "string" then
+    local s = tagObj
+    for t in s:gmatch("[^;%s]+") do
+      if t and t ~= "" then out[#out + 1] = t end
+    end
+    return
+  end
+
+  -- Many PZ collections support size()/get(i)
+  if tagObj.size and tagObj.get then
+    local ok, sz = pcall(function() return tagObj:size() end)
+    if ok and type(sz) == "number" then
+      for i = 0, sz - 1 do
+        local ok2, v = pcall(function() return tagObj:get(i) end)
+        if ok2 and v ~= nil then
+          local s = tostring(v)
+          if s ~= "" then out[#out + 1] = s end
+        end
+      end
+      return
+    end
+  end
+
+  -- Fallback: tostring and parse
+  local s = tostring(tagObj)
+  for t in s:gmatch("[^;%s]+") do
+    if t and t ~= "" then out[#out + 1] = t end
+  end
+end
+
+local function _getScriptItemTags(si)
+  if not si then return nil end
+
+  local tags = {}
+
+  -- Try getTags()
+  local v = _tryMethod(si, "getTags")
+  if v ~= nil then
+    _collectTagsFromTagObject(v, tags)
+  end
+
+  -- Sometimes tags live under a raw "Tags" value (rare)
+  if #tags == 0 and si.Tags ~= nil then
+    _collectTagsFromTagObject(si.Tags, tags)
+  end
+
+  if #tags == 0 then return nil end
+
+  -- de-dupe, preserve order
+  local seen, out = {}, {}
+  for i = 1, #tags do
+    local s = tostring(tags[i])
+    if s ~= "" and not seen[s] then
+      seen[s] = true
+      out[#out + 1] = s
+    end
+  end
+
+  -- Optional truncate
+  local maxT = VROPartScanner.MAX_TAGS or 0
+  if maxT > 0 and #out > maxT then
+    local cut = {}
+    for i = 1, maxT do cut[i] = out[i] end
+    cut[#cut + 1] = string.format("...(+%d)", (#out - maxT))
+    out = cut
+  end
+
+  return out
+end
 
 local function _getScriptItemOrigin(si, fullType)
   local v = _tryMethod(si, "getModID")
@@ -258,21 +328,8 @@ end
 
 local function _isVanillaOrigin(origin)
   if not origin then return false end
-  origin = tostring(origin)
-
-  if origin == "BaseGame" or origin == "Base" or origin == "pz-vanilla" then
-    return true
-  end
-
-  local o = origin:lower()
-  if o == "pz-vanilla" or o == "basegame" or o == "base" then
-    return true
-  end
-  if o:find("vanilla", 1, true) then
-    return true
-  end
-
-  return false
+  local o = tostring(origin):lower()
+  return (o == "basegame" or o == "base" or o == "pz-vanilla" or o:find("vanilla", 1, true) ~= nil)
 end
 
 function VROPartScanner.run()
@@ -294,7 +351,7 @@ function VROPartScanner.run()
     return
   end
 
-  local results = {} -- array of { fullType=, origin=, kw= }
+  local results = {} -- { fullType, origin, kw, tags[] }
   local seen = {}
   local totalItems = all:size()
 
@@ -337,6 +394,7 @@ function VROPartScanner.run()
                 fullType = fullType,
                 origin   = origin,
                 kw       = matchedKeyword,
+                tags     = VROPartScanner.SHOW_TAGS and _getScriptItemTags(si) or nil,
               }
             end
           end
@@ -348,12 +406,12 @@ function VROPartScanner.run()
   table.sort(results, function(a,b) return a.fullType < b.fullType end)
 
   print(string.format(
-    "[VRO][SCAN] Candidates not in VRO.PartLists: %d (scanned %d items). useKeywords=%s excludeVanilla=%s onlyVehicleMaintenance=%s",
-    #results,
-    totalItems,
+    "[VRO][SCAN] Candidates not in VRO.PartLists: %d (scanned %d items). useKeywords=%s excludeVanilla=%s onlyVehicleMaintenance=%s showTags=%s",
+    #results, totalItems,
     tostring(VROPartScanner.USE_KEYWORDS),
     tostring(VROPartScanner.EXCLUDE_VANILLA),
-    tostring(VROPartScanner.ONLY_VEHICLE_MAINTENANCE)
+    tostring(VROPartScanner.ONLY_VEHICLE_MAINTENANCE),
+    tostring(VROPartScanner.SHOW_TAGS)
   ))
 
   local limit = VROPartScanner.MAX_PRINT
@@ -366,10 +424,15 @@ function VROPartScanner.run()
     end
 
     local r = results[i]
+    local tagStr = ""
+    if VROPartScanner.SHOW_TAGS and r.tags and #r.tags > 0 then
+      tagStr = "  tags=" .. table.concat(r.tags, ";")
+    end
+
     if VROPartScanner.USE_KEYWORDS and VROPartScanner.SHOW_KEYWORD then
-      print(string.format("[VRO][SCAN]   %s  (from=%s, kw=%s)", r.fullType, r.origin, tostring(r.kw)))
+      print(string.format("[VRO][SCAN]   %s  (from=%s, kw=%s)%s", r.fullType, r.origin, tostring(r.kw), tagStr))
     else
-      print(string.format("[VRO][SCAN]   %s  (from=%s)", r.fullType, r.origin))
+      print(string.format("[VRO][SCAN]   %s  (from=%s)%s", r.fullType, r.origin, tagStr))
     end
   end
 end
