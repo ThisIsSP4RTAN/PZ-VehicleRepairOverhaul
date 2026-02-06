@@ -93,7 +93,8 @@ VRO.PartLists = VRO.PartLists or {}
   VRO.PartLists.WoodParts_All = {
     "Base.89volvo245WagonBackWindowArmorW","Base.89volvo244SedanBackWindowArmorW","Base.89volvo240WindshieldRearArmorW","Base.85gmBbodyWagonBackWindowArmorW","Base.85gmBbodyWindshieldRearArmorW","Base.91geoMetroWindshieldRearArmor","Base.E150MysteryMachineSurfboards2",
     "Base.89volvo240FrontWindowArmorW","Base.85gmBbodyFrontWindowArmorW","Base.89volvo240WindshieldArmorW","Base.89volvo240RearWindowArmorW","Base.91geoMetroFrontWindowArmor","Base.85gmBbodyWindshieldArmorW","Base.85gmBbodyRearWindowArmorW","Base.91geoMetroWindshieldArmor",
-    "Base.91geoMetroRearWindowArmor","Base.93chevySilveradoStakes2","Base.pzkTruckSideWoodboards2","Base.91geoMetroRoofrack0","Base.M923FlatbedStakes1","Base.97BushRoofStorage0","Base.M35A2Stakes1","Base.M35A2Stakes3",
+    "Base.91geoMetroRearWindowArmor","Base.93chevySilveradoStakes2","Base.pzkTruckSideWoodboards2","Base.91geoMetroRoofrack0","USMIL.Crate0militaryOpen","Base.M923FlatbedStakes1","Base.97BushRoofStorage0","USMIL.Crate0military","Base.M35A2Stakes1","Base.M35A2Stakes3",
+    "USMIL.Crate0Open","USMIL.Crate0",
   }
 
   VRO.PartLists.SmallTrunk_All = {
@@ -211,7 +212,7 @@ VRO.PartLists = VRO.PartLists or {}
     "Base.NormalCarSeat2","Base.NormalCarSeat3","Base.NormalCarSeat8","Base.ATAMotoBMWSeat","Base.M923FrontSeat2","Base.FireCoachSeat2","Base.DodgeRearSeat3","Base.NivaFrontSeat1","Base.FireCoachSeat2","Base.CUDAFrontSeat3","Base.65bansheeSeat3","Base.SportCarSeat2",
     "Base.SportCarSeat3","Base.SportCarSeat8","Base.TheTigerSeat1","Base.TheTigerSeat2","Base.TheTigerSeat3","Base.M35A2CarSeat2","Base.M923RearSeat2","Base.R32FrontSeat3","Base.CUDARearSeat3","Base.M998CarSeat2","Base.Int4700Seat2","Base.P19ACarSeat2","Base.M12CCarSeat2",
     "Base.R32RearSeat3","Base.MH_MkIISeat1","Base.MH_MkIISeat2","Base.MH_MkIISeat3","Base.M35RearSeat2","Base.E150CarSeat2","Base.M35RearSeat2","Base.HMMWVSeatSC2","Base.BigCarSeat1","Base.BigCarSeat2","Base.BigCarSeat3","Base.BigCarSeat8","Base.M12CarSeat2","Base.U1550LSeat2",
-    "USMIL.Seat1front","Base.M998_Seat2","Base.CycleSeat","Base.VN125seat","Base.ZNL50seat","Base.KZ1Kseat","Base.M35Seat2","Base.M35Seat2","USMIL.Seat2",
+    "USMIL.Seat1front","USMIL.Stretcher0","USMIL.Stretcher1","Base.M998_Seat2","Base.CycleSeat","Base.VN125seat","Base.ZNL50seat","Base.KZ1Kseat","Base.M35Seat2","Base.M35Seat2","USMIL.Seat2",
   }
 
   VRO.PartLists.Tire_All = {

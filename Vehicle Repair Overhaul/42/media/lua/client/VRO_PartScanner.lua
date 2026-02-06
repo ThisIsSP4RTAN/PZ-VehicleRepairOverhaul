@@ -86,8 +86,6 @@ VROPartScanner.EXCLUDE_KEYWORDS = {
   "viewportpack",
   "recipefiller",
   "fixaflat",
-  "crate0",
-  "stretcher",
   "handleclassic",
   "handlemodern",
   "dontusethis",
