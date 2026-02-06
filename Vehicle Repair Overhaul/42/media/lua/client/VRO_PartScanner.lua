@@ -1,7 +1,7 @@
 require "VRO_PartLists"
 
 local VROPartScanner = {} -- set to false to run scanner
-VROPartScanner._ran = false
+VROPartScanner._ran = true
 
 -- =========================
 -- TOGGLES
