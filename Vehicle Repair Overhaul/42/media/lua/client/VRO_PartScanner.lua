@@ -107,6 +107,8 @@ VROPartScanner.EXCLUDE_KEYWORDS = {
   "87fordf700bumperrear2",
   "foamseal",
   "93fordcf8000brushes",
+  "90fordf350ambseatrear2",
+  "87fordb700rearseat2",
   "towbar",
 }
 
