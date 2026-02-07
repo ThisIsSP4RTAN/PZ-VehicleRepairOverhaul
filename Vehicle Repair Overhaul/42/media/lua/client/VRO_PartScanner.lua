@@ -1,11 +1,12 @@
 require "VRO_PartLists"
 
-local VROPartScanner = {} -- set to false to run scanner
-VROPartScanner._ran = true
+local VROPartScanner = {}
 
 -- =========================
 -- TOGGLES
 -- =========================
+-- Master toggle: if false, scanner does nothing
+VROPartScanner.ENABLED = false
 
 -- If true, do NOT print candidates that appear to come from BaseGame/vanilla
 VROPartScanner.EXCLUDE_VANILLA = true
@@ -333,8 +334,9 @@ local function _isVanillaOrigin(origin)
 end
 
 function VROPartScanner.run()
-  if VROPartScanner._ran then return end
-  VROPartScanner._ran = true
+    if not VROPartScanner.ENABLED then return end
+    if VROPartScanner._ran then return end
+    VROPartScanner._ran = true
 
   local partSet = _buildPartSetFromVRO()
   if not partSet then return end
