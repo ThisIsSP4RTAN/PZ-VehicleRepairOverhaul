@@ -108,7 +108,7 @@ function EER_Commands.rebuildEngine(player, args)
 
   addXp(player, Perks.Mechanics, 50)
 
-  player:sendObjectChange('mechanicActionDone', {
+  player:sendObjectChange(IsoObjectChange.MECHANIC_ACTION_DONE, {
     success    = true,
     vehicleId  = vehicle:getId(),
     partId     = part:getId(),

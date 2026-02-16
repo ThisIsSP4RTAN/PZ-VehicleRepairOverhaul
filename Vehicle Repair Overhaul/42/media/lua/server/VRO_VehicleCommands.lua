@@ -512,7 +512,7 @@ VRO_CMDS.doFix = function(player, args)
     end
   end
 
-  player:sendObjectChange('mechanicActionDone', {
+  player:sendObjectChange(IsoObjectChange.MECHANIC_ACTION_DONE, {
     success    = success,
     vehicleId  = vehicleId or -1,
     partId     = partId or "",

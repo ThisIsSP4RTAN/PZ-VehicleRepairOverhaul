@@ -105,7 +105,7 @@ function ELR_Commands.repairLightbar(player, args)
     end
   end
 
-	player:sendObjectChange('mechanicActionDone', {
+	player:sendObjectChange(IsoObjectChange.MECHANIC_ACTION_DONE, {
 		success   = true,
 		vehicleId = vehicle:getId(),
 		partId    = part:getId(),

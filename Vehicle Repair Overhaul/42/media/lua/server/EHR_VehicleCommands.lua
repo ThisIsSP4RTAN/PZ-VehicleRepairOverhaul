@@ -120,7 +120,7 @@ function EHR_Commands.repairHeater(player, args)
 	end
 
 
-	player:sendObjectChange('mechanicActionDone', {
+	player:sendObjectChange(IsoObjectChange.MECHANIC_ACTION_DONE, {
 		success   = true,
 		vehicleId = vehicle:getId(),
 		partId    = part:getId(),
