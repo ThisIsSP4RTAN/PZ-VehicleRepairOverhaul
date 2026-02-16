@@ -460,10 +460,10 @@ VRO.PartLists = VRO.PartLists or {}
   VRO.PartLists.TankContainers_All = {
     "Base.pzk250_Water_Tank_Tainted1","Base.pzk250_Water_Tank_Tainted2","Base.pzk250_Water_Tank_Tainted3","Base.pzk500_Water_Tank_Tainted1","Base.pzk500_Water_Tank_Tainted2","Base.pzk500_Water_Tank_Tainted3","Base.1500_Water_Tank_Tainted1","Base.1500_Water_Tank_Tainted2",
     "Base.1500_Water_Tank_Tainted3","Base.3000_Water_Tank_Tainted1","Base.3000_Water_Tank_Tainted2","Base.3000_Water_Tank_Tainted3","Base.90pierceArrowWaterTank2","Base.Military_PetrolCan_20L2","Base.73fordFalconPSStorage","Base.pzk250_Water_Tank1","Base.pzk250_Water_Tank2",
-    "Base.pzk250_Water_Tank3","Base.pzk500_Water_Tank1","Base.pzk500_Water_Tank2","Base.pzk500_Water_Tank3","Base.10000_Water_Tank1","Base.10000_Water_Tank2","Base.10000_Water_Tank3","Base.MH_MkII_waterbox1","Base.MH_MkII_waterbox2","Base.MH_MkII_waterbox3","USMIL.WaterCan0",
+    "Base.pzk250_Water_Tank3","Base.pzk500_Water_Tank1","Base.pzk500_Water_Tank2","Base.pzk500_Water_Tank3","Base.10000_Water_Tank1","Base.10000_Water_Tank2","Base.10000_Water_Tank3","Base.MH_MkII_waterbox1","Base.MH_MkII_waterbox2","Base.MH_MkII_waterbox3","Base.1000Tank1",
     "Base.1000PropaneTank1","Base.1000PropaneTank2","Base.1000PropaneTank3","Base.3000PropaneTank1","Base.3000PropaneTank2","Base.3000PropaneTank3","Base.1000PropaneTank8","Base.1500_Water_Tank1","Base.1500_Water_Tank2","Base.1500_Water_Tank3","Base.3000_Water_Tank1",
-    "Base.3000_Water_Tank2","Base.3000_Water_Tank3","Base.250PropaneTank1","Base.250PropaneTank2","Base.250PropaneTank3","Base.250PropaneTank8","Base.500PropaneTank1","Base.500PropaneTank2","Base.500PropaneTank3","Base.500PropaneTank8","Base.1000Tank1","Base.1000Tank2",
-    "Base.1000Tank3","Base.1000Tank8","Base.250Tank1","Base.250Tank2","Base.250Tank3","Base.250Tank8","Base.500Tank1","Base.500Tank2","Base.500Tank3","Base.500Tank8","USMIL.GasCan0",
+    "Base.3000_Water_Tank2","Base.3000_Water_Tank3","Base.250PropaneTank1","Base.250PropaneTank2","Base.250PropaneTank3","Base.250PropaneTank8","Base.500PropaneTank1","Base.500PropaneTank2","Base.500PropaneTank3","Base.500PropaneTank8","Base.1000Tank2","Base.1000Tank3",
+    "Base.1000Tank8","Base.250Tank1","Base.250Tank2","Base.250Tank3","Base.250Tank8","Base.500Tank1","Base.500Tank2","Base.500Tank3","Base.500Tank8",
   }
 
   VRO.PartLists.VehicleShovel_All = {
