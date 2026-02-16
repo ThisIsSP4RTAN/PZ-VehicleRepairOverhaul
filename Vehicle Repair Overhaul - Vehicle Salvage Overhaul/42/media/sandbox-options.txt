@@ -1,0 +1,10 @@
+VERSION = 1,
+
+option VRO_EnableFullVehicleSalvaging
+{
+    type = boolean,
+    default = true,
+
+    page = VRO,
+    translation = VRO_EnableFullVehicleSalvaging,
+}

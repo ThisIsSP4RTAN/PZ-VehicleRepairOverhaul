@@ -1,0 +1,19 @@
+VERSION = 1,
+
+option VRO_EnableEngineRebuild
+{
+    type = boolean,
+    default = false,
+	
+	page = VRO,
+	translation = VRO_EnableEngineRebuild,
+}
+
+option VRO_UseVanillaFixingRecipes
+{
+    type = boolean,
+    default = false,
+
+    page = VRO,
+    translation = VRO_UseVanillaFixingRecipes,
+}

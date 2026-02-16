@@ -1,0 +1,10 @@
+Sandbox_ES = {
+
+	Sandbox_VRO = "Vehicle Repair Overhaul",
+
+	Sandbox_VRO_EnableEngineRebuild = "Reconstrucción del motor",
+	Sandbox_VRO_EnableEngineRebuild_tooltip = "Activa/desactiva si la acción de Reconstruir motor está disponible en el juego. (Si Project Summer Car u otro mod de reparación de motores está activo, este ajuste no hace nada).",
+
+	Sandbox_VRO_UseVanillaFixingRecipes = "Sistema de reparación antiguo",
+	Sandbox_VRO_UseVanillaFixingRecipes_tooltip = "Usa el sistema de reparación original que permite reparar en el sitio, sin máscara de soldar, sonidos ni animaciones.",
+}

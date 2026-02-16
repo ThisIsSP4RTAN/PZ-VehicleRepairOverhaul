@@ -1,0 +1,10 @@
+Sandbox_RU = {
+
+	Sandbox_VRO = "Vehicle Repair Overhaul",
+
+	Sandbox_VRO_EnableEngineRebuild = "Капитальный ремонт двигателя",
+	Sandbox_VRO_EnableEngineRebuild_tooltip = "Переключает доступность действия «Капитально отремонтировать двигатель». (Если активирован Project Summer Car или другой мод ремонта двигателя, настройка не действует.)",
+
+	Sandbox_VRO_UseVanillaFixingRecipes = "Старая система починки",
+	Sandbox_VRO_UseVanillaFixingRecipes_tooltip = "Использовать исходную систему ремонта: починка на месте, без сварочной маски, звуков и анимаций.",
+}

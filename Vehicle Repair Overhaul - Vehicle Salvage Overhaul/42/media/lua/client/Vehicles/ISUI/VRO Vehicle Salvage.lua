@@ -7,6 +7,7 @@
 
 require "Vehicles/ISUI/ISVehicleMenu"
 require "luautils"
+require "VRO_SalvageSandbox"
 
 local function _tag(id)
     if id == nil then return nil end
@@ -157,6 +158,9 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
     local option = nil
     --- remove Salvage Vehicles options ---
     if SandboxVars.VehicleRepairOverhaul == true or string.match(vehicle:getScript():getName(), "Burnt") or isClaimed then return enableSalvage(player, context, vehicle, test) end;
+    if VRO and VRO.IsFullVehicleSalvagingEnabled and (VRO.IsFullVehicleSalvagingEnabled() == false) then
+        return enableSalvage(player, context, vehicle, test)
+    end
 
     ---Salvage complete vehicles add option to menu---
         option = context:addOption(getText("ContextMenu_SalvageVehicle"), playerObj, ISVehicleMenu.onVehicleSalvage, vehicle);

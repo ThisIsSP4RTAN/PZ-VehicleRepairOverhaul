@@ -1,0 +1,6 @@
+Sandbox_TH = {
+
+	Sandbox_VRO = "Vehicle Repair Overhaul"
+	
+	Sandbox_VRO_EnableFullVehicleSalvaging = "การกู้ยานพาหนะเต็มรูปแบบ"
+}

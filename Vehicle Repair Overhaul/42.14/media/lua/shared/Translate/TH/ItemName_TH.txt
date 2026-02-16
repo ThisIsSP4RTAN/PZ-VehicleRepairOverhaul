@@ -1,0 +1,4 @@
+ItemName_TH = {
+	ItemName_VRO.FixAFlat = "สเปรย์ปะยางและเติมลมฉุกเฉิน",
+	ItemName_VRO.recipefiller = "empty recipe filler",
+}

@@ -1,0 +1,10 @@
+Sandbox_TH = {
+
+	Sandbox_VRO = "Vehicle Repair Overhaul",
+
+	Sandbox_VRO_EnableEngineRebuild = "ยกเครื่องเครื่องยนต์",
+	Sandbox_VRO_EnableEngineRebuild_tooltip = "สลับเปิด/ปิดการใช้งานการยกเครื่องเครื่องยนต์ในเกม (ถ้าเปิดใช้ Project Summer Car หรือม็อดซ่อมเครื่องยนต์อื่นอยู่ การตั้งค่านี้จะไม่เกิดผล)",
+
+	Sandbox_VRO_UseVanillaFixingRecipes = "ระบบซ่อมแบบเก่า",
+	Sandbox_VRO_UseVanillaFixingRecipes_tooltip = "ใช้ระบบซ่อมดั้งเดิมที่ให้ซ่อมได้จากที่ยืน ไม่ต้องใช้หน้ากากเชื่อม และไม่มีเสียงหรือแอนิเมชัน",
+}

@@ -1,0 +1,10 @@
+Sandbox_TR = {
+
+	Sandbox_VRO = "Vehicle Repair Overhaul",
+
+	Sandbox_VRO_EnableEngineRebuild = "Motor Yenileme",
+	Sandbox_VRO_EnableEngineRebuild_tooltip = "Oyunda Motor Yenileme eyleminin kullanılabilirliğini değiştirir. (Project Summer Car veya başka bir motor tamir modu etkinse bu ayar hiçbir şey yapmaz.)",
+
+	Sandbox_VRO_UseVanillaFixingRecipes = "Eski onarım sistemi",
+	Sandbox_VRO_UseVanillaFixingRecipes_tooltip = "Yerinde onarıma izin veren, kaynak maskesi/ses/animasyon kullanmayan orijinal sistemi kullan.",
+}
