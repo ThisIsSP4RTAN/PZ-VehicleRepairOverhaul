@@ -81,6 +81,82 @@ local function isScriptedItem(fullType)
   return false
 end
 
+-- Expand fixer entries that use tags:
+--   { tag="leatherfullmedium", uses=1, skills={...} }
+-- into one fixer entry per item that has that tag.
+local function VRO_ExpandFixersByTag()
+  local sm = ScriptManager and ScriptManager.instance
+  if not sm or not VRO or type(VRO.Recipes) ~= "table" then return end
+
+  local function _getScriptsForTag(tag)
+    local T = _tag(tag) -- accepts "Thread" or "base:Thread" etc.
+    if sm.getItemsTag then
+      return sm:getItemsTag(T)
+    elseif sm.getAllItemsWithTag then
+      return sm:getAllItemsWithTag(T)
+    end
+    return nil
+  end
+
+  local function _scriptFullType(si)
+    if not si then return nil end
+    if si.getFullName then
+      local ok, v = pcall(function() return si:getFullName() end)
+      if ok and v and v ~= "" then return v end
+    end
+    if si.getModuleName and si.getName then
+      local ok, m = pcall(function() return si:getModuleName() end)
+      local ok2, n = pcall(function() return si:getName() end)
+      if ok and ok2 and m and n and m ~= "" and n ~= "" then
+        return tostring(m) .. "." .. tostring(n)
+      end
+    end
+    return nil
+  end
+
+  local function _cloneFixer(base, fullType)
+    local f = {}
+    for k,v in pairs(base) do
+      if k ~= "tag" then
+        f[k] = v
+      end
+    end
+    f.item = fullType
+    return f
+  end
+
+  for ri = 1, #VRO.Recipes do
+    local fixing = VRO.Recipes[ri]
+    local fxr = fixing and fixing.fixers
+    if type(fxr) == "table" and #fxr > 0 then
+      local out = {}
+      for i = 1, #fxr do
+        local f = fxr[i]
+        -- Expand tag-only fixers (no item specified)
+        if f and f.tag and not f.item then
+          local scripts = _getScriptsForTag(f.tag)
+          local added = 0
+          if scripts and scripts.size then
+            for s = 0, scripts:size() - 1 do
+              local si = scripts:get(s)
+              local ft = _scriptFullType(si)
+              if ft and ft ~= "" then
+                out[#out + 1] = _cloneFixer(f, ft)
+                added = added + 1
+              end
+            end
+          end
+          -- If tag didn't resolve to anything, just drop it (so it doesn't create broken options)
+          if added == 0 then end
+        else
+          out[#out + 1] = f
+        end
+      end
+      fixing.fixers = out
+    end
+  end
+end
+
 -- Remove any fixer entries whose 'item' isn't a real scripted item.
 local function VRO_PruneMissingFixers()
   for ri = 1, #VRO.Recipes do
@@ -138,6 +214,7 @@ local function VRO_LoadPartLists()
   end
 end
 VRO_LoadPartLists()
+VRO_ExpandFixersByTag()
 VRO_PruneMissingFixers()
 
 -- === Access Overrides loader (module-first, no globals) ===
