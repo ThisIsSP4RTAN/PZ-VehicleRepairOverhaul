@@ -1840,7 +1840,7 @@ return {
 
     {
       name = "Fix Roof Rack Welding",
-      require = { "@RoofRack_All", "Base.TowBar", "Base.92jeepYJWinch2" },
+      require = { "@RoofRack_All", "Base.TowBar", "Base.92jeepYJWinch2", "Base.KI5CamperJack" },
       globalItem = { item = "Base.BlowTorch", uses = 2, consume = true },
       conditionModifier = 1.2,
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
@@ -1906,7 +1906,7 @@ return {
 
     {
       name = "Fix Roof Rack 1",
-      require = { "@RoofRack_All", "Base.TowBar", "Base.93fordCF8000Brushes", "Base.92jeepYJWinch2" },
+      require = { "@RoofRack_All", "Base.TowBar", "Base.93fordCF8000Brushes", "Base.92jeepYJWinch2", "Base.KI5CamperJack" },
       globalItem = nil,
       conditionModifier = 0.5,
       anim = "VehicleWorkOnMid",

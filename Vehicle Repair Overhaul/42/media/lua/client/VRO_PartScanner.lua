@@ -6,7 +6,7 @@ local VROPartScanner = {}
 -- TOGGLES
 -- =========================
 -- Master toggle: if false, scanner does nothing
-VROPartScanner.ENABLED = false
+VROPartScanner.ENABLED = true
 
 -- If true, do NOT print candidates that appear to come from BaseGame/vanilla
 VROPartScanner.EXCLUDE_VANILLA = true
@@ -115,6 +115,8 @@ VROPartScanner.EXCLUDE_KEYWORDS = {
   "90fordf350ambseatrear2",
   "87fordb700rearseat2",
   "towbar",
+  "gascan0",
+  "ki5camperjack",
 }
 
 -- If true, also match DisplayName (if available). FullType matching is always on.
