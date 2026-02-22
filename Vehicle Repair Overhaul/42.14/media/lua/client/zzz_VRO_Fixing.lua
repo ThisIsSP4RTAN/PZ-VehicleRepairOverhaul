@@ -351,7 +351,23 @@ end
 
 -- Tag helpers
 local function firstTagItem(inv, tag) return inv:getFirstTagRecurse(_tag(tag)) end
-local function hasTag(inv, tag)       return inv:containsTag(_tag(tag)) end
+local function hasTag(inv, tag)
+  local T = _tag(tag)
+  if not (inv and T) then return false end
+
+  -- Preferred (recursive)
+  if inv.getFirstTagRecurse then
+    return inv:getFirstTagRecurse(T) ~= nil
+  end
+
+  -- Fallbacks (depends on build/mod env)
+  if inv.containsTagRecurse then
+    return inv:containsTagRecurse(T)
+  end
+
+  -- Last resort (non-recursive)
+  return inv:containsTag(T) == true
+end
 
 local function itemHasAnyTag(it, tags)
   if not (it and it.hasTag and tags) then return false end

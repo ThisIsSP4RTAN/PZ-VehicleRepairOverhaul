@@ -11,6 +11,39 @@ local function log(msg)
 end
 
 --------- small helpers ----------
+local function _getItemContainerSafe(player, it)
+  if it and it.getContainer then
+    local c = it:getContainer()
+    if c then return c end
+  end
+  return player and player.getInventory and player:getInventory() or nil
+end
+
+local function _sendRemoveFromContainer(container, item)
+  if not (container and item) then return false end
+  if sendRemoveItemFromContainer then
+    return pcall(sendRemoveItemFromContainer, container, item) and true or false
+  end
+  return false
+end
+
+-- Remove item server-side and replicate to clients.
+local function _removeItemMP(player, it)
+  if not (player and it) then return false end
+  local con = _getItemContainerSafe(player, it)
+  if not con then return false end
+
+  -- Remove server-side
+  pcall(function() con:Remove(it) end)
+
+  -- Replicate removal
+  local sent = _sendRemoveFromContainer(con, it)
+
+  if con.setDrawDirty then pcall(function() con:setDrawDirty(true) end) end
+
+  return sent
+end
+
 local function clamp(v,a,b) if v<a then return a elseif v>b then return b else return v end end
 local function isDrainable(it) return it and instanceof(it, "DrainableComboItem") end
 
@@ -141,8 +174,8 @@ end
 -- Never delete blowtorches here; torch is handled separately.
 local function consumeFullTypeCount(player, fullType, needUses)
   if not (player and fullType and needUses and needUses > 0) then return end
-  local inv   = player:getInventory()
-  local bag   = ArrayList.new()
+  local inv = player:getInventory()
+  local bag = ArrayList.new()
   inv:getAllTypeRecurse(fullType, bag)
   if bag:isEmpty() then return end
 
@@ -150,32 +183,65 @@ local function consumeFullTypeCount(player, fullType, needUses)
   for i = 0, bag:size() - 1 do
     if remain <= 0 then break end
     local it = bag:get(i)
-    if isDrainable(it) then
-      if isTorchItem(it) then
-        -- Torch is consumed via args.torchUses; skip here.
-      else
-        -- Drain uses from this drainable item
-        if it.Use then
-          while remain > 0 and drainableUses(it) > 0 do
-            it:Use()
-            remain = remain - 1
-          end
+
+    -- Skip blowtorch here (handled by welding-specific logic)
+    if isTorchItem(it) then
+      -- do nothing
+    elseif isDrainable(it) then
+      -- Capture container BEFORE draining (and fall back safely)
+      local con0 = _getItemContainerSafe(player, it)
+      local before = drainableUses(it)
+
+      -- Drain uses
+      if it.Use then
+        while remain > 0 and drainableUses(it) > 0 do
+          it:Use()
+          remain = remain - 1
         end
-        if it.syncItemFields then it:syncItemFields() end
-        if drainableUses(it) <= 0 then
-          local con = it:getContainer()
-          if con then
-            con:Remove(it)
-            if sendRemoveItemFromContainer then sendRemoveItemFromContainer(con, it) end
-          end
+      end
+
+      -- Force delta to 0 if empty
+      if drainableUses(it) <= 0 and it.setUsedDelta then
+        it:setUsedDelta(0)
+      end
+
+      -- Force field replication (so the client sees the new usedDelta immediately)
+      if it.syncItemFields then it:syncItemFields() end
+
+      local after = drainableUses(it)
+
+      if VRO_VehicleCommands.debug then
+        log(("DRN %s uses %s -> %s (need=%d remain=%d)"):format(
+          tostring(fullType),
+          tostring(before),
+          tostring(after),
+          tonumber(needUses) or 0,
+          tonumber(remain) or 0
+        ))
+      end
+
+      -- If empty, remove and replicate using captured container fallback
+      if after <= 0 then
+        local sent = _removeItemMP(player, it)
+        if VRO_VehicleCommands.debug and not sent then
+          log(("WARN %s empty but could not replicate remove"):format(tostring(fullType)))
         end
       end
     else
       -- Non-drainable: remove one item = 1 use
-      local con = it:getContainer()
+      local con = _getItemContainerSafe(player, it)
       if con then
         con:Remove(it)
-        if sendRemoveItemFromContainer then sendRemoveItemFromContainer(con, it) end
+        local sent = _sendRemoveFromContainer(con, it)
+
+        if VRO_VehicleCommands.debug then
+          log(("REMOVE %s x1 sent=%s remain(beforeDec)=%d"):format(
+            tostring(fullType),
+            tostring(sent),
+            tonumber(remain) or 0
+          ))
+        end
+
         remain = remain - 1
       end
     end
