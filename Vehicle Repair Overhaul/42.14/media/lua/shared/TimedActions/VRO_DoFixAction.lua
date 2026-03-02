@@ -84,18 +84,6 @@ local function setHBR(part, invItem, val)
   if part then part:getModData().VRO_HaveBeenRepaired = val end
 end
 
--- Returns true only if the part has a real inventory item with a module-qualified full type
--- (e.g., "Base.Something"). Parts like TruckBed (no item) will return false.
-
---[[ local function _partHasModuleItem(part)
-  if not part then return false end
-  if not (part.getInventoryItem and part:getInventoryItem()) then return false end
-  local inv = part:getInventoryItem()
-  local ft  = inv and inv.getFullType and inv:getFullType() or nil
-  -- Must contain a '.' to be a module-qualified type (e.g., "Base.Foo")
-  return (ft ~= nil) and (string.find(ft, ".", 1, true) ~= nil)
-end ]]
-
 -- Perk helpers + repair math
 local function resolvePerk(perkName)
   if Perks then

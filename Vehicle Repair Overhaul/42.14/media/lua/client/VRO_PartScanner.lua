@@ -6,7 +6,7 @@ local VROPartScanner = {}
 -- TOGGLES
 -- =========================
 -- Master toggle: if false, scanner does nothing
-VROPartScanner.ENABLED = false
+VROPartScanner.ENABLED = true
 
 -- If true, do NOT print candidates that appear to come from BaseGame/vanilla
 VROPartScanner.EXCLUDE_VANILLA = true
