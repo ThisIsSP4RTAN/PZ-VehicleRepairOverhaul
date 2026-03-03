@@ -1843,24 +1843,21 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
     -- WEAR
     if eq.wearTag then
-      local hasWear = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.wearTag))) or hasTag(inv, eq.wearTag)
-      ok = ok and (hasWear ~= nil)
+      ok = ok and hasTag(inv, eq.wearTag)
     elseif eq.wear then
       ok = ok and (findFirstTypeRecurse(inv, eq.wear) ~= nil)
     end
 
     -- PRIMARY
     if eq.primaryTag then
-      local hasPrim = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.primaryTag))) or hasTag(inv, eq.primaryTag)
-      ok = ok and (hasPrim ~= nil)
+      ok = ok and hasTag(inv, eq.primaryTag)
     elseif eq.primary then
       ok = ok and (findFirstTypeRecurse(inv, eq.primary) ~= nil)
     end
 
     -- SECONDARY
     if eq.secondaryTag and eq.secondaryTag ~= eq.primaryTag then
-      local hasSec = (inv.getFirstTagRecurse and inv:getFirstTagRecurse(_tag(eq.secondaryTag))) or hasTag(inv, eq.secondaryTag)
-      ok = ok and (hasSec ~= nil)
+      ok = ok and hasTag(inv, eq.secondaryTag)
     elseif eq.secondary and eq.secondary ~= eq.primary then
       ok = ok and (findFirstTypeRecurse(inv, eq.secondary) ~= nil)
     end
@@ -1897,7 +1894,9 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   local rendered = false
   for __ri = 1, #VRO.Recipes do
     local fixing = VRO.Recipes[__ri]
-    if recipeMatchesTarget(fixing) then
+    local requireSet = resolveRequireSet(fixing)
+    local applies = (requireSet[ft] == true) or (partId and requireSet[partId] == true)
+    if applies then
       local fixers = fixing.fixers or {}
       for idx = 1, #fixers do
         local fixer = fixers[idx]
@@ -1940,8 +1939,8 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
         local skillsOK = true
         if fixer.skills then
-          for name,req in pairs(fixer.skills) do
-            if perkLevel(playerObj, name) < req then skillsOK=false; break end
+          for name, req in pairs(fixer.skills) do
+            if perkLevel(playerObj, name) < req then skillsOK = false; break end
           end
         end
 
@@ -2018,7 +2017,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
               return
             end
 
-            local torchUses = _weldingUses(fixer, fixing)
+            local torchUses = _weldingUses(fixr, fixg)
             local tm    = resolveTime(fixr, fixg, p, brk)
             local anim  = resolveAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
@@ -2352,7 +2351,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
               return
             end
 
-            local torchUses = _weldingUses(fixer, fixing)
+            local torchUses = _weldingUses(fixr, fixg)
             local tm    = resolveTime(fixr, fixg, p, brk)
             local anim  = resolveInvAnim(fixr, fixg)
             local sfx   = resolveSound(fixr, fixg)
