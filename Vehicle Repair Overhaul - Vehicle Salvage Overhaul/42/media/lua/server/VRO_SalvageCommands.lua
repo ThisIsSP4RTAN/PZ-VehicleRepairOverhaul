@@ -85,6 +85,35 @@ function Commands.addXp(player, args)
   end
 end
 
+function Commands.drainTorch(player, args)
+  if not player then return end
+  local uses = (args and tonumber(args.uses)) or 0
+  if uses <= 0 then return end
+
+  local it = player.getPrimaryHandItem and player:getPrimaryHandItem() or nil
+  if not it then return end
+
+  local ft = (it.getFullType and it:getFullType()) or ""
+  if ft ~= "Base.BlowTorch" then return end
+
+  if it.Use then
+    for _ = 1, uses do
+      if it.getCurrentUses and it:getCurrentUses() <= 0 then break end
+      it:Use()
+    end
+  end
+
+  if it.getCurrentUses and it:getCurrentUses() <= 0 and it.setUsedDelta then
+    it:setUsedDelta(0)
+  end
+
+  if it.syncItemFields then
+    it:syncItemFields()
+  elseif it.transmitCompleteItemToClients then
+    it:transmitCompleteItemToClients()
+  end
+end
+
 local POOLS = {
   Small = {
     rolls = 3,

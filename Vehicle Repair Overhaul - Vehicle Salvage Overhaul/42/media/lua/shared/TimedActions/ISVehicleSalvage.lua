@@ -129,9 +129,18 @@ function ISVehicleSalvage:perform()
         if self:checkAddItem("NutsBolts", 12) then totalXp = totalXp + 2 end;
         if self:checkAddItem("NutsBolts", 12) then totalXp = totalXp + 2 end;
     end
-    for i=1,10 do   --Propane uses--
-        self.item:Use();
+
+    if isClient() then
+        sendClientCommand(self.character, "vro_salvage", "drainTorch", { uses = 10 })
+    else
+        for i=1,10 do
+            self.item:Use()
+        end
+        if self.item and self.item.syncItemFields then
+            self.item:syncItemFields()
+        end
     end
+
     sendClientCommand(self.character, "vro_salvage", "addXp", {
     perk   = "MetalWelding",
     amount = totalXp})
