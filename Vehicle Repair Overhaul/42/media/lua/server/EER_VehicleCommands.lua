@@ -58,28 +58,27 @@ function EER_Commands.rebuildEngine(player, args)
   if quality < 0 then quality = 0 elseif quality > 100 then quality = 100 end
 
   local loud, force = nil, nil
+  local scr = vehicle and vehicle:getScript() or nil
 
-  if vehicle.getEngineLoudness then
+  if scr then
+    if scr.getEngineLoudness then
+      local ok, v = pcall(function() return scr:getEngineLoudness() end)
+      if ok then loud = v end
+    end
+    if scr.getEngineForce then
+      local ok, v = pcall(function() return scr:getEngineForce() end)
+      if ok then force = v end
+    end
+  end
+
+  if not loud and vehicle.getEngineLoudness then
     local ok, v = pcall(function() return vehicle:getEngineLoudness() end)
     if ok then loud = v end
   end
-  if vehicle.getEnginePower then
+
+  if not force and vehicle.getEnginePower then
     local ok, v = pcall(function() return vehicle:getEnginePower() end)
     if ok then force = v end
-  end
-
-  if (not loud or not force) then
-    local scr = vehicle and vehicle:getScript() or nil
-    if scr then
-      if (not loud) and scr.getEngineLoudness then
-        local ok, v = pcall(function() return scr:getEngineLoudness() end)
-        if ok then loud = v end
-      end
-      if (not force) and scr.getEngineForce then
-        local ok, v = pcall(function() return scr:getEngineForce() end)
-        if ok then force = v end
-      end
-    end
   end
 
   loud  = tonumber(loud)  or 120
