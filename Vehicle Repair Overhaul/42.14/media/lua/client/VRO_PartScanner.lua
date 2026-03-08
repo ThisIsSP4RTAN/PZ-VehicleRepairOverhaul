@@ -1,12 +1,10 @@
 require "VRO_PartLists"
 
 local VROPartScanner = {}
-
+VROPartScanner.ENABLED = getDebug()
 -- =========================
 -- TOGGLES
 -- =========================
--- Master toggle: if false, scanner does nothing
-VROPartScanner.ENABLED = false
 
 -- If true, do NOT print candidates that appear to come from BaseGame/vanilla
 VROPartScanner.EXCLUDE_VANILLA = true
@@ -117,6 +115,13 @@ VROPartScanner.EXCLUDE_KEYWORDS = {
   "towbar",
   "gascan0",
   "ki5camperjack",
+  "e150chassisfur",
+  "e150doorfur",
+  "e150hoodfur",
+  "e150legfur",
+  "e150trunkdoorfur",
+  "69minimrbchair1",
+  "ecto1equipment1",
 }
 
 -- If true, also match DisplayName (if available). FullType matching is always on.

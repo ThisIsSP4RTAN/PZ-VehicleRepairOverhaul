@@ -1057,7 +1057,7 @@ return {
 
     {
       name = "Fix Car seat",
-      require = { "@CarSeat_All", "SeatRearLeft", "SeatRearRight", "Base.ATAMotoBagBMW1", "Base.ATAMotoBagBMW2", "Base.ATAMotoHarleyBag", "Base.ATAMotoHarleyHolster", "Base.SS100topbag3", "Base.90pierceArrowHoses", "Base.FireDeptHosesMedium" },
+      require = { "@CarSeat_All", "SeatRearLeft", "SeatRearRight", "Base.69miniMrBChair1", "Base.ATAMotoBagBMW1", "Base.ATAMotoBagBMW2", "Base.ATAMotoHarleyBag", "Base.ATAMotoHarleyHolster", "Base.SS100topbag3", "Base.90pierceArrowHoses", "Base.FireDeptHosesMedium" },
       globalItem = nil,
       conditionModifier = 0.5,
       anim = "VehicleWorkOnMid",
@@ -1075,7 +1075,7 @@ return {
 
     {
       name = "Fix Car seat 1",
-      require = { "@CarSeat_All", "SeatRearLeft", "SeatRearRight", "Base.ATAMotoBagBMW1", "Base.ATAMotoBagBMW2", "Base.ATAMotoHarleyBag", "Base.ATAMotoHarleyHolster", "Base.SS100topbag3", "Base.90pierceArrowHoses", "Base.FireDeptHosesMedium" },
+      require = { "@CarSeat_All", "SeatRearLeft", "SeatRearRight", "Base.69miniMrBChair1", "Base.ATAMotoBagBMW1", "Base.ATAMotoBagBMW2", "Base.ATAMotoHarleyBag", "Base.ATAMotoHarleyHolster", "Base.SS100topbag3", "Base.90pierceArrowHoses", "Base.FireDeptHosesMedium" },
       globalItems = {
         { tags = { "Scissors", "SharpKnife" }, consume = false, flags = { "IsNotDull", "MayDegradeLight" } },
         { tag = "Thread", uses = 3, consume = true },
@@ -1100,7 +1100,7 @@ return {
 
     {
       name = "Fix Car seat 2",
-      require = {"@CarSeat_All", "SeatRearLeft", "SeatRearRight" },
+      require = {"@CarSeat_All", "SeatRearLeft", "SeatRearRight", "Base.69miniMrBChair1" },
       globalItems = {
         { tags = { "Scissors", "SharpKnife" }, consume = false, flags = { "IsNotDull", "MayDegradeLight" } },
         { tag = "Thread", uses = 4, consume = true },
@@ -1125,7 +1125,7 @@ return {
 
     {
       name = "Fix Car seat 3",
-      require = {"@CarSeat_All", "SeatRearLeft", "SeatRearRight" },
+      require = {"@CarSeat_All", "SeatRearLeft", "SeatRearRight", "Base.69miniMrBChair1" },
       globalItem = { item = "Base.NutsBolts", uses = 6, consume = true },
       conditionModifier = 0.6,
       equip = { primaryTag = "Wrench", flags = { "MayDegradeLight" }, showModel = false },
