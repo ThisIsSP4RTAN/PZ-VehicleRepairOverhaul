@@ -1,4 +1,0 @@
-ItemName_TR = {
-    ItemName_VRO.FixAFlat = "Bir Parçayi Onarin",
-    ItemName_VRO.recipefiller = "empty recipe filler",
-}

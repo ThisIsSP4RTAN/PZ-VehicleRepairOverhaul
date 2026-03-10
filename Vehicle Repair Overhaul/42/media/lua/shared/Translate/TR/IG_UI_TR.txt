@@ -1,3 +1,0 @@
-IGUI_TR = {
-	IGUI_EER_RebuildEngine = "Motoru Yeniden Oluştur",
-}

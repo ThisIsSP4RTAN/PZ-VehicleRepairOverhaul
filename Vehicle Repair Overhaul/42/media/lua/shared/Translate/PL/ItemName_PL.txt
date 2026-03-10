@@ -1,4 +1,0 @@
-ItemName_PL = {
-	ItemName_VRO.FixAFlat = "Naprawa Przebitej Opony",
-    ItemName_VRO.recipefiller = "empty recipe filler",
-}

@@ -1,6 +1,0 @@
-ItemName_RU = {
-	ItemName_VRO.FixAFlat = "Герметик для автомобильных шин",
-	ItemName_VRO.recipefiller = "empty recipe filler",
-	ItemName_TW.MetalParts = "Металлические запчасти",
-	ItemName_TW.Spring = "Пружина",
-}
