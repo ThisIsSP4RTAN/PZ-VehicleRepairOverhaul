@@ -84,6 +84,6 @@ function ELRRepairLightbar:new(character, part, item, timeToRepair, repairBlocks
 	o.requiredParts   = requiredParts
 	o.targetCondition = targetCondition
 
-	o.jobType = getText("ContextMenu_Repair")..''..getText("IGUI_VehiclePartlightbar")
+	o.jobType = getText("ContextMenu_Repair")..' '..getText("IGUI_VehiclePartlightbar")
 	return o
 end

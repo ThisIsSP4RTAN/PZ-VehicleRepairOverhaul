@@ -108,6 +108,6 @@ function EHRRepairHeater:new(character, part, blowtorch, mask, timeToRepair, req
 	o.stopOnRun = true;
 	o.sound = nil
 
-	o.jobType = getText("ContextMenu_Repair")..''..getText("IGUI_VehiclePartHeater")
+	o.jobType = getText("ContextMenu_Repair")..' '..getText("IGUI_VehiclePartHeater")
 	return o
 end
