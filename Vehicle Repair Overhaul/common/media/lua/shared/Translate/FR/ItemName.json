@@ -1,6 +1,6 @@
 {
-	"ItemName_VRO.FixAFlat": "Bombe anti-crevaison",
-	"ItemName_VRO.recipefiller": "empty recipe filler",
-	"ItemName_TW.MetalParts": "Pièces de ferraille",
-	"ItemName_TW.Spring": "Ressort métallique"
+	"VRO.FixAFlat": "Bombe anti-crevaison",
+	"VRO.recipefiller": "empty recipe filler",
+	"TW.MetalParts": "Pièces de ferraille",
+	"TW.Spring": "Ressort métallique"
 }

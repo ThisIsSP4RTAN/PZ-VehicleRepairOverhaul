@@ -1,6 +1,6 @@
 {
-     "ItemName_VRO.FixAFlat": "Reifenreparaturspray",
-     "ItemName_VRO.recipefiller": "empty recipe filler",
-     "ItemName_TW.MetalParts": "Metallschrottteile",
-     "ItemName_TW.Spring": "Metallfeder"
+     "VRO.FixAFlat": "Reifenreparaturspray",
+     "VRO.recipefiller": "empty recipe filler",
+     "TW.MetalParts": "Metallschrottteile",
+     "TW.Spring": "Metallfeder"
 }
