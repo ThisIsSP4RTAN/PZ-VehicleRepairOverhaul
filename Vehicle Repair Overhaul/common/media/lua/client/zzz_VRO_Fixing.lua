@@ -2109,7 +2109,7 @@ local function invRepairLabel(item)
   local nm = (getItemNameFromFullType and getItemNameFromFullType(item:getFullType()))
            or (item.getDisplayName and item:getDisplayName())
            or (item.getType and item:getType()) or "Item"
-  return getText("ContextMenu_Repair") .. "" .. nm
+  return getText("ContextMenu_Repair") .. " " .. nm
 end
 
 local function addInventoryFixOptions(playerObj, context, broken)
