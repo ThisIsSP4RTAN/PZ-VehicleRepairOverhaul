@@ -150,7 +150,7 @@ local function buildJobType(part, brokenItem)
     if inv and inv.getDisplayName then name = inv:getDisplayName() end
   end
   if name and name ~= "" then
-    return label .. "" .. name
+    return label .. " " .. name
   end
   return label
 end
