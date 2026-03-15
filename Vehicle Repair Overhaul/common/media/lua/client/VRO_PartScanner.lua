@@ -227,7 +227,7 @@ local function _isVehicleMaintenanceCategory(si)
   local dc = _getScriptItemDisplayCategory(si)
   if not dc then return false end
   local s = _lc(dc):gsub("%s+", "")
-  return s == "vehiclemaintenance"
+  return s == "mechanics"
 end
 
 -- Tags extraction: best-effort
