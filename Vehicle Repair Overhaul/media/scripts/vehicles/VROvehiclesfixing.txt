@@ -707,7 +707,7 @@ module Vehicle Repairs
 
 	fixing Fix Military Windows Welding
 	{
-	   Require : V100Window1;V100Window2;V100Window3;V100Window8;WindowV100;SmallViewport0;LargeViewport0;M113FrontWindow8;M12Window2;M151A2Windshield2;M151A2SideWindow2;M35A2SideWindow2;M923SideWindow2;M923Gunport2;Int4700SideWindow2;Int4700RearWindow2;Int4700FrontWindow2;P19ASideWindow2;97BushFrontSideWindow2;97BushSideWindow2;M911SideWindow2;80manKat1FrontSideWindow2;87fordF700ArmoredFrontSideWindow2;87fordF700ArmoredRearSideWindow2;87fordF700ArmoredSmallWindow2;89defenderWolfFrontSideWindow2;lockMartM577Windshield2,
+	   Require : V100Window1;V100Window2;V100Window3;V100Window8;WindowV100;SmallViewport0;LargeViewport0;LargeViewportPack0;SmallViewportPack0;M113FrontWindow8;M12Window2;M151A2Windshield2;M151A2SideWindow2;M35A2SideWindow2;M923SideWindow2;M923Gunport2;Int4700SideWindow2;Int4700RearWindow2;Int4700FrontWindow2;P19ASideWindow2;97BushFrontSideWindow2;97BushSideWindow2;M911SideWindow2;80manKat1FrontSideWindow2;87fordF700ArmoredFrontSideWindow2;87fordF700ArmoredRearSideWindow2;87fordF700ArmoredSmallWindow2;89defenderWolfFrontSideWindow2;lockMartM577Windshield2,
 	   GlobalItem : BlowTorch=3,
 	   ConditionModifier : 1.0,
 	   

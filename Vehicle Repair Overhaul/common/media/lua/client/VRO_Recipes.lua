@@ -1749,7 +1749,7 @@ return {
 
     {
       name = "Fix Military Windows Welding",
-      require = "@MilitaryWindow_All",
+      require = { "@MilitaryWindow_All", "USMIL.LargeViewportPack0", "USMIL.SmallViewportPack0" },
       globalItem = { item = "Base.BlowTorch", uses = 3, consume = true },
       conditionModifier = 1.2,
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
