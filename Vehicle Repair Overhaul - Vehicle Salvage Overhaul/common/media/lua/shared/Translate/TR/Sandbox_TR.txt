@@ -1,6 +1,0 @@
-Sandbox_TR = {
-
-	Sandbox_VRO = "Vehicle Repair Overhaul"
-	
-	Sandbox_VRO_EnableFullVehicleSalvaging = "Tam Araç Kurtarma"
-}

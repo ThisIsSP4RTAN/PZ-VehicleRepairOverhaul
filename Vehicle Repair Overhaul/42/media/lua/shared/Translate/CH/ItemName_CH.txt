@@ -1,4 +1,0 @@
-ItemName_CH = {
-	ItemName_VRO.FixAFlat = "爆胎剋星",
-	ItemName_VRO.recipefiller = "empty recipe filler",
-}

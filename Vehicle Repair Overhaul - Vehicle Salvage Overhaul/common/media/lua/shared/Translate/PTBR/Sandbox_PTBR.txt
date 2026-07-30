@@ -1,6 +1,0 @@
-Sandbox_PTBR = {
-
-	Sandbox_VRO = "Vehicle Repair Overhaul"
-	
-	Sandbox_VRO_EnableFullVehicleSalvaging = "Salvamento Completo de Veículos"
-}

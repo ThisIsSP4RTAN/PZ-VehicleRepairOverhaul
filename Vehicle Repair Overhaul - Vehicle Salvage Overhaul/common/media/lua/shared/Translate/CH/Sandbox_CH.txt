@@ -1,6 +1,0 @@
-Sandbox_CH = {
-
-	Sandbox_VRO = "Vehicle Repair Overhaul"
-	
-	Sandbox_VRO_EnableFullVehicleSalvaging = "整车回收"
-}

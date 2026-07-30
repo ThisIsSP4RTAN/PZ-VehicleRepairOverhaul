@@ -1,3 +1,0 @@
-IGUI_CN = {
-    IGUI_CraftCategory_Salvage = "车辆回收",
-}

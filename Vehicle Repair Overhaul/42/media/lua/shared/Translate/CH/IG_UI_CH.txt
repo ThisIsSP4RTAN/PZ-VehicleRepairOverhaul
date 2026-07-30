@@ -1,3 +1,0 @@
-IGUI_CH = {
-	IGUI_EER_RebuildEngine = "重新建造引擎",
-}
