@@ -179,6 +179,28 @@ function Commands.doReturns(player, args)
   _rollAwardsToTarget(player, false, player, pool)
 end
 
+function Commands.dropSalvage(player, args)
+  if not (player and args and args.items) then return end
+  local x, y, z = tonumber(args.x), tonumber(args.y), tonumber(args.z)
+  if not (x and y and z) then return end
+  local cell = getCell()
+  local sq = cell and cell:getGridSquare(x, y, z)
+  if not sq then return end
+  for _, d in ipairs(args.items) do
+    if d and d.t then
+      local fullType = tostring(d.t)
+      if not string.find(fullType, "%.") then fullType = "Base." .. fullType end
+      local it = instanceItem(fullType)
+      if it then
+        -- Use the scatter offset rolled on the client so the layout matches.
+        local ox = tonumber(d.ox) or ZombRandFloat(0, 0.9)
+        local oy = tonumber(d.oy) or ZombRandFloat(0, 0.9)
+        sq:AddWorldInventoryItem(it, ox, oy, 0)
+      end
+    end
+  end
+end
+
 function VRO_Salvage_Server_DoReturns(player, recipeKey)
   if not player then return end
   return Commands.doReturns(player, { recipe = recipeKey, playerIndex = player:getPlayerNum() })

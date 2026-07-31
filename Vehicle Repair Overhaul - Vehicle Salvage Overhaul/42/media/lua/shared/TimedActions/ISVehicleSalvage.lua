@@ -86,6 +86,7 @@ function ISVehicleSalvage:perform()
         self.character:getEmitter():stopSound(self.sound)
     end
     local totalXp = 10;
+    self.salvageDrops = {}
     for i=1,math.max(6,self.character:getPerkLevel(Perks.MetalWelding)) do
         if self:checkAddItem("MetalBar", 15) then totalXp = totalXp + 2 end;
         if self:checkAddItem("MetalBar", 20) then totalXp = totalXp + 2 end;
@@ -130,9 +131,23 @@ function ISVehicleSalvage:perform()
         if self:checkAddItem("NutsBolts", 12) then totalXp = totalXp + 2 end;
     end
 
+    local salvageSquare = self.vehicle:getSquare()
     if isClient() then
+        if salvageSquare and #self.salvageDrops > 0 then
+            sendClientCommand(self.character, "vro_salvage", "dropSalvage", {
+                items = self.salvageDrops,
+                x = salvageSquare:getX(),
+                y = salvageSquare:getY(),
+                z = salvageSquare:getZ(),
+            })
+        end
         sendClientCommand(self.character, "vro_salvage", "drainTorch", { uses = 10 })
     else
+        if salvageSquare then
+            for _, d in ipairs(self.salvageDrops) do
+                salvageSquare:AddWorldInventoryItem(d.t, d.ox, d.oy, 0)
+            end
+        end
         for i=1,10 do
             self.item:Use()
         end
@@ -153,8 +168,12 @@ end
 
 function ISVehicleSalvage:checkAddItem(item, baseChance)
     if ZombRand(baseChance-self.character:getPerkLevel(Perks.MetalWelding)) == 0 then
-        --		self.character:getInventory():AddItem(item);
-        self.vehicle:getSquare():AddWorldInventoryItem(item, ZombRandFloat(0,0.9), ZombRandFloat(0,0.9), 0);
+        self.salvageDrops = self.salvageDrops or {}
+        self.salvageDrops[#self.salvageDrops + 1] = {
+            t = item,
+            ox = ZombRandFloat(0,0.9),
+            oy = ZombRandFloat(0,0.9),
+        }
         return true;
     end
     return false;
