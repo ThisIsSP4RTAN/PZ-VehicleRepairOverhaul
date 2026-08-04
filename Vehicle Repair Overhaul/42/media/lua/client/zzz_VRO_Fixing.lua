@@ -4,10 +4,10 @@ require "Vehicles/ISUI/ISVehicleMechanics"
 require "ISUI/ISToolTip"
 require "ISUI/ISInventoryPaneContextMenu"
 require "TimedActions/ISBaseTimedAction"
-require "TimedActions/ISPathFindAction"
+require "Vehicles/TimedActions/ISPathFindAction"
 require "TimedActions/ISEquipWeaponAction"
 require "TimedActions/ISUnequipAction"
-require "VRO_DoFixAction"
+require "TimedActions/VRO_DoFixAction"
 
 local VRO = require "VRO/Core"
 VRO.__index = VRO
