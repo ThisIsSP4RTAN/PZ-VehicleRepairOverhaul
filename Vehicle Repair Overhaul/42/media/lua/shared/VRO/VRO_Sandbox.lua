@@ -70,25 +70,50 @@ function VRO.UseVanillaFixingRecipes()
     return false
 end
 
--- Nearby-material options are read on each menu/action build, allowing normal
--- sandbox option changes to take effect without a Lua reload.
+-- Read B42's live option object instead of the SandboxVars table, which is a
+-- startup snapshot.  SandboxVars remains the fallback for older builds and for
+-- the short period before the live options object is available.
+local function _getLiveSandboxValue(name)
+    if not getSandboxOptions then return nil end
+
+    local ok, sandboxOptions = pcall(getSandboxOptions)
+    if not (ok and sandboxOptions and sandboxOptions.getOptionByName) then return nil end
+
+    local optionOk, option = pcall(function()
+        return sandboxOptions:getOptionByName(name)
+    end)
+    if not (optionOk and option and option.getValue) then return nil end
+
+    local valueOk, value = pcall(function() return option:getValue() end)
+    if valueOk then return value end
+    return nil
+end
+
+local function _getNearbySandboxValue(name, legacyKey)
+    local value = _getLiveSandboxValue(name)
+    if value ~= nil then return value end
+    if not SandboxVars then return nil end
+    if SandboxVars[name] ~= nil then return SandboxVars[name] end
+    if SandboxVars.VRO and SandboxVars.VRO[legacyKey] ~= nil then
+        return SandboxVars.VRO[legacyKey]
+    end
+    return nil
+end
+
+-- Nearby-material options are resolved on each menu/action build, so changing
+-- them during a running B42 game takes effect without reloading Lua.
 function VRO.UseNearbyContainers()
-    if not SandboxVars then return true end
-    if SandboxVars.VRO_UseNearbyContainers ~= nil then return SandboxVars.VRO_UseNearbyContainers == true end
-    if SandboxVars.VRO and SandboxVars.VRO.UseNearbyContainers ~= nil then return SandboxVars.VRO.UseNearbyContainers == true end
-    return true
+    local value = _getNearbySandboxValue("VRO_UseNearbyContainers", "UseNearbyContainers")
+    return value == nil or value == true
 end
 
 function VRO.GetNearbySearchRadius()
-    local value = SandboxVars and (SandboxVars.VRO_NearbySearchRadius
-        or (SandboxVars.VRO and SandboxVars.VRO.NearbySearchRadius)) or 2
+    local value = _getNearbySandboxValue("VRO_NearbySearchRadius", "NearbySearchRadius")
     value = tonumber(value) or 2
     return math.max(1, math.min(10, math.floor(value)))
 end
 
 function VRO.SearchNearbyGroundItems()
-    if not SandboxVars then return true end
-    if SandboxVars.VRO_SearchNearbyGroundItems ~= nil then return SandboxVars.VRO_SearchNearbyGroundItems == true end
-    if SandboxVars.VRO and SandboxVars.VRO.SearchNearbyGroundItems ~= nil then return SandboxVars.VRO.SearchNearbyGroundItems == true end
-    return true
+    local value = _getNearbySandboxValue("VRO_SearchNearbyGroundItems", "SearchNearbyGroundItems")
+    return value == nil or value == true
 end
