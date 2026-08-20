@@ -1,4 +1,6 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch
+require "TimedActions/ISBaseTimedAction"
+require "TimedActions/ISInventoryTransferAction"
 -- Nearby materials are only exposed through the virtual inventory used while
 -- building repair options.  Consumption remains VRO's normal player-inventory
 -- timed action/server-command path after the selected items are staged.
@@ -180,6 +182,19 @@ end
 function NearbyInventory.queueItemToPlayer(playerObj, item)
     if not item or item:getContainer() == playerObj:getInventory() then return true end
     if NearbyInventory._queued[item] then return true end
+
+    local source = item:getContainer()
+    if source then
+        local ok, action = pcall(function()
+            return ISInventoryTransferAction:new(playerObj, item, source, playerObj:getInventory(), 10)
+        end)
+        if not (ok and action) then return false end
+        NearbyInventory._queued[item] = true
+        ISTimedActionQueue.add(action)
+        return true
+    end
+
+    -- Loose ground items need the game's normal pickup handling.
     if not (ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.transferIfNeeded) then return false end
     NearbyInventory._queued[item] = true
     local ok = pcall(ISInventoryPaneContextMenu.transferIfNeeded, playerObj, item)
@@ -198,6 +213,133 @@ function NearbyInventory.queueBundleToPlayer(playerObj, bundle)
             return false
         end
     end
+    return true
+end
+
+local function _bundlesAreInPlayerInventory(playerObj, bundles)
+    local inventory = playerObj and playerObj:getInventory()
+    if not inventory then return false end
+
+    local required = {}
+    for i = 1, #bundles do
+        local bundle = bundles[i]
+        if bundle then
+            for j = 1, #bundle do
+                local entry = bundle[j]
+                local item = entry and entry.item
+                local fullType = item and item.getFullType and item:getFullType()
+                if fullType then
+                    required[fullType] = (required[fullType] or 0) + (entry.takeUses or 1)
+                end
+            end
+        end
+    end
+
+    for fullType, needed in pairs(required) do
+        local items = ArrayList.new()
+        inventory:getAllTypeRecurse(fullType, items)
+        local available = 0
+        for i = 0, items:size() - 1 do
+            local item = items:get(i)
+            if item then
+                if item.getDrainableUsesInt then
+                    available = available + item:getDrainableUsesInt()
+                elseif item.getCurrentUses then
+                    available = available + item:getCurrentUses()
+                else
+                    available = available + 1
+                end
+                if available >= needed then break end
+            end
+        end
+        if available < needed then return false end
+    end
+    return true
+end
+
+local function _bundleSummary(bundles)
+    local required, names = {}, {}
+    for i = 1, #bundles do
+        local bundle = bundles[i]
+        if bundle then
+            for j = 1, #bundle do
+                local entry = bundle[j]
+                local item = entry and entry.item
+                local fullType = item and item.getFullType and item:getFullType()
+                if fullType then
+                    required[fullType] = (required[fullType] or 0) + (entry.takeUses or 1)
+                end
+            end
+        end
+    end
+    for fullType, uses in pairs(required) do
+        names[#names + 1] = fullType .. "=" .. tostring(uses)
+    end
+    table.sort(names)
+    return table.concat(names, ", ")
+end
+
+local StageBundlesAction = ISBaseTimedAction:derive("VRO_StageBundlesAction")
+
+function StageBundlesAction:isValid()
+    return self.character ~= nil
+end
+
+function StageBundlesAction:perform()
+    local ready = _bundlesAreInPlayerInventory(self.character, self.bundles)
+    ISBaseTimedAction.perform(self)
+
+    if ready then
+        print("[VRO][Nearby] Materials staged; queuing repair: " .. _bundleSummary(self.bundles))
+        -- The timed-action queue is still finalizing this action during
+        -- perform().  Adding the path/repair on the next tick avoids losing
+        -- that handoff when the queue removes its current action.
+        if Events and Events.OnTick then
+            local onReady = self.onReady
+            local function deferRepairQueue()
+                Events.OnTick.Remove(deferRepairQueue)
+                print("[VRO][Nearby] Handing staged materials to repair queue")
+                onReady()
+            end
+            Events.OnTick.Add(deferRepairQueue)
+        else
+            self.onReady()
+        end
+    elseif self.attempts < 3 then
+        -- A transfer can be deferred by movement or another queued action.
+        -- Put a fresh check behind its retry rather than racing it on OnTick.
+        for i = 1, #self.bundles do
+            NearbyInventory.queueBundleToPlayer(self.character, self.bundles[i])
+        end
+        ISTimedActionQueue.add(StageBundlesAction:new(
+            self.character, self.bundles, self.onReady, self.attempts + 1))
+    else
+        print("[VRO][Nearby] Materials did not finish staging: " .. _bundleSummary(self.bundles))
+    end
+end
+
+function StageBundlesAction:new(character, bundles, onReady, attempts)
+    local o = ISBaseTimedAction.new(self, character)
+    o.character = character
+    o.bundles = bundles
+    o.onReady = onReady
+    o.attempts = attempts or 0
+    o.maxTime = 1
+    o.stopOnWalk = false
+    o.stopOnRun = false
+    return o
+end
+
+-- transferIfNeeded queues normal inventory actions.  Insert a small action
+-- after them, then enqueue the dependent repair only after all selected items
+-- have reached the player's inventory.
+function NearbyInventory.stageBundlesThen(playerObj, bundles, onReady)
+    if not (playerObj and bundles and onReady) then return false end
+    for i = 1, #bundles do
+        if not NearbyInventory.queueBundleToPlayer(playerObj, bundles[i]) then return false end
+    end
+    if not ISTimedActionQueue then return false end
+    ISTimedActionQueue.add(StageBundlesAction:new(playerObj, bundles, onReady))
     return true
 end
 

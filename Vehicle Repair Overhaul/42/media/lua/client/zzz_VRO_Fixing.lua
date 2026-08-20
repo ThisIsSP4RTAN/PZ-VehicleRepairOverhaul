@@ -1679,12 +1679,11 @@ local function queueEquipActions(playerObj, eq, torchHint, lookupInv)
   return chosenPrimary, chosenSecondary, equipKeep
 end
 
--- Search uses the virtual nearby inventory.  Before the normal VRO action is
--- queued, stage every exact external selection into the real player inventory.
-local function stageRepairBundles(playerObj, fixerBundle, globalBundle, globalKeep)
-  return NearbyInventory.queueBundleToPlayer(playerObj, fixerBundle)
-     and NearbyInventory.queueBundleToPlayer(playerObj, globalBundle)
-     and NearbyInventory.queueBundleToPlayer(playerObj, globalKeep)
+-- Search uses the virtual nearby inventory.  Wait for every selected external
+-- material to arrive before creating the dependent repair/equip actions.
+local function stageRepairBundles(playerObj, fixerBundle, globalBundle, globalKeep, onReady)
+  return NearbyInventory.stageBundlesThen(playerObj,
+    { fixerBundle, globalBundle, globalKeep }, onReady)
 end
 
 local function findRepairParentOption(context, matcherFn)
@@ -2009,30 +2008,32 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           rendered = true
           -- we already have torchGlobal above; pass it through
           option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
+            -- Pathfinding clears/rebuilds the timed-action queue as it starts.
+            -- It must therefore precede material staging and the repair action.
             queuePathToPartArea(p, prt)
-            if not stageRepairBundles(p, fxB, glB, glK) then return end
-            local chosenP, chosenS, equipKeep, err =
-              queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint,
-                NearbyInventory.getEffectiveInventory(p))
-            if err == "need_torch_uses" then
-              return
-            end
+            if not stageRepairBundles(p, fxB, glB, glK, function()
+              local repairEq = mergeEquip(fixr.equip, fixg.equip)
+              local chosenP, chosenS, equipKeep, err =
+                queueEquipActions(p, repairEq, torchHint, NearbyInventory.getEffectiveInventory(p))
+              if err == "need_torch_uses" then return end
 
-            local torchUses = _weldingUses(fixr, fixg)
-            local tm    = resolveTime(fixr, fixg, p, brk)
-            local anim  = resolveAnim(fixr, fixg)
-            local sfx   = resolveSound(fixr, fixg)
-            local sfxOK = resolveSuccessSound(fixr, fixg)
-            local showM = resolveShowModel(fixr, fixg)
-            local noHands = not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
-            if noHands then showM = false end
-            ISTimedActionQueue.add(VRO.DoFixAction:new{
-              character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
-              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
-              equipKeep=equipKeep,time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
-              showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
-              torchUses=torchUses,
-            })
+              local torchUses = _weldingUses(fixr, fixg)
+              local tm    = resolveTime(fixr, fixg, p, brk)
+              local anim  = resolveAnim(fixr, fixg)
+              local sfx   = resolveSound(fixr, fixg)
+              local sfxOK = resolveSuccessSound(fixr, fixg)
+              local showM = resolveShowModel(fixr, fixg)
+              local noHands = not (repairEq.primary or repairEq.primaryTag or repairEq.secondary or repairEq.secondaryTag)
+              if noHands then showM = false end
+              print("[VRO][Nearby] Path and vehicle repair actions queued")
+              ISTimedActionQueue.add(VRO.DoFixAction:new{
+                character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
+                brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
+                equipKeep=equipKeep,time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
+                showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
+                torchUses=torchUses,
+              })
+            end) then return end
           end, part, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else
           option = sub:addOption(label, nil, nil); option.notAvailable = true
@@ -2346,37 +2347,30 @@ local function addInventoryFixOptions(playerObj, context, broken)
           rendered = true
           -- we already have torchGlobal above; pass it through
           option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
-            if not stageRepairBundles(p, fxB, glB, glK) then return end
-            local chosenP, chosenS, equipKeep, err =
-              queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint,
-                NearbyInventory.getEffectiveInventory(p))
-            if err == "need_torch_uses" then
-              return
-            end
+            if not stageRepairBundles(p, fxB, glB, glK, function()
+              local repairEq = mergeEquip(fixr.equip, fixg.equip)
+              local chosenP, chosenS, equipKeep, err =
+                queueEquipActions(p, repairEq, torchHint, NearbyInventory.getEffectiveInventory(p))
+              if err == "need_torch_uses" then return end
 
-            local torchUses = _weldingUses(fixr, fixg)
-            local tm    = resolveTime(fixr, fixg, p, brk)
-            local anim  = resolveInvAnim(fixr, fixg)
-            local sfx   = resolveSound(fixr, fixg)
-            local sfxOK = resolveSuccessSound(fixr, fixg)
-            local showM = resolveShowModel(fixr, fixg)
-            local noHands = not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
-            if noHands then showM = false end
+              local torchUses = _weldingUses(fixr, fixg)
+              local tm    = resolveTime(fixr, fixg, p, brk)
+              local anim  = resolveInvAnim(fixr, fixg)
+              local sfx   = resolveSound(fixr, fixg)
+              local sfxOK = resolveSuccessSound(fixr, fixg)
+              local showM = resolveShowModel(fixr, fixg)
+              local noHands = not (repairEq.primary or repairEq.primaryTag or repairEq.secondary or repairEq.secondaryTag)
+              if noHands then showM = false end
+              print("[VRO][Nearby] Inventory repair action queued")
 
-            if brk and brk.getContainer then
-              local inv = p and p.getInventory and p:getInventory() or nil
-              if not inv or brk:getContainer() ~= inv then
-                ISInventoryPaneContextMenu.transferIfNeeded(p, brk)
-              end
-            end
-
-            ISTimedActionQueue.add(VRO.DoFixAction:new{
-              character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
-              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
-              equipKeep=equipKeep, time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
-              showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
-              torchUses=torchUses,
-            })
+              ISTimedActionQueue.add(VRO.DoFixAction:new{
+                character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
+                brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
+                equipKeep=equipKeep, time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
+                showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
+                torchUses=torchUses,
+              })
+            end) then return end
           end, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else
           option = sub:addOption(label, nil, nil); option.notAvailable = true

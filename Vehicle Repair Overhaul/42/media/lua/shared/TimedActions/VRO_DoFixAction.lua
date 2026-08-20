@@ -346,13 +346,17 @@ end
 VRO.DoFixAction = ISBaseTimedAction:derive("VRO_DoFixAction")
 
 function VRO.DoFixAction:isValid()
+  local valid = false
   if self.part and self.part:getVehicle() then
-    return _hasEnoughNow(self)
+    valid = _hasEnoughNow(self)
+  elseif self.brokenItem then
+    valid = _hasEnoughNow(self)
   end
-  if self.brokenItem then
-    return _hasEnoughNow(self)
+  if not valid and not self._loggedInvalid then
+    self._loggedInvalid = true
+    print("[VRO][Repair] Action rejected: required materials are not in the player inventory")
   end
-  return false
+  return valid
 end
 
 function VRO.DoFixAction:waitToStart()
@@ -388,10 +392,12 @@ end
 function VRO.DoFixAction:start()
   local anim = self.actionAnim or defaultAnimForPart(self.part)
   if anim and self.setActionAnim then self:setActionAnim(anim) end
-    if not _hasEnoughNow(self) then
+  if not _hasEnoughNow(self) then
+    print("[VRO][Repair] Action stopped at start: required materials are missing")
     self:forceStop()
     return
   end
+  print("[VRO][Repair] Action started")
 
   if self.setOverrideHandModels then
     if self.showModel ~= false then
@@ -508,6 +514,7 @@ function VRO.DoFixAction:perform()
     args.consumeMap = _mergeCounts(c1, c2)
 
     args.keepFlags = _packKeepFlags(self, self.keepFlagTargets)
+    print("[VRO][Repair] Dispatching vehicle repair to server")
     sendClientCommand(self.character, 'VRO_vehicle', 'doFix', args)
     else
       -- ===== Loose inventory item → server does the mutation now =====
@@ -546,6 +553,7 @@ function VRO.DoFixAction:perform()
       args.consumeMap = _mergeCounts(c1, c2)
       args.keepFlags = _packKeepFlags(self, self.keepFlagTargets)
 
+      print("[VRO][Repair] Dispatching inventory repair to server")
       sendClientCommand(self.character, 'VRO_vehicle', 'doFixInventory', args)
     end
 
