@@ -5,5 +5,11 @@
 	"Sandbox_VRO_EnableEngineRebuild_tooltip": "Toggle whether the Engine Rebuild action is available in-game. (If Project Summer Car or another engine repair mod is enabled, this setting does nothing)",
 	
 	"Sandbox_VRO_UseVanillaFixingRecipes": "Old Repair System",
-	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Use the original repair system that allows repairs to be done standing in place, doesn't use a welding mask, any sounds or animations."
+	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Use the original repair system that allows repairs to be done standing in place, doesn't use a welding mask, any sounds or animations.",
+	"Sandbox_VRO_UseNearbyContainers": "Search nearby containers",
+	"Sandbox_VRO_UseNearbyContainers_tooltip": "Allow Vehicle Repair Overhaul to use repair materials stored in nearby containers.",
+	"Sandbox_VRO_NearbySearchRadius": "Search radius",
+	"Sandbox_VRO_NearbySearchRadius_tooltip": "Maximum distance in tiles used when searching for nearby repair materials.",
+	"Sandbox_VRO_SearchNearbyGroundItems": "Search items on the ground",
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Allow repair materials lying on the ground within the search radius to be used."
 }

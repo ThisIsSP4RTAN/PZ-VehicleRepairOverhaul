@@ -8,6 +8,7 @@ require "Vehicles/TimedActions/ISPathFindAction"
 require "TimedActions/ISEquipWeaponAction"
 require "TimedActions/ISUnequipAction"
 require "TimedActions/VRO_DoFixAction"
+local NearbyInventory = require "VRO_NearbyInventory"
 
 local VRO = require "VRO/Core"
 VRO.__index = VRO
@@ -1149,7 +1150,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   local function markSeenItemFT(ft) if ft then seenFull[ft] = true end end
   local function wasSeenFT(ft) return ft and seenFull[ft] == true end
 
-  local inv = player:getInventory()
+  local inv = NearbyInventory.getEffectiveInventory(player)
 
   -- count total "uses" for a fullType (cap at need)
   local function invHaveForFullType(fullType, capTo)
@@ -1447,17 +1448,6 @@ end
 ----------------------------------------------------------------
 -- E) Context Menu Injection (attach to vanilla "Repair")
 ----------------------------------------------------------------
-local function toPlayerInventory(playerObj, it)
-  if not it then return end
-  if it:getContainer() ~= playerObj:getInventory() then
-    if ISVehiclePartMenu and ISVehiclePartMenu.toPlayerInventory then
-      ISVehiclePartMenu.toPlayerInventory(playerObj, it)
-    else
-      playerObj:getInventory():AddItem(it)
-    end
-  end
-end
-
 -- does an already-held / already-worn item satisfy a spec { item=..., tag=..., tags=... } ?
 local function _equippedSatisfies(it, spec, needUses)
   if not (it and spec) then return false end
@@ -1496,17 +1486,18 @@ local function _equippedSatisfies(it, spec, needUses)
 end
 
 -- returns (chosenPrimary, chosenSecondary, equipKeep[, err])
-local function queueEquipActions(playerObj, eq, torchHint)
+local function queueEquipActions(playerObj, eq, torchHint, lookupInv)
   if not eq then return nil, nil, nil end
 
-  local inv        = playerObj:getInventory()
+  local playerInv  = playerObj:getInventory()
+  local inv        = lookupInv or NearbyInventory.getEffectiveInventory(playerObj)
   local equipKeep  = {}
 
   -- make sure an item is actually in the player inventory (not in a bag)
   local function _ensureInPlayerInv(it)
     if not it then return end
-    if it:getContainer() ~= inv then
-      toPlayerInventory(playerObj, it)
+    if it:getContainer() ~= playerInv then
+      NearbyInventory.queueItemToPlayer(playerObj, it)
     end
   end
 
@@ -1686,6 +1677,14 @@ local function queueEquipActions(playerObj, eq, torchHint)
 
   if #equipKeep == 0 then equipKeep = nil end
   return chosenPrimary, chosenSecondary, equipKeep
+end
+
+-- Search uses the virtual nearby inventory.  Before the normal VRO action is
+-- queued, stage every exact external selection into the real player inventory.
+local function stageRepairBundles(playerObj, fixerBundle, globalBundle, globalKeep)
+  return NearbyInventory.queueBundleToPlayer(playerObj, fixerBundle)
+     and NearbyInventory.queueBundleToPlayer(playerObj, globalBundle)
+     and NearbyInventory.queueBundleToPlayer(playerObj, globalKeep)
 end
 
 local function findRepairParentOption(context, matcherFn)
@@ -1900,7 +1899,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
       local fixers = fixing.fixers or {}
       for idx = 1, #fixers do
         local fixer = fixers[idx]
-        local inv = playerObj:getInventory()
+        local inv = NearbyInventory.getEffectiveInventory(playerObj)
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
         local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle, glKeep = true, nil, nil
@@ -2011,8 +2010,10 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           -- we already have torchGlobal above; pass it through
           option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
             queuePathToPartArea(p, prt)
+            if not stageRepairBundles(p, fxB, glB, glK) then return end
             local chosenP, chosenS, equipKeep, err =
-              queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint)
+              queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint,
+                NearbyInventory.getEffectiveInventory(p))
             if err == "need_torch_uses" then
               return
             end
@@ -2243,7 +2244,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
       local fixers = fixing.fixers or {}
       for idx = 1, #fixers do
         local fixer = fixers[idx]
-        local inv = playerObj:getInventory()
+        local inv = NearbyInventory.getEffectiveInventory(playerObj)
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
         local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle, glKeep = true, nil, nil
@@ -2345,8 +2346,10 @@ local function addInventoryFixOptions(playerObj, context, broken)
           rendered = true
           -- we already have torchGlobal above; pass it through
           option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
+            if not stageRepairBundles(p, fxB, glB, glK) then return end
             local chosenP, chosenS, equipKeep, err =
-              queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint)
+              queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint,
+                NearbyInventory.getEffectiveInventory(p))
             if err == "need_torch_uses" then
               return
             end

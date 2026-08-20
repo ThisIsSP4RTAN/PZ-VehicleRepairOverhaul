@@ -69,3 +69,26 @@ function VRO.UseVanillaFixingRecipes()
     end
     return false
 end
+
+-- Nearby-material options are read on each menu/action build, allowing normal
+-- sandbox option changes to take effect without a Lua reload.
+function VRO.UseNearbyContainers()
+    if not SandboxVars then return true end
+    if SandboxVars.VRO_UseNearbyContainers ~= nil then return SandboxVars.VRO_UseNearbyContainers == true end
+    if SandboxVars.VRO and SandboxVars.VRO.UseNearbyContainers ~= nil then return SandboxVars.VRO.UseNearbyContainers == true end
+    return true
+end
+
+function VRO.GetNearbySearchRadius()
+    local value = SandboxVars and (SandboxVars.VRO_NearbySearchRadius
+        or (SandboxVars.VRO and SandboxVars.VRO.NearbySearchRadius)) or 2
+    value = tonumber(value) or 2
+    return math.max(1, math.min(10, math.floor(value)))
+end
+
+function VRO.SearchNearbyGroundItems()
+    if not SandboxVars then return true end
+    if SandboxVars.VRO_SearchNearbyGroundItems ~= nil then return SandboxVars.VRO_SearchNearbyGroundItems == true end
+    if SandboxVars.VRO and SandboxVars.VRO.SearchNearbyGroundItems ~= nil then return SandboxVars.VRO.SearchNearbyGroundItems == true end
+    return true
+end
