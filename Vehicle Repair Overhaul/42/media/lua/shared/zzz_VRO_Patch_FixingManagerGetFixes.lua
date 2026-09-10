@@ -1,5 +1,3 @@
-if isClient() then return end
-
 if FixingManager and FixingManager.getFixes and not FixingManager._VRO_orig_getFixes then
     FixingManager._VRO_orig_getFixes = FixingManager.getFixes
 

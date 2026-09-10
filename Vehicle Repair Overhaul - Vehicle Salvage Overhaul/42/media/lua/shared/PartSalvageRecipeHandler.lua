@@ -16,10 +16,7 @@ local function _loadSharedPartListsOnce()
   if VRO._partListsLoaded then return end
   VRO._partListsLoaded = true
 
-  local ok, mod = pcall(require, "VRO/PartLists")
-  if ok and type(mod) == "table" then _mergeLists(VRO.PartLists, mod) end
-
-  ok, mod = pcall(require, "VRO_PartLists")
+  local ok, mod = pcall(require, "VRO_PartLists")
   if ok and type(mod) == "table" then _mergeLists(VRO.PartLists, mod) end
 end
 

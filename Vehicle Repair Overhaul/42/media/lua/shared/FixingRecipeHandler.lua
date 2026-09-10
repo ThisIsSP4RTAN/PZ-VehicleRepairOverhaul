@@ -98,14 +98,17 @@ local function injectFixingRequire(fixingName, itemListOrToken)
 
   local validItems = _flattenTokens(tokens)
 
+  local inputString
   if #validItems > 0 then
     -- Fixing.Load accepts a single script-like string chunk with Require entries (; delimited)
-    local inputString = "{ Require = " .. table.concat(validItems, ";") .. ", }"
-    fixing:Load(fixingName, inputString)
+    inputString = "{ Require = " .. table.concat(validItems, ";") .. ", }"
     --print("[VRO] [Fixing] Injected Require list for:", fixingName)
   else
-    --print(("[VRO] [Fixing] No valid items for '%s'; leaving recipe unchanged."):format(fixingName))
+    inputString = "{ Require = VRO.recipefiller, }"
+    --print(("[VRO] [Fixing] No valid items for '%s'; loaded non-matching placeholder."):format(fixingName))
   end
+
+  fixing:Load(fixingName, inputString)
 end
 
 local function injectAllFixingRequires()
