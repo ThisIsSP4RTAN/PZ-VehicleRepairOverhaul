@@ -1,7 +1,6 @@
 require "Vehicles/ISUI/ISVehicleMechanics"
 local VRO = require "VRO/Core"
 pcall(require, "VRO/VRO_Sandbox")
-pcall(require, "VRO_Sandbox")
 
 local function VRO_IsEngineRebuildEnabled()
   if VRO and VRO.IsEngineRebuildEnabled then

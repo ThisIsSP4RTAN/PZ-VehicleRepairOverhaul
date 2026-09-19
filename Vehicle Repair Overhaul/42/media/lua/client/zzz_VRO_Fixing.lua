@@ -195,11 +195,7 @@ local function _appendRecipesFrom(source)
 end
 
 local function VRO_LoadExternalRecipes()
-
-  local ok, mod = pcall(require, "VRO/Recipes")
-  if ok and mod then _appendRecipesFrom(mod) end
-
-  ok, mod = pcall(require, "VRO_Recipes")
+  local ok, mod = pcall(require, "VRO_Recipes")
   if ok and mod then _appendRecipesFrom(mod) end
 end
 VRO_LoadExternalRecipes()
@@ -226,10 +222,7 @@ local function _merge(dst, src)
 end
 
 local function VRO_LoadAccessOverrides()
-  local ok, mod = pcall(require, "VRO/AccessOverrides")
-  if not ok or type(mod) ~= "table" then
-    ok, mod = pcall(require, "VRO_AccessOverrides")
-  end
+  local ok, mod = pcall(require, "VRO_AccessOverrides")
   if ok and type(mod) == "table" then
     _merge(VRO.AccessOverrides, mod)
     return
