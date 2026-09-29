@@ -60,18 +60,17 @@ function EHR_Commands.repairHeater(player, args)
 	local tgt  = math.min(maxC, tonumber(args.targetCondition) or maxC)
 	part:setCondition(tgt)
 
-	-- Count a “repair” and mirror to the installed inventory item
-	local md = part:getModData()
-	md.VRO_HaveBeenRepaired = (md.VRO_HaveBeenRepaired or 0) + 1
-
+	-- Count a “repair” on the installed ITEM (source of truth; travels with the
+	-- part). The slot's modData is intentionally not used as the counter, so
+	-- the count can't leak between different items installed in this slot.
 	local inv = part.getInventoryItem and part:getInventoryItem() or nil
 	if inv then
 		if inv.setCondition then inv:setCondition(part:getCondition()) end
 		if inv.setHaveBeenRepaired then
-			inv:setHaveBeenRepaired(md.VRO_HaveBeenRepaired or 0)
+			inv:setHaveBeenRepaired((inv:getHaveBeenRepaired() or 0) + 1)
 		else
 			local imd = inv:getModData()
-			imd.VRO_HaveBeenRepaired = md.VRO_HaveBeenRepaired or 0
+			imd.VRO_HaveBeenRepaired = (imd.VRO_HaveBeenRepaired or 0) + 1
 		end
 		if inv.syncItemFields then inv:syncItemFields() end
 	end

@@ -256,15 +256,6 @@ local function _persistInstalledPart(vehicle, part)
   local inv = part.getInventoryItem and part:getInventoryItem() or nil
   if inv then
     if inv.setCondition then inv:setCondition(part:getCondition()) end
-    -- Mirror "times repaired" from part modData to item (native API if present)
-    local pmd = part:getModData()
-    local hbr = (pmd and pmd.VRO_HaveBeenRepaired) or 0
-    if inv.setHaveBeenRepaired then
-      inv:setHaveBeenRepaired(hbr)
-    else
-      local imd = inv:getModData()
-      imd.VRO_HaveBeenRepaired = hbr
-    end
     if inv.syncItemFields then inv:syncItemFields() end
   end
 
@@ -383,11 +374,22 @@ end
 
 -- Choose the best candidate from inventory when multiples exist:
 -- pick the item with the LOWEST condition among matching fullType.
-local function _pickInventoryTarget(player, fullType)
+local function _pickInventoryTarget(player, fullType, itemId)
   local inv = player and player:getInventory()
   if not (inv and fullType) then return nil end
   local list = ArrayList.new()
   inv:getAllTypeRecurse(fullType, list)
+
+  -- Prefer the exact item the player selected, resolved by its unique ID.
+  if itemId ~= nil then
+    for i = 0, list:size() - 1 do
+      local it = list:get(i)
+      if it and it.getID and it:getID() == itemId then
+        return it
+      end
+    end
+  end
+
   local best, bestCond = nil, math.huge
   for i = 0, list:size() - 1 do
     local it = list:get(i)
@@ -417,7 +419,7 @@ VRO_CMDS.doFixInventory = function(player, args)
     return
   end
 
-  local it = _pickInventoryTarget(player, fullType)
+  local it = _pickInventoryTarget(player, fullType, args.itemId)
   if not it then log("doFixInventory: no item "..tostring(fullType)); return end
 
   -- roll + compute
@@ -516,6 +518,14 @@ VRO_CMDS.doFix = function(player, args)
     return
   end
 
+  -- HaveBeenRepaired belongs to the installed part ITEM, not the vehicle slot.
+  local partItem = part.getInventoryItem and part:getInventoryItem() or nil
+  if partItem and partItem.getHaveBeenRepaired then
+    hbr = partItem:getHaveBeenRepaired() or 0
+  elseif partItem then
+    hbr = (partItem:getModData().VRO_HaveBeenRepaired) or 0
+  end
+
   -- roll + compute on server
   local fail = chanceOfFail(player, skills, hbr)
   local success = ZombRand(100) >= fail
@@ -530,8 +540,12 @@ VRO_CMDS.doFix = function(player, args)
     if gain < 1 then gain = 1 end
     part:setCondition(math.min(targetMax, targetCur + gain))
 
-    local md = part:getModData()
-    md.VRO_HaveBeenRepaired = (md.VRO_HaveBeenRepaired or 0) + 1
+    if partItem and partItem.setHaveBeenRepaired then
+      partItem:setHaveBeenRepaired((partItem:getHaveBeenRepaired() or 0) + 1)
+    elseif partItem then
+      local imd = partItem:getModData()
+      imd.VRO_HaveBeenRepaired = (imd.VRO_HaveBeenRepaired or 0) + 1
+    end
     _persistInstalledPart(vehicle, part)
   else
     if targetCur > 0 then part:setCondition(targetCur - 1) end

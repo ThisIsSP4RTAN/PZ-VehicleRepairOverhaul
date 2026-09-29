@@ -487,10 +487,15 @@ function VRO.DoFixAction:perform()
     args.vehicleId  = veh:getId()
     args.partId     = self.part:getId()
 
-    -- HBR (seed) – ok if 0; server increments after success
+    -- HBR (seed) – the server re-reads this from the item and increments after success
     do
-      local md = self.part:getModData()
-      args.hbr = (md and md.VRO_HaveBeenRepaired) or 0
+      local inv = self.part.getInventoryItem and self.part:getInventoryItem() or nil
+      if inv and inv.getHaveBeenRepaired then
+        args.hbr = inv:getHaveBeenRepaired() or 0
+      else
+        local md = self.part:getModData()
+        args.hbr = (md and md.VRO_HaveBeenRepaired) or 0
+      end
     end
 
     args.fixerIndex    = self.fixerIndex or 1
@@ -522,6 +527,7 @@ function VRO.DoFixAction:perform()
       end
 
       args.itemFullType = bi:getFullType()
+      if bi.getID then args.itemId = bi:getID() end
 
       -- HBR seed from item if available
       if bi.getHaveBeenRepaired then

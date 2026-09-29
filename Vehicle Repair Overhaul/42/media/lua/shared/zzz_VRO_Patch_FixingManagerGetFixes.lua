@@ -1,12 +1,12 @@
 if FixingManager and FixingManager.getFixes and not FixingManager._VRO_orig_getFixes then
     FixingManager._VRO_orig_getFixes = FixingManager.getFixes
 
-    local function _VRO_safeGetFixes_Fallback(item)
-        if not item or not item.getFullType then
+    local function _VRO_safeGetFixes_Fallback(InventoryItem)
+        if not InventoryItem or not InventoryItem.getFullType then
             return nil
         end
 
-        local ft = item:getFullType()
+        local ft = InventoryItem:getFullType()
         if not ft then
             return nil
         end
@@ -44,16 +44,16 @@ if FixingManager and FixingManager.getFixes and not FixingManager._VRO_orig_getF
         return out
     end
 
-    FixingManager.getFixes = function(item)
-        if not item then
+    FixingManager.getFixes = function(InventoryItem)
+        if not InventoryItem then
             return nil
         end
 
-        local ok, res = pcall(FixingManager._VRO_orig_getFixes, item)
+        local ok, res = pcall(FixingManager._VRO_orig_getFixes, InventoryItem)
         if ok and res then
             return res
         end
 
-        return _VRO_safeGetFixes_Fallback(item)
+        return _VRO_safeGetFixes_Fallback(InventoryItem)
     end
 end
