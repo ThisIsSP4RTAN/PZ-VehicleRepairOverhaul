@@ -8,7 +8,7 @@ module Base
 	craftRecipe Salvage Vehicle Doors
 	{
 		timedAction = Welding,
-		time = 1000,
+		time = 600,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
@@ -31,7 +31,7 @@ module Base
 	craftRecipe Salvage Military or Large Vehicle Doors
 	{
 		timedAction = Welding,
-		time = 1200,
+		time = 700,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
@@ -54,7 +54,7 @@ module Base
 	craftRecipe Salvage Vehicle Trunk Doors
 	{
 		timedAction = Welding,
-		time = 1000,
+		time = 500,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
@@ -77,7 +77,7 @@ module Base
 	craftRecipe Salvage Vehicle Hoods or Metal Covers
 	{
 		timedAction = Welding,
-		time = 1000,
+		time = 600,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
@@ -100,7 +100,7 @@ module Base
 	craftRecipe Salvage Military Vehicle Hoods or Armor
 	{
 		timedAction = Welding,
-		time = 1200,
+		time = 800,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:25,
@@ -143,7 +143,7 @@ module Base
 	craftRecipe Salvage Vehicle Gas Tanks
 	{
 		timedAction = Welding,
-		time = 1000,
+		time = 700,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
@@ -164,7 +164,7 @@ module Base
 	craftRecipe Salvage Small Vehicle Gas Tanks
 	{
 		timedAction = Welding,
-		time = 700,
+		time = 500,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
@@ -187,7 +187,7 @@ module Base
 	craftRecipe Salvage Vehicle Mufflers
 	{
 		timedAction = Welding,
-		time = 1000,
+		time = 500,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
@@ -210,7 +210,7 @@ module Base
 	craftRecipe Salvage Vehicle Suspension
 	{
 		timedAction = Welding,
-		time = 1000,
+		time = 500,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
@@ -278,7 +278,7 @@ module Base
 	craftRecipe Salvage Vehicle Tires
 	{
 		timedAction = Welding,
-		time = 700,
+		time = 600,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:10,
@@ -301,7 +301,7 @@ module Base
 	craftRecipe Salvage Vehicle Bars
 	{
 		timedAction = Welding,
-		time = 700,
+		time = 600,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:10,
@@ -344,7 +344,7 @@ module Base
 	craftRecipe Salvage Hard Vehicle Saddlebags
 	{
 		timedAction = Welding,
-		time = 700,
+		time = 600,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:10,
@@ -367,7 +367,7 @@ module Base
 	craftRecipe Salvage Vehicle Soft-tops
 	{
 		timedAction = RipClothing,
-		time = 800,
+		time = 300,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = Tailoring:5,
@@ -389,7 +389,7 @@ module Base
 	craftRecipe Salvage Small Misc Vehicle Panels
 	{
 		timedAction = Welding,
-		time = 800,
+		time = 600,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
@@ -412,7 +412,7 @@ module Base
 	craftRecipe Salvage Large Container Tanks
 	{
 		timedAction = Welding,
-		time = 1000,
+		time = 500,
 		Tags = InHandCraft,
 		category = Salvage,
 		xpAward = MetalWelding:20,
