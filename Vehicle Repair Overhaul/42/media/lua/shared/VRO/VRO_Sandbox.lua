@@ -3,6 +3,7 @@ VRO = VRO or {}
 local DISABLE_ENGINE_REBUILD_WHEN_MODS = {
     "ProjectSummerCar",
     "Ivmakk_RestoreEngineQuality",
+    "MaskaradsSummerCar",
 }
 
 local function _isAnyConflictingModActive()
