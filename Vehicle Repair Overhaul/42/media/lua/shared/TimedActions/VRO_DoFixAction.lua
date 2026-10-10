@@ -582,7 +582,9 @@ function VRO.DoFixAction:_completeInventoryRepair()
     else
       broken:setCondition(math.min(max, cur + gain))
     end
-    setHBR(nil, broken, (hbr or 0) + 1)
+    if not (VRO and VRO.IsDiminishingRepairsDisabled and VRO.IsDiminishingRepairsDisabled()) then
+      setHBR(nil, broken, (hbr or 0) + 1)
+    end
   else
     local newVal = math.max(0, cur - 1)
     if broken.setConditionNoSound then broken:setConditionNoSound(newVal)

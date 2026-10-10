@@ -435,10 +435,12 @@ VRO_CMDS.doFixInventory = function(player, args)
     local gain    = math.floor((missing * (pct / 100.0)) + 0.5)
     if gain < 1 then gain = 1 end
     if it.setCondition then it:setCondition(math.min(max, cur + gain)) end
-    if it.setHaveBeenRepaired then
-      it:setHaveBeenRepaired((it:getHaveBeenRepaired() or 0) + 1)
-    else
-      local md = it:getModData(); md.VRO_HaveBeenRepaired = (md.VRO_HaveBeenRepaired or 0) + 1
+    if not (VRO and VRO.IsDiminishingRepairsDisabled and VRO.IsDiminishingRepairsDisabled()) then
+      if it.setHaveBeenRepaired then
+        it:setHaveBeenRepaired((it:getHaveBeenRepaired() or 0) + 1)
+      else
+        local md = it:getModData(); md.VRO_HaveBeenRepaired = (md.VRO_HaveBeenRepaired or 0) + 1
+      end
     end
   else
     if cur > 0 and it.setCondition then it:setCondition(cur - 1) end
@@ -540,11 +542,14 @@ VRO_CMDS.doFix = function(player, args)
     if gain < 1 then gain = 1 end
     part:setCondition(math.min(targetMax, targetCur + gain))
 
-    if partItem and partItem.setHaveBeenRepaired then
-      partItem:setHaveBeenRepaired((partItem:getHaveBeenRepaired() or 0) + 1)
-    elseif partItem then
-      local imd = partItem:getModData()
-      imd.VRO_HaveBeenRepaired = (imd.VRO_HaveBeenRepaired or 0) + 1
+    -- Count the repair (diminishing returns) unless disabled by sandbox option.
+    if not (VRO and VRO.IsDiminishingRepairsDisabled and VRO.IsDiminishingRepairsDisabled()) then
+      if partItem and partItem.setHaveBeenRepaired then
+        partItem:setHaveBeenRepaired((partItem:getHaveBeenRepaired() or 0) + 1)
+      elseif partItem then
+        local imd = partItem:getModData()
+        imd.VRO_HaveBeenRepaired = (imd.VRO_HaveBeenRepaired or 0) + 1
+      end
     end
     _persistInstalledPart(vehicle, part)
   else

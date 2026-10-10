@@ -66,11 +66,13 @@ function EHR_Commands.repairHeater(player, args)
 	local inv = part.getInventoryItem and part:getInventoryItem() or nil
 	if inv then
 		if inv.setCondition then inv:setCondition(part:getCondition()) end
-		if inv.setHaveBeenRepaired then
-			inv:setHaveBeenRepaired((inv:getHaveBeenRepaired() or 0) + 1)
-		else
-			local imd = inv:getModData()
-			imd.VRO_HaveBeenRepaired = (imd.VRO_HaveBeenRepaired or 0) + 1
+		if not (VRO and VRO.IsDiminishingRepairsDisabled and VRO.IsDiminishingRepairsDisabled()) then
+			if inv.setHaveBeenRepaired then
+				inv:setHaveBeenRepaired((inv:getHaveBeenRepaired() or 0) + 1)
+			else
+				local imd = inv:getModData()
+				imd.VRO_HaveBeenRepaired = (imd.VRO_HaveBeenRepaired or 0) + 1
+			end
 		end
 		if inv.syncItemFields then inv:syncItemFields() end
 	end

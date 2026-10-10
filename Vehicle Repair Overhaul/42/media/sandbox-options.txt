@@ -17,3 +17,12 @@ option VRO_UseVanillaFixingRecipes
     page = VRO,
     translation = VRO_UseVanillaFixingRecipes,
 }
+
+option VRO_DisableDiminishingRepairs
+{
+    type = boolean,
+    default = false,
+
+    page = VRO,
+    translation = VRO_DisableDiminishingRepairs,
+}

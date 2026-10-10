@@ -70,3 +70,19 @@ function VRO.UseVanillaFixingRecipes()
     end
     return false
 end
+
+-- Disable diminishing repairs: when ON, repairing a part does NOT increase its
+-- HaveBeenRepaired counter, so repairs never get progressively harder/weaker.
+-- Default OFF (repairs diminish as normal).
+function VRO.IsDiminishingRepairsDisabled()
+    if not SandboxVars then return false end
+    -- normal (top-level) sandbox var
+    if SandboxVars.VRO_DisableDiminishingRepairs ~= nil then
+        return SandboxVars.VRO_DisableDiminishingRepairs == true
+    end
+    -- backward-compat if someone shipped a nested "VRO" table
+    if SandboxVars.VRO and SandboxVars.VRO.DisableDiminishingRepairs ~= nil then
+        return SandboxVars.VRO.DisableDiminishingRepairs == true
+    end
+    return false
+end

@@ -5,5 +5,8 @@
 	"Sandbox_VRO_EnableEngineRebuild_tooltip": "Toggle whether the Engine Rebuild action is available in-game. (If Project Summer Car or another engine repair mod is enabled, this setting does nothing)",
 	
 	"Sandbox_VRO_UseVanillaFixingRecipes": "Old Repair System",
-	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Use the original repair system that allows repairs to be done standing in place, doesn't use a welding mask, any sounds or animations."
+	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Use the original repair system that allows repairs to be done standing in place, doesn't use a welding mask, any sounds or animations.",
+
+	"Sandbox_VRO_DisableDiminishingRepairs": "Disable Diminishing Repairs",
+	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "When enabled, repairing a part no longer increases its repair counter, so repairs never get progressively harder or less effective. Default: off (repairs diminish as normal)."
 }
