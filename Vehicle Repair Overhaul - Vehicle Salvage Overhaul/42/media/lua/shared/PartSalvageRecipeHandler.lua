@@ -221,3 +221,64 @@ Events.OnInitWorld.Add(injectAllRecipeInputsOnce)
 if isServer() then
   Events.OnGameBoot.Add(injectAllRecipeInputsOnce)
 end
+
+local SALVAGE_TIME_OPTIONS = {
+  { recipe = "Salvage Vehicle Doors"                      , var = "VRO_SalvageTime_Doors", default = 600 },
+  { recipe = "Salvage Military or Large Vehicle Doors"    , var = "VRO_SalvageTime_DoorsMilitary", default = 700 },
+  { recipe = "Salvage Vehicle Trunk Doors"                , var = "VRO_SalvageTime_TrunkDoors", default = 500 },
+  { recipe = "Salvage Vehicle Hoods or Metal Covers"      , var = "VRO_SalvageTime_Hoods", default = 600 },
+  { recipe = "Salvage Military Vehicle Hoods or Armor"    , var = "VRO_SalvageTime_HoodsMilitary", default = 800 },
+  { recipe = "Salvage Wooden Vehicle Parts"               , var = "VRO_SalvageTime_Wooden", default = 700 },
+  { recipe = "Salvage Vehicle Gas Tanks"                  , var = "VRO_SalvageTime_GasTanks", default = 700 },
+  { recipe = "Salvage Small Vehicle Gas Tanks"            , var = "VRO_SalvageTime_GasTanksSmall", default = 500 },
+  { recipe = "Salvage Vehicle Mufflers"                   , var = "VRO_SalvageTime_Mufflers", default = 500 },
+  { recipe = "Salvage Vehicle Suspension"                 , var = "VRO_SalvageTime_Suspension", default = 500 },
+  { recipe = "Salvage Vehicle Brakes"                     , var = "VRO_SalvageTime_Brakes", default = 600 },
+  { recipe = "Salvage Vehicle Seats"                      , var = "VRO_SalvageTime_Seats", default = 600 },
+  { recipe = "Salvage Vehicle Tires"                      , var = "VRO_SalvageTime_Tires", default = 600 },
+  { recipe = "Salvage Vehicle Bars"                       , var = "VRO_SalvageTime_Bars", default = 600 },
+  { recipe = "Salvage Vehicle Saddlebags or Misc Fabrics" , var = "VRO_SalvageTime_SaddlebagsFabric", default = 600 },
+  { recipe = "Salvage Hard Vehicle Saddlebags"            , var = "VRO_SalvageTime_SaddlebagsHard", default = 600 },
+  { recipe = "Salvage Vehicle Soft-tops"                  , var = "VRO_SalvageTime_SoftTops", default = 300 },
+  { recipe = "Salvage Small Misc Vehicle Panels"          , var = "VRO_SalvageTime_Panels", default = 600 },
+  { recipe = "Salvage Large Container Tanks"              , var = "VRO_SalvageTime_ContainerTanks", default = 500 },
+  { recipe = "Salvage Vehicle Electronics"                , var = "VRO_SalvageTime_Electronics", default = 500 },
+}
+
+local function _salvageTimeFor(opt)
+  if VRO and VRO.GetSalvageTime then
+    return VRO.GetSalvageTime(opt.var, opt.default)
+  end
+  local default = tonumber(opt.default) or 100
+  if SandboxVars then
+    local v = tonumber(SandboxVars[opt.var])
+    if v and v >= 1 then
+      return math.floor(v)
+    end
+  end
+  return default
+end
+
+local function injectRecipeTime(recipeName, timeValue)
+  local recipe = ScriptManager.instance:getCraftRecipe(recipeName)
+  if not recipe then
+    --print("[VRO] Recipe not found (time)", recipeName)
+    return
+  end
+  timeValue = tonumber(timeValue)
+  if not timeValue or timeValue < 1 then return end
+  recipe:Load(recipeName, "{ time = " .. tostring(math.floor(timeValue)) .. ", }")
+  --print("[VRO] Set salvage time for", recipeName, "=", timeValue)
+end
+
+local function injectAllRecipeTimes()
+  for i = 1, #SALVAGE_TIME_OPTIONS do
+    local opt = SALVAGE_TIME_OPTIONS[i]
+    injectRecipeTime(opt.recipe, _salvageTimeFor(opt))
+  end
+end
+
+Events.OnGameStart.Add(injectAllRecipeTimes)
+if isServer() and Events.OnServerStarted and Events.OnServerStarted.Add then
+  Events.OnServerStarted.Add(injectAllRecipeTimes)
+end

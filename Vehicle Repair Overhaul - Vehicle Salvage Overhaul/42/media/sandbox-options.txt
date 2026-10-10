@@ -8,3 +8,204 @@ option VRO_EnableFullVehicleSalvaging
     page = VRO,
     translation = VRO_EnableFullVehicleSalvaging,
 }
+
+option VRO_SalvageTime_Doors
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 600,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Doors,
+}
+option VRO_SalvageTime_DoorsMilitary
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 700,
+
+    page = VRO,
+    translation = VRO_SalvageTime_DoorsMilitary,
+}
+option VRO_SalvageTime_TrunkDoors
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 500,
+
+    page = VRO,
+    translation = VRO_SalvageTime_TrunkDoors,
+}
+option VRO_SalvageTime_Hoods
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 600,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Hoods,
+}
+option VRO_SalvageTime_HoodsMilitary
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 800,
+
+    page = VRO,
+    translation = VRO_SalvageTime_HoodsMilitary,
+}
+option VRO_SalvageTime_Wooden
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 700,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Wooden,
+}
+option VRO_SalvageTime_GasTanks
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 700,
+
+    page = VRO,
+    translation = VRO_SalvageTime_GasTanks,
+}
+option VRO_SalvageTime_GasTanksSmall
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 500,
+
+    page = VRO,
+    translation = VRO_SalvageTime_GasTanksSmall,
+}
+option VRO_SalvageTime_Mufflers
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 500,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Mufflers,
+}
+option VRO_SalvageTime_Suspension
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 500,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Suspension,
+}
+option VRO_SalvageTime_Brakes
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 600,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Brakes,
+}
+option VRO_SalvageTime_Seats
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 600,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Seats,
+}
+option VRO_SalvageTime_Tires
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 600,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Tires,
+}
+option VRO_SalvageTime_Bars
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 600,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Bars,
+}
+option VRO_SalvageTime_SaddlebagsFabric
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 600,
+
+    page = VRO,
+    translation = VRO_SalvageTime_SaddlebagsFabric,
+}
+option VRO_SalvageTime_SaddlebagsHard
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 600,
+
+    page = VRO,
+    translation = VRO_SalvageTime_SaddlebagsHard,
+}
+option VRO_SalvageTime_SoftTops
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 300,
+
+    page = VRO,
+    translation = VRO_SalvageTime_SoftTops,
+}
+option VRO_SalvageTime_Panels
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 600,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Panels,
+}
+option VRO_SalvageTime_ContainerTanks
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 500,
+
+    page = VRO,
+    translation = VRO_SalvageTime_ContainerTanks,
+}
+option VRO_SalvageTime_Electronics
+{
+    type = integer,
+    min = 1,
+    max = 5000,
+    default = 500,
+
+    page = VRO,
+    translation = VRO_SalvageTime_Electronics,
+}

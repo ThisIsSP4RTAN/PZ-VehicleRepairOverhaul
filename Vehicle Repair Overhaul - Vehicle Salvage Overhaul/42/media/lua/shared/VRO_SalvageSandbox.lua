@@ -15,3 +15,25 @@ function VRO.IsFullVehicleSalvagingEnabled()
 
     return true
 end
+
+function VRO.GetSalvageTime(varName, default)
+    local fallback = tonumber(default) or 100
+
+    if not SandboxVars or not varName then
+        return fallback
+    end
+
+    local v = SandboxVars[varName]
+
+    if v == nil and SandboxVars.VRO then
+        local nestedKey = tostring(varName):gsub("^VRO_", "")
+        v = SandboxVars.VRO[nestedKey]
+    end
+
+    v = tonumber(v)
+    if v and v >= 1 then
+        return math.floor(v)
+    end
+
+    return fallback
+end
