@@ -9,6 +9,28 @@ require "TimedActions/ISBaseTimedAction"
 
 EHRRepairHeater = ISBaseTimedAction:derive("EHRRepairHeater")
 
+-- Face the part's actual world square (engine-resolved from the vehicle's
+-- position and rotation) so the character turns toward the real part, not the
+-- vehicle origin. Falls back to the part's area square, then the vehicle.
+local function _faceRepairPart(self)
+	local part = self.part
+	local veh  = self.vehicle or (part and part.getVehicle and part:getVehicle()) or nil
+	local sq   = part and part.getSquare and part:getSquare() or nil
+	if sq and sq.getX then
+		self.character:faceLocation(sq:getX() + 0.5, sq:getY() + 0.5)
+		return
+	end
+	local area = part and part.getArea and part:getArea() or nil
+	if area and area ~= "" and veh and veh.getSquareForArea then
+		local ok, asq = pcall(function() return veh:getSquareForArea(area) end)
+		if ok and asq and asq.getX then
+			self.character:faceLocation(asq:getX() + 0.5, asq:getY() + 0.5)
+			return
+		end
+	end
+	if veh then self.character:faceThisObject(veh) end
+end
+
 function EHRRepairHeater:isValid()
 	if not self.character:hasEquipped("BlowTorch") or self.vehicle == nil then
 		return false
@@ -18,12 +40,12 @@ function EHRRepairHeater:isValid()
 end
 
 function EHRRepairHeater:waitToStart()
-	self.character:faceThisObject(self.vehicle)
+	_faceRepairPart(self)
 	return self.character:shouldBeTurning()
 end
 
 function EHRRepairHeater:update()
-	self.character:faceThisObject(self.vehicle)
+	_faceRepairPart(self)
 	self.blowtorch:setJobDelta(self:getJobDelta())
 
     self.character:setMetabolicTarget(Metabolics.LightWork)
@@ -35,7 +57,10 @@ function EHRRepairHeater:start()
 
 	-- Play the character animation of using the blowtorch
 	self:setActionAnim("BlowTorchMid")
-	self:setOverrideHandModels(self.character:getPrimaryHandItem(), nil)
+	if self.setOverrideHandModels then
+		self:setOverrideHandModels(self.blowtorch or self.character:getPrimaryHandItem(), nil)
+		self._didOverride = true
+	end
 
 	-- Play the sound of using the blowtorch and make it audible in the world so zombies can react to it
 	-- Store the reference to the sound so we can stop it once the action is done
@@ -52,6 +77,10 @@ function EHRRepairHeater:stop()
 		self.character:getEmitter():stopSound(self.sound)
 		self.sound = nil
 	end
+	if self._didOverride and self.setOverrideHandModels then
+		self:setOverrideHandModels(nil, nil)
+		self._didOverride = nil
+	end
     ISBaseTimedAction.stop(self);
 end
 
@@ -62,6 +91,10 @@ function EHRRepairHeater:perform()
         self.sound = nil
     end
 	self.blowtorch:setJobDelta(0)
+	if self._didOverride and self.setOverrideHandModels then
+		self:setOverrideHandModels(nil, nil)
+		self._didOverride = nil
+	end
 
 	local args = {
 		vehicle         = self.part:getVehicle():getId(),

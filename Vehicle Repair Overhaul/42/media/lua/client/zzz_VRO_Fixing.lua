@@ -8,6 +8,7 @@ require "Vehicles/TimedActions/ISPathFindAction"
 require "TimedActions/ISEquipWeaponAction"
 require "TimedActions/ISUnequipAction"
 require "TimedActions/VRO_DoFixAction"
+local NearbyInventory = require "VRO_NearbyInventory"
 
 local VRO = require "VRO/Core"
 VRO.__index = VRO
@@ -1188,7 +1189,7 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   local function markSeenItemFT(ft) if ft then seenFull[ft] = true end end
   local function wasSeenFT(ft) return ft and seenFull[ft] == true end
 
-  local inv = player:getInventory()
+  local inv = NearbyInventory.getEffectiveInventory(player)
 
   -- count total "uses" for a fullType (cap at need)
   local function invHaveForFullType(fullType, capTo)
@@ -1535,17 +1536,21 @@ local function _equippedSatisfies(it, spec, needUses)
 end
 
 -- returns (chosenPrimary, chosenSecondary, equipKeep[, err])
-local function queueEquipActions(playerObj, eq, torchHint)
+local function queueEquipActions(playerObj, eq, torchHint, lookupInv)
   if not eq then return nil, nil, nil end
 
-  local inv        = playerObj:getInventory()
+  local playerInv  = playerObj:getInventory()
+  local inv        = lookupInv or NearbyInventory.getEffectiveInventory(playerObj)
   local equipKeep  = {}
 
-  -- make sure an item is actually in the player inventory (not in a bag)
+  -- make sure an item is actually in the player inventory (not in a bag).
+  -- When sourcing from nearby containers/ground, inv may be the virtual
+  -- inventory, so compare against the real player inventory and stage via
+  -- NearbyInventory (a proper, awaitable transfer) rather than teleporting it.
   local function _ensureInPlayerInv(it)
     if not it then return end
-    if it:getContainer() ~= inv then
-      toPlayerInventory(playerObj, it)
+    if it:getContainer() ~= playerInv then
+      NearbyInventory.queueItemToPlayer(playerObj, it)
     end
   end
 
@@ -1725,6 +1730,16 @@ local function queueEquipActions(playerObj, eq, torchHint)
 
   if #equipKeep == 0 then equipKeep = nil end
   return chosenPrimary, chosenSecondary, equipKeep
+end
+
+-- Materials may live in nearby containers / on the ground.  Transfer every
+-- selected bundle into the player inventory first, then run onReady (which
+-- queues the equip + repair actions) only once they have all arrived.  With
+-- nearby sourcing disabled the bundles are already in the player inventory, so
+-- this resolves immediately.
+local function stageRepairBundles(playerObj, fixerBundle, globalBundle, globalKeep, onReady)
+  return NearbyInventory.stageBundlesThen(playerObj,
+    { fixerBundle, globalBundle, globalKeep }, onReady)
 end
 
 local function findRepairParentOption(context, matcherFn)
@@ -1942,7 +1957,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
       local fixers = fixing.fixers or {}
       for idx = 1, #fixers do
         local fixer = fixers[idx]
-        local inv = playerObj:getInventory()
+        local inv = NearbyInventory.getEffectiveInventory(playerObj)
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
         local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle, glKeep = true, nil, nil
@@ -2052,28 +2067,31 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           rendered = true
           -- we already have torchGlobal above; pass it through
           option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
+            -- Pathfinding clears/rebuilds the timed-action queue as it starts,
+            -- so it must precede material staging and the repair action.
             queuePathToPartArea(p, prt)
-            local chosenP, chosenS, equipKeep, err =
-              queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint)
-            if err == "need_torch_uses" then
-              return
-            end
+            if not stageRepairBundles(p, fxB, glB, glK, function()
+              local repairEq = mergeEquip(fixr.equip, fixg.equip)
+              local chosenP, chosenS, equipKeep, err =
+                queueEquipActions(p, repairEq, torchHint, NearbyInventory.getEffectiveInventory(p))
+              if err == "need_torch_uses" then return end
 
-            local torchUses = _weldingUses(fixr, fixg)
-            local tm    = resolveTime(fixr, fixg, p, brk)
-            local anim  = resolveAnim(fixr, fixg)
-            local sfx   = resolveSound(fixr, fixg)
-            local sfxOK = resolveSuccessSound(fixr, fixg)
-            local showM = resolveShowModel(fixr, fixg)
-            local noHands = not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
-            if noHands then showM = false end
-            ISTimedActionQueue.add(VRO.DoFixAction:new{
-              character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
-              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
-              equipKeep=equipKeep,time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
-              showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
-              torchUses=torchUses,
-            })
+              local torchUses = _weldingUses(fixr, fixg)
+              local tm    = resolveTime(fixr, fixg, p, brk)
+              local anim  = resolveAnim(fixr, fixg)
+              local sfx   = resolveSound(fixr, fixg)
+              local sfxOK = resolveSuccessSound(fixr, fixg)
+              local showM = resolveShowModel(fixr, fixg)
+              local noHands = not (repairEq.primary or repairEq.primaryTag or repairEq.secondary or repairEq.secondaryTag)
+              if noHands then showM = false end
+              ISTimedActionQueue.add(VRO.DoFixAction:new{
+                character=p, part=prt, fixing=fixg, fixer=fixr, fixerIndex=idx_,
+                brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
+                equipKeep=equipKeep,time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
+                showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
+                torchUses=torchUses,
+              })
+            end) then return end
           end, part, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else
           option = sub:addOption(label, nil, nil); option.notAvailable = true
@@ -2285,7 +2303,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
       local fixers = fixing.fixers or {}
       for idx = 1, #fixers do
         local fixer = fixers[idx]
-        local inv = playerObj:getInventory()
+        local inv = NearbyInventory.getEffectiveInventory(playerObj)
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
         local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle, glKeep = true, nil, nil
@@ -2387,35 +2405,34 @@ local function addInventoryFixOptions(playerObj, context, broken)
           rendered = true
           -- we already have torchGlobal above; pass it through
           option = sub:addOption(label, playerObj, function(p, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
-            local chosenP, chosenS, equipKeep, err =
-              queueEquipActions(p, mergeEquip(fixr.equip, fixg.equip), torchHint)
-            if err == "need_torch_uses" then
-              return
-            end
+            -- The target item may sit in a nearby container or on the ground.
+            -- Stage it into the player inventory before the material barrier so
+            -- the server resolves it from there; bail if it can't be moved.
+            if brk and brk.getContainer and brk:getContainer() ~= p:getInventory()
+              and not NearbyInventory.queueItemToPlayer(p, brk) then return end
+            if not stageRepairBundles(p, fxB, glB, glK, function()
+              local repairEq = mergeEquip(fixr.equip, fixg.equip)
+              local chosenP, chosenS, equipKeep, err =
+                queueEquipActions(p, repairEq, torchHint, NearbyInventory.getEffectiveInventory(p))
+              if err == "need_torch_uses" then return end
 
-            local torchUses = _weldingUses(fixr, fixg)
-            local tm    = resolveTime(fixr, fixg, p, brk)
-            local anim  = resolveInvAnim(fixr, fixg)
-            local sfx   = resolveSound(fixr, fixg)
-            local sfxOK = resolveSuccessSound(fixr, fixg)
-            local showM = resolveShowModel(fixr, fixg)
-            local noHands = not (eq.primary or eq.primaryTag or eq.secondary or eq.secondaryTag)
-            if noHands then showM = false end
+              local torchUses = _weldingUses(fixr, fixg)
+              local tm    = resolveTime(fixr, fixg, p, brk)
+              local anim  = resolveInvAnim(fixr, fixg)
+              local sfx   = resolveSound(fixr, fixg)
+              local sfxOK = resolveSuccessSound(fixr, fixg)
+              local showM = resolveShowModel(fixr, fixg)
+              local noHands = not (repairEq.primary or repairEq.primaryTag or repairEq.secondary or repairEq.secondaryTag)
+              if noHands then showM = false end
 
-            if brk and brk.getContainer then
-              local inv = p and p.getInventory and p:getInventory() or nil
-              if not inv or brk:getContainer() ~= inv then
-                ISInventoryPaneContextMenu.transferIfNeeded(p, brk)
-              end
-            end
-
-            ISTimedActionQueue.add(VRO.DoFixAction:new{
-              character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
-              brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
-              equipKeep=equipKeep, time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
-              showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
-              torchUses=torchUses,
-            })
+              ISTimedActionQueue.add(VRO.DoFixAction:new{
+                character=p, part=nil, fixing=fixg, fixer=fixr, fixerIndex=idx_,
+                brokenItem=brk, fixerBundle=fxB, globalBundle=glB, globalKeep=glK,
+                equipKeep=equipKeep, time=tm, anim=anim, sfx=sfx, successSfx=sfxOK,
+                showModel=showM, expectedPrimary=chosenP, expectedSecondary=chosenS,
+                torchUses=torchUses,
+              })
+            end) then return end
           end, fixing, fixer, idx, broken, fxBundle, glBundle, glKeep, torchGlobal)
         else
           option = sub:addOption(label, nil, nil); option.notAvailable = true

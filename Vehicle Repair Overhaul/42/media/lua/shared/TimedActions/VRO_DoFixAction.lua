@@ -345,6 +345,39 @@ end
 ----------------------------------------------------------------
 VRO.DoFixAction = ISBaseTimedAction:derive("VRO_DoFixAction")
 
+-- Face the specific repair area (e.g. the corner a tire sits on) rather than
+-- the vehicle origin, so the character visibly turns toward the part. Prefers
+-- the area we walked to (repairArea), falls back to the part's own area, then
+-- to facing the vehicle as a whole.
+local function _faceRepairArea(self)
+  local veh = self.part and self.part:getVehicle()
+  if not veh then return end
+
+  -- The part's own world square is resolved by the engine from the vehicle's
+  -- position AND rotation, so facing its tile centre points at the real part
+  -- regardless of which way the vehicle is parked.
+  local sq = self.part.getSquare and self.part:getSquare() or nil
+  if sq and sq.getX then
+    self.character:faceLocation(sq:getX() + 0.5, sq:getY() + 0.5)
+    return
+  end
+
+  -- Fallback: the repair area's world square (also engine-resolved). Prefer the
+  -- area we walked to (overrides included), else the part's declared area.
+  local area = self.repairArea
+  if (not area or area == "") and self.part.getArea then area = self.part:getArea() end
+  if area and area ~= "" and veh.getSquareForArea then
+    local ok, asq = pcall(function() return veh:getSquareForArea(area) end)
+    if ok and asq and asq.getX then
+      self.character:faceLocation(asq:getX() + 0.5, asq:getY() + 0.5)
+      return
+    end
+  end
+
+  -- Last resort: face the vehicle as a whole.
+  self.character:faceThisObject(veh)
+end
+
 function VRO.DoFixAction:isValid()
   if self.part and self.part:getVehicle() then
     return _hasEnoughNow(self)
@@ -356,14 +389,12 @@ function VRO.DoFixAction:isValid()
 end
 
 function VRO.DoFixAction:waitToStart()
-  local veh = self.part and self.part:getVehicle()
-  if veh then self.character:faceThisObject(veh) end
+  _faceRepairArea(self)
   return self.character:shouldBeTurning()
 end
 
 function VRO.DoFixAction:update()
-  local veh = self.part and self.part:getVehicle()
-  if veh then self.character:faceThisObject(veh) end
+  _faceRepairArea(self)
 
   if not _hasEnoughNow(self) then
     self:forceStop()
@@ -602,6 +633,7 @@ function VRO.DoFixAction:new(args)
   o.stopOnRun         = true
   o.character         = args.character
   o.part              = args.part
+  o.repairArea        = args.repairArea
   o.fixing            = args.fixing
   o.fixer             = args.fixer
   o.fixerIndex        = args.fixerIndex or 1
