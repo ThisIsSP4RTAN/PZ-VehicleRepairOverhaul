@@ -205,6 +205,124 @@ if Events and Events.OnTick and not NearbyInventory._clearQueuedOnTick then
         end
     end)
 end
+
+local function _containerSquare(container)
+    if not container then return nil end
+    local ok, parent = pcall(function() return container.getParent and container:getParent() end)
+    if ok and parent and parent.getSquare then
+        local ok2, sq = pcall(function() return parent:getSquare() end)
+        if ok2 and sq then return sq end
+    end
+    local ok3, grid = pcall(function() return container.getSourceGrid and container:getSourceGrid() end)
+    if ok3 and grid then return grid end
+    return nil
+end
+
+-- Walk the character once to a world square, ending on an adjacent free tile. Never clears the queue.
+local function _walkToSquareOnce(playerObj, sq)
+    if not sq then return false end
+    if AdjacentFreeTileFinder and AdjacentFreeTileFinder.Find and ISWalkToTimedAction then
+        local ok, adj = pcall(AdjacentFreeTileFinder.Find, sq, playerObj)
+        if ok and adj then
+            local added = pcall(function()
+                ISTimedActionQueue.add(ISWalkToTimedAction:new(playerObj, adj))
+            end)
+            if added then return true end
+        end
+    end
+    if luautils and luautils.walkAdj then
+        local ok, reached = pcall(luautils.walkAdj, playerObj, sq, true)
+        return (ok and reached) and true or false
+    end
+    return false
+end
+
+local function _queueTake(playerObj, item, playerInv)
+    local cont = item.getContainer and item:getContainer() or nil
+    if cont then
+        local ok, action = pcall(function()
+            return ISInventoryTransferAction:new(playerObj, item, cont, playerInv)
+        end)
+        if ok and action and pcall(ISTimedActionQueue.add, action) then return true end
+    end
+    -- No resolvable container (rare): fall back to the engine grab on SP/host.
+    local wi = item.getWorldItem and item:getWorldItem() or nil
+    if wi and not isClient() and ISGrabItemAction then
+        local time = 50
+        if ISWorldObjectContextMenu and ISWorldObjectContextMenu.grabItemTime then
+            local okT, t = pcall(ISWorldObjectContextMenu.grabItemTime, playerObj, wi)
+            if okT and tonumber(t) then time = t end
+        end
+        if pcall(function() ISTimedActionQueue.add(ISGrabItemAction:new(playerObj, wi, time)) end) then return true end
+    end
+    if ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.transferIfNeeded then
+        return pcall(ISInventoryPaneContextMenu.transferIfNeeded, playerObj, item)
+    end
+    return false
+end
+
+-- Grouping key + walk square for an item: a loose item groups by its own world
+-- square; a container item groups by its container (walking to that container's
+-- owning object).  Items sharing a key share one walk.
+local function _takeKey(item)
+    local wi = item.getWorldItem and item:getWorldItem() or nil
+    if wi then
+        local sq = (wi.getSquare and wi:getSquare()) or nil
+        return sq, sq
+    end
+    local cont = item.getContainer and item:getContainer() or nil
+    if cont then
+        return cont, _containerSquare(cont)
+    end
+    return nil, nil
+end
+
+-- Walk to each distinct pickup location once, then queue every take for that
+-- location consecutively so same-type items merge into one continuous pickup.
+-- Items with no resolvable location fall back to a plain take.  Returns true
+-- only if every take was queued.
+local function _queueTakeItems(playerObj, items)
+    local playerInv = _playerInventory(playerObj)
+    if not playerInv then return false end
+
+    local order, groups, loose = {}, {}, {}
+    for i = 1, #items do
+        local item = items[i]
+        local itemValid, source = _itemContainer(item)
+        if item and itemValid and source ~= playerInv and not NearbyInventory._queued[item] then
+            local key, walkSq = _takeKey(item)
+            if key == nil then
+                loose[#loose + 1] = item
+            else
+                local g = groups[key]
+                if not g then
+                    g = { walkSq = walkSq, items = {} }
+                    groups[key] = g
+                    order[#order + 1] = key
+                end
+                g.items[#g.items + 1] = item
+            end
+        end
+    end
+
+    local allOk = true
+    local function take(it)
+        NearbyInventory._queued[it] = playerObj
+        if not _queueTake(playerObj, it, playerInv) then
+            NearbyInventory._queued[it] = nil
+            allOk = false
+        end
+    end
+
+    for i = 1, #order do
+        local g = groups[order[i]]
+        _walkToSquareOnce(playerObj, g.walkSq)
+        for j = 1, #g.items do take(g.items[j]) end
+    end
+    for i = 1, #loose do take(loose[i]) end
+    return allOk
+end
+
 function NearbyInventory.queueItemToPlayer(playerObj, item)
     local playerInv = _playerInventory(playerObj)
     local itemValid, source = _itemContainer(item)
@@ -213,181 +331,46 @@ function NearbyInventory.queueItemToPlayer(playerObj, item)
         NearbyInventory._queued[item] = nil
         return true
     end
-
     local queuedFor = NearbyInventory._queued[item]
     if queuedFor then return queuedFor == playerObj end
-
-    if source then
-        local ok, action = pcall(function()
-            return ISInventoryTransferAction:new(playerObj, item, source, playerInv, 10)
-        end)
-        if not (ok and action) then return false end
-        if not (ISTimedActionQueue and ISTimedActionQueue.add) then return false end
-        NearbyInventory._queued[item] = playerObj
-        local added = pcall(ISTimedActionQueue.add, action)
-        if not added then
-            NearbyInventory._queued[item] = nil
-            return false
-        end
-        return true
-    end
-
-    -- Loose ground items need the game's normal pickup handling.
-    if not (ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.transferIfNeeded) then return false end
-    NearbyInventory._queued[item] = playerObj
-    local ok = pcall(ISInventoryPaneContextMenu.transferIfNeeded, playerObj, item)
-    if not ok then NearbyInventory._queued[item] = nil end
-    return ok
+    if not (ISTimedActionQueue and ISTimedActionQueue.add) then return false end
+    return _queueTakeItems(playerObj, { item })
 end
 
 function NearbyInventory.queueBundleToPlayer(playerObj, bundle)
     if not bundle then return true end
+    local items = {}
     for i = 1, #bundle do
         local entry = bundle[i]
         -- VRO's normal recursive player inventory logic already consumes items
         -- from carried bags.  Only external selections need staging.
-        if entry and entry.item and not _containsPlayerItem(playerObj, entry.item)
-            and not NearbyInventory.queueItemToPlayer(playerObj, entry.item) then
-            return false
+        if entry and entry.item and not _containsPlayerItem(playerObj, entry.item) then
+            items[#items + 1] = entry.item
         end
     end
-    return true
+    if #items == 0 then return true end
+    return _queueTakeItems(playerObj, items)
 end
 
-local function _bundlesAreInPlayerInventory(playerObj, bundles)
-    local inventory = playerObj and playerObj:getInventory()
-    if not inventory then return false end
-
-    local required = {}
-    for i = 1, #bundles do
-        local bundle = bundles[i]
-        if bundle then
-            for j = 1, #bundle do
-                local entry = bundle[j]
-                local item = entry and entry.item
-                local fullType = item and item.getFullType and item:getFullType()
-                if fullType then
-                    required[fullType] = (required[fullType] or 0) + (entry.takeUses or 1)
-                end
-            end
-        end
-    end
-
-    for fullType, needed in pairs(required) do
-        local items = ArrayList.new()
-        inventory:getAllTypeRecurse(fullType, items)
-        local available = 0
-        for i = 0, items:size() - 1 do
-            local item = items:get(i)
-            if item then
-                if item.getDrainableUsesInt then
-                    available = available + item:getDrainableUsesInt()
-                elseif item.getCurrentUses then
-                    available = available + item:getCurrentUses()
-                else
-                    available = available + 1
-                end
-                if available >= needed then break end
-            end
-        end
-        if available < needed then return false end
-    end
-    return true
-end
-
-local function _bundleSummary(bundles)
-    local required, names = {}, {}
-    for i = 1, #bundles do
-        local bundle = bundles[i]
-        if bundle then
-            for j = 1, #bundle do
-                local entry = bundle[j]
-                local item = entry and entry.item
-                local fullType = item and item.getFullType and item:getFullType()
-                if fullType then
-                    required[fullType] = (required[fullType] or 0) + (entry.takeUses or 1)
-                end
-            end
-        end
-    end
-    for fullType, uses in pairs(required) do
-        names[#names + 1] = fullType .. "=" .. tostring(uses)
-    end
-    table.sort(names)
-    return table.concat(names, ", ")
-end
-
-local StageBundlesAction = ISBaseTimedAction:derive("VRO_StageBundlesAction")
-
-function StageBundlesAction:isValid()
-    return self.character ~= nil
-end
-
-function StageBundlesAction:perform()
-    local ready = _bundlesAreInPlayerInventory(self.character, self.bundles)
-    ISBaseTimedAction.perform(self)
-
-    if ready then
-        -- The timed-action queue is still finalizing this action during
-        -- perform().  Adding the path/repair on the next tick avoids losing
-        -- that handoff when the queue removes its current action.
-        if Events and Events.OnTick then
-            local onReady = self.onReady
-            local function deferRepairQueue()
-                Events.OnTick.Remove(deferRepairQueue)
-                onReady()
-            end
-            Events.OnTick.Add(deferRepairQueue)
-        else
-            self.onReady()
-        end
-    elseif self.attempts < 3 then
-        -- A transfer can be deferred by movement or another queued action.
-        -- Put a fresh check behind its retry rather than racing it on OnTick.
-        for i = 1, #self.bundles do
-            local bundle = self.bundles[i]
-            if bundle then
-                for j = 1, #bundle do
-                    local item = bundle[j] and bundle[j].item
-                    if item and not _containsPlayerItem(self.character, item) then
-                        -- This check is ordered after the original transfer
-                        -- actions, so an item still outside the inventory was
-                        -- not transferred and may be queued again safely.
-                        NearbyInventory._queued[item] = nil
-                    end
-                end
-            end
-            NearbyInventory.queueBundleToPlayer(self.character, self.bundles[i])
-        end
-        ISTimedActionQueue.add(StageBundlesAction:new(
-            self.character, self.bundles, self.onReady, self.attempts + 1))
-    else
-        print("[VRO][Nearby] Materials did not finish staging: " .. _bundleSummary(self.bundles))
-    end
-end
-
-function StageBundlesAction:new(character, bundles, onReady, attempts)
-    local o = ISBaseTimedAction.new(self, character)
-    o.character = character
-    o.bundles = bundles
-    o.onReady = onReady
-    o.attempts = attempts or 0
-    o.maxTime = 1
-    o.stopOnWalk = false
-    o.stopOnRun = false
-    return o
-end
-
--- transferIfNeeded queues normal inventory actions.  Insert a small action
--- after them, then enqueue the dependent repair only after all selected items
--- have reached the player's inventory.
 function NearbyInventory.stageBundlesThen(playerObj, bundles, onReady)
     if not (playerObj and bundles and onReady) then return false end
-    for i = 1, #bundles do
-        if not NearbyInventory.queueBundleToPlayer(playerObj, bundles[i]) then return false end
-    end
     if not ISTimedActionQueue then return false end
-    ISTimedActionQueue.add(StageBundlesAction:new(playerObj, bundles, onReady))
+
+    local items = {}
+    for i = 1, #bundles do
+        local bundle = bundles[i]
+        if bundle then
+            for j = 1, #bundle do
+                local entry = bundle[j]
+                if entry and entry.item and not _containsPlayerItem(playerObj, entry.item) then
+                    items[#items + 1] = entry.item
+                end
+            end
+        end
+    end
+
+    if #items > 0 and not _queueTakeItems(playerObj, items) then return false end
+    onReady()
     return true
 end
 

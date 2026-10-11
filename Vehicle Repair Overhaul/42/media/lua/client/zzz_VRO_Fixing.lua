@@ -2067,14 +2067,17 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           rendered = true
           -- we already have torchGlobal above; pass it through
           option = sub:addOption(label, playerObj, function(p, prt, fixg, fixr, idx_, brk, fxB, glB, glK, torchHint)
-            -- Pathfinding clears/rebuilds the timed-action queue as it starts,
-            -- so it must precede material staging and the repair action.
-            queuePathToPartArea(p, prt)
+            -- Order: gather the materials (stageRepairBundles, walking to each),
+            -- THEN gather + equip any required tool (also possibly on the ground
+            -- or in a nearby container), THEN walk to the part, THEN repair. The
+            -- tool is gathered before the walk-to-part so it isn't fetched from
+            -- across the map after the character has already walked to the part.
             if not stageRepairBundles(p, fxB, glB, glK, function()
               local repairEq = mergeEquip(fixr.equip, fixg.equip)
               local chosenP, chosenS, equipKeep, err =
                 queueEquipActions(p, repairEq, torchHint, NearbyInventory.getEffectiveInventory(p))
               if err == "need_torch_uses" then return end
+              queuePathToPartArea(p, prt)
 
               local torchUses = _weldingUses(fixr, fixg)
               local tm    = resolveTime(fixr, fixg, p, brk)
