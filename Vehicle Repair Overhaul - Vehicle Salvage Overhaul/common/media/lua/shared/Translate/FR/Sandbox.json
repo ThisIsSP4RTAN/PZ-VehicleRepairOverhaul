@@ -1,5 +1,65 @@
 {
-	"Sandbox_VRO": "Vehicle Repair Overhaul",
+	"Sandbox_VSO": "Vehicle Salvage Overhaul",
 
-	"Sandbox_VRO_EnableFullVehicleSalvaging": "Récupération Complète de Véhicules"
+	"Sandbox_VSO_EnableFullVehicleSalvaging": "Récupération Complète de Véhicules",
+
+	"Sandbox_VSO_SalvageTime_Doors": "Temps de Récupération: Portes",
+	"Sandbox_VSO_SalvageTime_Doors_tooltip": "Combien de temps cela prend pour récupérer les portes. Plus c'est élevé, plus c'est lent. Par défaut 600.",
+
+	"Sandbox_VSO_SalvageTime_DoorsMilitary": "Temps de Récupération: Portes Militaires / Grandes Portes",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary_tooltip": "Combien de temps cela prend pour récupérer les portes militaires / grandes portes. Plus c'est élevé, plus c'est lent. Par défaut 700.",
+
+	"Sandbox_VSO_SalvageTime_TrunkDoors": "Temps de Récupération: Portes de Coffre",
+	"Sandbox_VSO_SalvageTime_TrunkDoors_tooltip": "Combien de temps cela prend pour récupérer les portes de coffre. Plus c'est élevé, plus c'est lent. Par défaut 500.",
+
+	"Sandbox_VSO_SalvageTime_Hoods": "Temps de Récupération: Capots / Revêtements Métalliques",
+	"Sandbox_VSO_SalvageTime_Hoods_tooltip": "Combien de temps cela prend pour récupérer les capots / revêtements métalliques. Plus c'est élevé, plus c'est lent. Par défaut 600.",
+
+	"Sandbox_VSO_SalvageTime_HoodsMilitary": "Temps de Récupération: Capots Militaires / Armure",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary_tooltip": "Combien de temps cela prend pour récupérer les capots militaires / l'armure. Plus c'est élevé, plus c'est lent. Par défaut 800.",
+
+	"Sandbox_VSO_SalvageTime_Wooden": "Temps de Récupération: Parties en Bois",
+	"Sandbox_VSO_SalvageTime_Wooden_tooltip": "Combien de temps cela prend pour récupérer les parties en bois. Plus c'est élevé, plus c'est lent. Par défaut 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanks": "Temps de Récupération: Tanques de Gaz",
+	"Sandbox_VSO_SalvageTime_GasTanks_tooltip": "Combien de temps cela prend pour récupérer les tanques de gaz. Plus c'est élevé, plus c'est lent. Par défaut 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanksSmall": "Temps de Récupération: Petits Tanques de Gaz",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall_tooltip": "Combien de temps cela prend pour récupérer les petits tanques de gaz. Plus c'est élevé, plus c'est lent. Par défaut 500.",
+
+	"Sandbox_VSO_SalvageTime_Mufflers": "Temps de Récupération: Silenciateurs",
+	"Sandbox_VSO_SalvageTime_Mufflers_tooltip": "Combien de temps cela prend pour récupérer les silenciateurs. Plus c'est élevé, plus c'est lent. Par défaut 500.",
+
+	"Sandbox_VSO_SalvageTime_Suspension": "Temps de Récupération: Suspension",
+	"Sandbox_VSO_SalvageTime_Suspension_tooltip": "Combien de temps cela prend pour récupérer la suspension. Plus c'est élevé, plus c'est lent. Par défaut 500.",
+
+	"Sandbox_VSO_SalvageTime_Brakes": "Temps de Récupération: Frenos",
+	"Sandbox_VSO_SalvageTime_Brakes_tooltip": "Combien de temps cela prend pour récupérer les frenos. Plus c'est élevé, plus c'est lent. Par défaut 600.",
+
+	"Sandbox_VSO_SalvageTime_Seats": "Temps de Récupération: Sièges",
+	"Sandbox_VSO_SalvageTime_Seats_tooltip": "Combien de temps cela prend pour récupérer les sièges. Plus c'est élevé, plus c'est lent. Par défaut 600.",
+
+	"Sandbox_VSO_SalvageTime_Tires": "Temps de Récupération: Pneus",
+	"Sandbox_VSO_SalvageTime_Tires_tooltip": "Combien de temps cela prend pour récupérer les pneus. Plus c'est élevé, plus c'est lent. Par défaut 600.",
+
+	"Sandbox_VSO_SalvageTime_Bars": "Temps de Récupération: Barres (Bullbars / Support de Toit)",
+	"Sandbox_VSO_SalvageTime_Bars_tooltip": "Combien de temps cela prend pour récupérer les barres (bullbars / support de toit). Plus c'est élevé, plus c'est lent. Par défaut 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric": "Temps de Récupération: Saddlebags / Tissus Divers",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric_tooltip": "Combien de temps cela prend pour récupérer les sellebags / tissus divers. Plus c'est élevé, plus c'est lent. Par défaut 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard": "Temps de Récupération: Sacoches rigides",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard_tooltip": "Temps nécessaire pour récupérer des sacoches rigides. Plus la valeur est élevée, plus le processus est lent. Valeur par défaut : 600.",
+
+	"Sandbox_VSO_SalvageTime_SoftTops": "Temps de Récupération: Capotes souples",
+	"Sandbox_VSO_SalvageTime_SoftTops_tooltip": "Temps nécessaire pour récupérer les capotes souples. Plus la valeur est élevée, plus le processus est lent. Valeur par défaut : 300.",
+
+	"Sandbox_VSO_SalvageTime_Panels": "Temps de Récupération: Petits Panneaux Divers",
+	"Sandbox_VSO_SalvageTime_Panels_tooltip": "Temps nécessaire pour récupérer les petits panneaux divers. Plus la valeur est élevée, plus le processus est lent. Valeur par défaut : 600.",
+
+	"Sandbox_VSO_SalvageTime_ContainerTanks": "Temps de Récupération: Tanques de Contêiner Grands",
+	"Sandbox_VSO_SalvageTime_ContainerTanks_tooltip": "Combien de temps cela prend pour récupérer les tanques de contêiner grands. Plus c'est élevé, plus c'est lent. Par défaut 500.",
+
+	"Sandbox_VSO_SalvageTime_Electronics": "Temps de Récupération: Électroniques",
+	"Sandbox_VSO_SalvageTime_Electronics_tooltip": "Combien de temps cela prend pour récupérer les électroniques. Plus c'est élevé, plus c'est lent. Par défaut 500."
 }

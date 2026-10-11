@@ -26,3 +26,12 @@ option VRO_DisableDiminishingRepairs
     page = VRO,
     translation = VRO_DisableDiminishingRepairs,
 }
+
+option VRO_RepairFullyBrokenParts
+{
+    type = boolean,
+    default = false,
+
+    page = VRO,
+    translation = VRO_RepairFullyBrokenParts,
+}

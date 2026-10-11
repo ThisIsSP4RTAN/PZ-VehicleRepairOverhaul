@@ -1,5 +1,65 @@
 {
-	"Sandbox_VRO": "Vehicle Repair Overhaul",
+	"Sandbox_VSO": "Vehicle Salvage Overhaul",
 
-	"Sandbox_VRO_EnableFullVehicleSalvaging": "Rescate Completo de Vehículos"
+	"Sandbox_VSO_EnableFullVehicleSalvaging": "Rescate Completo de Vehículos",
+
+	"Sandbox_VSO_SalvageTime_Doors": "Tiempo de Rescate: Puertas",
+	"Sandbox_VSO_SalvageTime_Doors_tooltip": "Cuánto tiempo toma rescatar las puertas. Cuanto más alto, más lento. Predeterminado 600.",
+
+	"Sandbox_VSO_SalvageTime_DoorsMilitary": "Tiempo de Rescate: Puertas Militares / Grandes",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary_tooltip": "Cuánto tiempo toma rescatar puertas militares / grandes. Cuanto más alto, más lento. Predeterminado 700.",
+
+	"Sandbox_VSO_SalvageTime_TrunkDoors": "Tiempo de Rescate: Puertas de Maletero",
+	"Sandbox_VSO_SalvageTime_TrunkDoors_tooltip": "Cuánto tiempo toma rescatar puertas de maletero. Cuanto más alto, más lento. Predeterminado 500.",
+
+	"Sandbox_VSO_SalvageTime_Hoods": "Tiempo de Rescate: Capó / Toldos Metálicos",
+	"Sandbox_VSO_SalvageTime_Hoods_tooltip": "Cuánto tiempo toma rescatar capó / toldos metálicos. Cuanto más alto, más lento. Predeterminado 600.",
+
+	"Sandbox_VSO_SalvageTime_HoodsMilitary": "Tiempo de Rescate: Capó Militar / Armadura",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary_tooltip": "Cuánto tiempo toma rescatar capó militar / armadura. Cuanto más alto, más lento. Predeterminado 800.",
+
+	"Sandbox_VSO_SalvageTime_Wooden": "Tiempo de Rescate: Partes de Madera",
+	"Sandbox_VSO_SalvageTime_Wooden_tooltip": "Cuánto tiempo toma rescatar partes de madera. Cuanto más alto, más lento. Predeterminado 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanks": "Tiempo de Rescate: Tanques de Gas",
+	"Sandbox_VSO_SalvageTime_GasTanks_tooltip": "Cuánto tiempo toma rescatar tanques de gas. Cuanto más alto, más lento. Predeterminado 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanksSmall": "Tiempo de Rescate: Tanques de Gas Pequeños",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall_tooltip": "Cuánto tiempo toma rescatar tanques de gas pequeños. Cuanto más alto, más lento. Predeterminado 500.",
+
+	"Sandbox_VSO_SalvageTime_Mufflers": "Tiempo de Rescate: Silenciadores",
+	"Sandbox_VSO_SalvageTime_Mufflers_tooltip": "Cuánto tiempo toma rescatar silenciadores. Cuanto más alto, más lento. Predeterminado 500.",
+
+	"Sandbox_VSO_SalvageTime_Suspension": "Tiempo de Rescate: Suspensión",
+	"Sandbox_VSO_SalvageTime_Suspension_tooltip": "Cuánto tiempo toma rescatar la suspensión. Cuanto más alto, más lento. Predeterminado 500.",
+
+	"Sandbox_VSO_SalvageTime_Brakes": "Tiempo de Rescate: Frenos",
+	"Sandbox_VSO_SalvageTime_Brakes_tooltip": "Cuánto tiempo toma rescatar los frenos. Cuanto más alto, más lento. Predeterminado 600.",
+
+	"Sandbox_VSO_SalvageTime_Seats": "Tiempo de Rescate: Asientos",
+	"Sandbox_VSO_SalvageTime_Seats_tooltip": "Cuánto tiempo toma rescatar los asientos. Cuanto más alto, más lento. Predeterminado 600.",
+
+	"Sandbox_VSO_SalvageTime_Tires": "Tiempo de Rescate: Neumáticos",
+	"Sandbox_VSO_SalvageTime_Tires_tooltip": "Cuánto tiempo toma rescatar los neumáticos. Cuanto más alto, más lento. Predeterminado 600.",
+
+	"Sandbox_VSO_SalvageTime_Bars": "Tiempo de Rescate: Barras (Protector de Choque / Estanterías para Techo)",
+	"Sandbox_VSO_SalvageTime_Bars_tooltip": "Cuánto tiempo toma rescatar las barras (protector de choque / estanterías para techo). Cuanto más alto, más lento. Predeterminado 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric": "Tiempo de Rescate: Saddlebags / Materiales Varias",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric_tooltip": "Cuánto tiempo toma rescatar silla de montar / materiales variados. Cuanto más alto, más lento. Predeterminado 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard": "Tiempo de Rescate: Saddlebags Duros",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard_tooltip": "Cuánto tiempo toma rescatar silla de montar duros. Cuanto más alto, más lento. Predeterminado 600.",
+
+	"Sandbox_VSO_SalvageTime_SoftTops": "Tiempo de Rescate: Techos Blandos",
+	"Sandbox_VSO_SalvageTime_SoftTops_tooltip": "Cuánto tiempo toma rescatar techos blandos. Cuanto más alto, más lento. Predeterminado 300.",
+
+	"Sandbox_VSO_SalvageTime_Panels": "Tiempo de Rescate: Paneles Varias",
+	"Sandbox_VSO_SalvageTime_Panels_tooltip": "Cuánto tiempo toma rescatar paneles variados. Cuanto más alto, más lento. Predeterminado 600.",
+
+	"Sandbox_VSO_SalvageTime_ContainerTanks": "Tiempo de Rescate: Tanques de Contenedores Grandes",
+	"Sandbox_VSO_SalvageTime_ContainerTanks_tooltip": "Cuánto tiempo toma rescatar tanques de contenedores grandes. Cuanto más alto, más lento. Predeterminado 500.",
+
+	"Sandbox_VSO_SalvageTime_Electronics": "Tiempo de Rescate: Electrónica",
+	"Sandbox_VSO_SalvageTime_Electronics_tooltip": "Cuánto tiempo toma rescatar electrónica. Cuanto más alto, más lento. Predeterminado 500."
 }

@@ -5,5 +5,11 @@
 	"Sandbox_VRO_EnableEngineRebuild_tooltip": "Activa/desactiva si la acción de Reconstruir motor está disponible en el juego. (Si Project Summer Car u otro mod de reparación de motores está activo, este ajuste no hace nada).",
 
 	"Sandbox_VRO_UseVanillaFixingRecipes": "Sistema de reparación antiguo",
-	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Usa el sistema de reparación original que permite reparar en el sitio, sin máscara de soldar, sonidos ni animaciones."
+	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Usa el sistema de reparación original que permite reparar en el sitio, sin máscara de soldar, sonidos ni animaciones.",
+
+	"Sandbox_VRO_DisableDiminishingRepairs": "Deshabilitar Reparaciones Decrecientes",
+	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "Cuando está habilitado, reparar una pieza ya no aumenta su contador de reparación, por lo que las reparaciones nunca se vuelven progresivamente más difíciles o menos efectivas. (Si el Sistema de Reparación Antiguo está habilitado, esta configuración no hace nada)",
+
+	"Sandbox_VRO_RepairFullyBrokenParts": "Reparar Piezas completamente dañadas",
+	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "Cuando está habilitado, las piezas con condición 0 pueden repararse, ya sea en tu inventario o instaladas en un vehículo. Las ventanas y las piezas de neumáticos están excluidas y aún no se pueden reparar una vez completamente dañadas. (Si el Sistema de Reparación Antiguo está habilitado, esta configuración no hace nada)"
 }

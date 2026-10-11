@@ -5,5 +5,11 @@
 	"Sandbox_VRO_EnableEngineRebuild_tooltip": "Activer/désactiver l'action Réfection du moteur dans le jeu. (Si Project Summer Car ou un autre mod de réparation de moteur est activé, ce réglage n'a aucun effet)",
 
 	"Sandbox_VRO_UseVanillaFixingRecipes": "Ancien système de réparation",
-	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Utiliser le système de réparation d'origine : réparation sur place, sans masque de soudure, sans sons ni animations."
+	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Utiliser le système de réparation d'origine : réparation sur place, sans masque de soudure, sans sons ni animations.",
+
+	"Sandbox_VRO_DisableDiminishingRepairs": "Désactiver les réparations déclinantes",
+	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "Lorsqu'il est activé, réparer un composant ne fait plus augmenter son compteur de réparation, donc les réparations ne deviennent jamais plus difficiles ou moins efficaces. (Si le système de réparation ancien est activé, ce paramètre ne fait rien)",
+
+	"Sandbox_VRO_RepairFullyBrokenParts": "Réparer les pièces complètement endommagées",
+	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "Lorsqu'il est activé, les pièces avec une condition de 0 peuvent être réparées, qu'elles soient dans votre inventaire ou installées sur un véhicule. Les fenêtres et les pièces de pneus sont exclues et ne peuvent toujours pas être réparées une fois complètement endommagées. (Si le système de réparation ancien est activé, ce paramètre ne fait rien)"
 }

@@ -5,5 +5,11 @@
 	"Sandbox_VRO_EnableEngineRebuild_tooltip": "Przełącza dostępność akcji „Przebuduj silnik”. (Jeśli włączony jest Project Summer Car lub inny mod naprawy silnika, to ustawienie nic nie robi.)",
 
 	"Sandbox_VRO_UseVanillaFixingRecipes": "Stary system napraw",
-	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Używa oryginalnego systemu napraw: naprawy na miejscu, bez maski spawalniczej, dźwięków i animacji."
+	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Używa oryginalnego systemu napraw: naprawy na miejscu, bez maski spawalniczej, dźwięków i animacji.",
+
+	"Sandbox_VRO_DisableDiminishingRepairs": "Wyłącz malejące naprawy",
+	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "Po włączeniu, naprawa części nie zwiększa już licznika napraw, więc naprawy nigdy nie stają się coraz trudniejsze lub mniej skuteczne. (Jeśli włączony jest Stary System Napraw, to ustawienie nic nie robi)",
+
+	"Sandbox_VRO_RepairFullyBrokenParts": "Napraw całkowicie zniszczone części",
+	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "Po włączeniu, części o stanie 0 mogą być naprawiane, niezależnie od tego, czy są w twoim inwentarzu, czy zainstalowane na pojeździe. Okna i części opon są wyłączone i nadal nie mogą być naprawiane po całkowitym zniszczeniu. (Jeśli włączony jest Stary System Napraw, to ustawienie nic nie robi)"
 }

@@ -1,5 +1,65 @@
 {
-	"Sandbox_VRO": "Vehicle Repair Overhaul",
+	"Sandbox_VSO": "Vehicle Salvage Overhaul",
 
-	"Sandbox_VRO_EnableFullVehicleSalvaging": "Vollständige Fahrzeugbergung"
+	"Sandbox_VSO_EnableFullVehicleSalvaging": "Vollständige Fahrzeugbergung",
+
+	"Sandbox_VSO_SalvageTime_Doors": "Bergungszeit: Türen",
+	"Sandbox_VSO_SalvageTime_Doors_tooltip": "Wie lange es dauert, Türen zu bergen. Je höher der Wert, desto langsamer. Standardwert: 600.",
+
+	"Sandbox_VSO_SalvageTime_DoorsMilitary": "Bergungszeit: Militär / Große Türen",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary_tooltip": "Wie lange es dauert, Militärtüren bzw. große Türen zu bergen. Je höher der Wert, desto langsamer. Standardwert: 700.",
+
+	"Sandbox_VSO_SalvageTime_TrunkDoors": "Bergungszeit: Kofferraumklappen",
+	"Sandbox_VSO_SalvageTime_TrunkDoors_tooltip": "Wie lange es dauert, Kofferraumklappen zu bergen. Je höher der Wert, desto langsamer. Standardwert: 500.",
+
+	"Sandbox_VSO_SalvageTime_Hoods": "Bergungszeit: Abdeckhauben / Metallabdeckungen",
+	"Sandbox_VSO_SalvageTime_Hoods_tooltip": "Wie lange es dauert, bis Hauben/Metallabdeckungen geborgen sind. Je höher der Wert, desto langsamer. Standardwert: 600.",
+
+	"Sandbox_VSO_SalvageTime_HoodsMilitary": "Bergungszeit: Militärhauben / Schutzausrüstung",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary_tooltip": "Wie lange es dauert, militärische Kapuzen bzw. Rüstungen zu bergen. Je höher der Wert, desto langsamer. Standardwert: 800.",
+
+	"Sandbox_VSO_SalvageTime_Wooden": "Bergungszeit: Holzteile",
+	"Sandbox_VSO_SalvageTime_Wooden_tooltip": "Wie lange es dauert, Holzteile zu bergen. Je höher der Wert, desto langsamer. Standardwert: 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanks": "Bergungszeit: Gastanks",
+	"Sandbox_VSO_SalvageTime_GasTanks_tooltip": "Wie lange es dauert, bis Benzintanks geborgen sind. Je höher der Wert, desto langsamer. Standardwert: 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanksSmall": "Rettungszeit: Kleine Gastanks",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall_tooltip": "Wie lange es dauert, kleine Gastanks zu bergen. Je höher der Wert, desto langsamer. Standardwert: 500.",
+
+	"Sandbox_VSO_SalvageTime_Mufflers": "Bergungszeit: Schalldämpfer",
+	"Sandbox_VSO_SalvageTime_Mufflers_tooltip": "Wie lange es dauert, Schalldämpfer zu bergen. Je höher der Wert, desto langsamer. Standardwert: 500.",
+
+	"Sandbox_VSO_SalvageTime_Suspension": "Bergungszeit: Aufhängung",
+	"Sandbox_VSO_SalvageTime_Suspension_tooltip": "Wie lange es dauert, die Federung wiederherzustellen. Je höher der Wert, desto langsamer. Standardwert: 500.",
+
+	"Sandbox_VSO_SalvageTime_Brakes": "Bergungszeit: Bremsen",
+	"Sandbox_VSO_SalvageTime_Brakes_tooltip": "Wie lange es dauert, die Bremsen wiederherzustellen. Je höher der Wert, desto langsamer. Standardwert: 600.",
+
+	"Sandbox_VSO_SalvageTime_Seats": "Bergungszeit: Sitze",
+	"Sandbox_VSO_SalvageTime_Seats_tooltip": "Wie lange es dauert, Sitzplätze zu sichern. Je höher der Wert, desto langsamer. Standardwert: 600.",
+
+	"Sandbox_VSO_SalvageTime_Tires": "Bergungszeit: Reifen",
+	"Sandbox_VSO_SalvageTime_Tires_tooltip": "Wie lange es dauert, Reifen zu bergen. Je höher der Wert, desto langsamer. Standardwert: 600.",
+
+	"Sandbox_VSO_SalvageTime_Bars": "Bergungszeit: Träger (Frontschutzbügel / Dachträger)",
+	"Sandbox_VSO_SalvageTime_Bars_tooltip": "Wie lange es dauert, bis die Traversen (Frontschutzbügel / Dachträger) geborgen sind. Je höher der Wert, desto langsamer. Standardwert: 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric": "Bergungszeit: Satteltaschen / Verschiedene Stoffe",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric_tooltip": "Wie lange es dauert, Satteltaschen und sonstige Stoffe zu verwerten. Je höher der Wert, desto langsamer der Vorgang. Standardwert: 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard": "Bergungszeit: Hartschalen-Satteltaschen",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard_tooltip": "Wie lange es dauert, bis die harten Satteltaschen geborgen sind. Je höher der Wert, desto langsamer. Standardwert: 600.",
+
+	"Sandbox_VSO_SalvageTime_SoftTops": "Bergungszeit: Verdecke",
+	"Sandbox_VSO_SalvageTime_SoftTops_tooltip": "Wie lange es dauert, Softtops zu bergen. Je höher der Wert, desto langsamer. Standardwert: 300.",
+
+	"Sandbox_VSO_SalvageTime_Panels": "Zeit zum Ausmisten: Kleine, verschiedene Paneele",
+	"Sandbox_VSO_SalvageTime_Panels_tooltip": "Wie lange es dauert, kleine sonstige Panels zu bergen. Je höher der Wert, desto langsamer. Standardwert: 600.",
+
+	"Sandbox_VSO_SalvageTime_ContainerTanks": "Bergungszeit: Große Containertanks",
+	"Sandbox_VSO_SalvageTime_ContainerTanks_tooltip": "Wie lange es dauert, große Containertanks zu bergen. Je höher der Wert, desto langsamer. Standardwert: 500.",
+
+	"Sandbox_VSO_SalvageTime_Electronics": "Bergungszeit: Elektronik",
+	"Sandbox_VSO_SalvageTime_Electronics_tooltip": "Wie lange es dauert, Elektronik zu bergen. Je höher der Wert, desto langsamer. Standardwert: 500."
 }

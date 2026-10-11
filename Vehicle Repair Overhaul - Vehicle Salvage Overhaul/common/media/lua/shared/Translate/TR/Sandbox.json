@@ -1,5 +1,65 @@
 {
-	"Sandbox_VRO": "Vehicle Repair Overhaul",
+	"Sandbox_VSO": "Vehicle Salvage Overhaul",
 
-	"Sandbox_VRO_EnableFullVehicleSalvaging": "Tam Araç Kurtarma"
+	"Sandbox_VSO_EnableFullVehicleSalvaging": "Tam Araç Kurtarma",
+
+	"Sandbox_VSO_SalvageTime_Doors": "Kurtarma Süresi: Kapılar",
+	"Sandbox_VSO_SalvageTime_Doors_tooltip": "Kapıların kurtarılması ne kadar sürer? Değer ne kadar yüksekse işlem o kadar yavaş olur. Varsayılan değer 600.",
+
+	"Sandbox_VSO_SalvageTime_DoorsMilitary": "Kurtarma Süresi: Askeri / Büyük Kapılar",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary_tooltip": "Askeri / büyük kapıların kurtarılması ne kadar sürer? Değer ne kadar yüksekse, işlem o kadar yavaş olur. Varsayılan değer 700.",
+
+	"Sandbox_VSO_SalvageTime_TrunkDoors": "Kurtarma Süresi: Bagaj Kapakları",
+	"Sandbox_VSO_SalvageTime_TrunkDoors_tooltip": "Bagaj kapılarının kurtarılması ne kadar sürer? Değer ne kadar yüksekse işlem o kadar yavaş olur. Varsayılan değer 500.",
+
+	"Sandbox_VSO_SalvageTime_Hoods": "Kurtarma Süresi: Davlumbazlar / Metal Kapaklar",
+	"Sandbox_VSO_SalvageTime_Hoods_tooltip": "Davlumbazların / metal kapakların kurtarılması ne kadar sürer? Değer ne kadar yüksekse işlem o kadar yavaş olur. Varsayılan değer 600.",
+
+	"Sandbox_VSO_SalvageTime_HoodsMilitary": "Kurtarma Süresi: Askeri Başlıklar / Zırhlar",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary_tooltip": "Askeri başlıkların / zırhların kurtarılması ne kadar sürer? Değer ne kadar yüksekse, işlem o kadar yavaş olur. Varsayılan değer 800.",
+
+	"Sandbox_VSO_SalvageTime_Wooden": "Kurtarma Süresi: Ahşap Parçalar",
+	"Sandbox_VSO_SalvageTime_Wooden_tooltip": "Ahşap parçaların kurtarılması ne kadar sürer? Değer ne kadar yüksekse işlem o kadar yavaş olur. Varsayılan değer 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanks": "Kurtarma Süresi: Benzin Depoları",
+	"Sandbox_VSO_SalvageTime_GasTanks_tooltip": "Benzin depolarını kurtarmak ne kadar sürer? Değer ne kadar yüksekse, işlem o kadar yavaş olur. Varsayılan değer 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanksSmall": "Kurtarma Süresi: Küçük Gaz Tankları",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall_tooltip": "Küçük gaz tanklarını kurtarmak ne kadar sürer? Değer ne kadar yüksekse, işlem o kadar yavaş olur. Varsayılan değer 500.",
+
+	"Sandbox_VSO_SalvageTime_Mufflers": "Kurtarma Süresi: Susturucular",
+	"Sandbox_VSO_SalvageTime_Mufflers_tooltip": "Egzoz susturucularının kurtarılması ne kadar sürer? Değer ne kadar yüksekse işlem o kadar yavaş olur. Varsayılan değer 500.",
+
+	"Sandbox_VSO_SalvageTime_Suspension": "Kurtarma Süresi: Askı",
+	"Sandbox_VSO_SalvageTime_Suspension_tooltip": "Süspansiyonun kurtarılması ne kadar sürer? Değer ne kadar yüksekse, o kadar yavaş olur. Varsayılan değer 500.",
+
+	"Sandbox_VSO_SalvageTime_Brakes": "Kurtarma Süresi: Frenler",
+	"Sandbox_VSO_SalvageTime_Brakes_tooltip": "Frenlerin kurtarılması ne kadar sürer? Değer ne kadar yüksekse, o kadar yavaştır. Varsayılan değer 600.",
+
+	"Sandbox_VSO_SalvageTime_Seats": "Kurtarma Süresi: Koltuklar",
+	"Sandbox_VSO_SalvageTime_Seats_tooltip": "Koltukların kurtarılması ne kadar sürer? Değer ne kadar yüksekse, işlem o kadar yavaş olur. Varsayılan 600.",
+
+	"Sandbox_VSO_SalvageTime_Tires": "Kurtarma Süresi: Lastikler",
+	"Sandbox_VSO_SalvageTime_Tires_tooltip": "Lastiklerin kurtarılması ne kadar sürer? Değer ne kadar yüksekse, işlem o kadar yavaş olur. Varsayılan değer 600.",
+
+	"Sandbox_VSO_SalvageTime_Bars": "Kurtarma Süresi: Çubuklar (Ön koruma çubukları / Tavan rafları)",
+	"Sandbox_VSO_SalvageTime_Bars_tooltip": "Çubukları (ön koruma çubukları / tavan rafları) kurtarmak ne kadar sürer? Değer ne kadar yüksekse, işlem o kadar yavaş olur. Varsayılan değer 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric": "Kurtarma Süresi: Eyer çantaları / Çeşitli kumaşlar",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric_tooltip": "Sele çantaları / çeşitli kumaşların geri kazanılması ne kadar sürer? Değer ne kadar yüksekse işlem o kadar yavaş olur. Varsayılan değer 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard": "Kurtarma Süresi: Sert Seleli Çantalar",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard_tooltip": "Sert yan çantaların kurtarılması ne kadar sürer? Değer ne kadar yüksekse işlem o kadar yavaş olur. Varsayılan değer 600.",
+
+	"Sandbox_VSO_SalvageTime_SoftTops": "Kurtarma Süresi: Yumuşak tavanlı araçlar",
+	"Sandbox_VSO_SalvageTime_SoftTops_tooltip": "Yumuşak tavanların kurtarılması ne kadar sürer? Değer ne kadar yüksekse, işlem o kadar yavaş olur. Varsayılan değer 300.",
+
+	"Sandbox_VSO_SalvageTime_Panels": "Kurtarma Süresi: Küçük Çeşitli Paneller",
+	"Sandbox_VSO_SalvageTime_Panels_tooltip": "Küçük çeşitli panellerin kurtarılması ne kadar sürer? Değer ne kadar yüksekse işlem o kadar yavaş olur. Varsayılan değer 600.",
+
+	"Sandbox_VSO_SalvageTime_ContainerTanks": "Kurtarma Süresi: Büyük Konteyner Tankları",
+	"Sandbox_VSO_SalvageTime_ContainerTanks_tooltip": "Büyük konteyner tanklarının kurtarılması ne kadar sürer? Değer ne kadar yüksekse, o kadar yavaş olur. Varsayılan değer 500.",
+
+	"Sandbox_VSO_SalvageTime_Electronics": "Kurtarma Süresi: Elektronikler",
+	"Sandbox_VSO_SalvageTime_Electronics_tooltip": "Elektronik cihazların kurtarılması ne kadar sürer? Değer ne kadar yüksekse işlem o kadar yavaş olur. Varsayılan değer 500."
 }

@@ -515,10 +515,56 @@ local function isTorchItem(it)
   return ft == "Base.BlowTorch"
 end
 
--- Item must be NOT broken and strictly below max condition to be repairable from inventory
+-- Part lists whose fully-broken items are NEVER repairable (loose in or installed on a vehicle), regardless of the "Repair Fully Broken Parts" sandbox option.
+local BROKEN_REPAIR_EXCLUDED_LISTS = { "Window_All", "MilitaryWindow_All", "FixAFlat_All", "Tire_All", "MilitaryTire_All" }
+local _brokenExcludedSet, _brokenExcludedCount = nil, 0
+
+local function _buildBrokenExcludedSet()
+  local set, n = {}, 0
+  local lists = VRO and VRO.PartLists
+  if type(lists) == "table" then
+    for li = 1, #BROKEN_REPAIR_EXCLUDED_LISTS do
+      local listName = BROKEN_REPAIR_EXCLUDED_LISTS[li]
+      local lst = lists[listName]
+      if type(lst) == "table" then
+        for i = 1, #lst do
+          local ft = lst[i]
+          if type(ft) == "string" and not set[ft] then
+            set[ft] = true
+            n = n + 1
+          end
+        end
+      end
+    end
+  end
+  return set, n
+end
+
+-- Is this item in one of the excluded part lists?
+local function _isBrokenRepairExcluded(it)
+  if not it then return false end
+  local ft = it.getFullType and it:getFullType() or nil
+  if not ft then return false end
+  -- Build lazily; rebuild while still empty in case the part lists load later.
+  if (not _brokenExcludedSet) or _brokenExcludedCount == 0 then
+    _brokenExcludedSet, _brokenExcludedCount = _buildBrokenExcludedSet()
+  end
+  return _brokenExcludedSet[ft] == true
+end
+
+-- Shared gate for a fully-broken (0 condition) part, used by both the loose inventory path and the installed on-vehicle path.
+local function _brokenRepairBlocked(it)
+  local allow = VRO and VRO.CanRepairFullyBrokenParts and VRO.CanRepairFullyBrokenParts()
+  if not allow then return true end
+  if _isBrokenRepairExcluded(it) then return true end
+  return false
+end
+
 local function isRepairableFromInventory(it)
   if not it then return false end
-  if it.isBroken and it:isBroken() then return false end
+  if it.isBroken and it:isBroken() then
+    if _brokenRepairBlocked(it) then return false end
+  end
   local max = it.getConditionMax and it:getConditionMax() or 100
   local cur = it.getCondition   and it:getCondition()    or max
   return cur < max
@@ -1747,6 +1793,9 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
   local broken = part:getInventoryItem()  -- may be nil for parts with no inventory item
   if part:getCondition() >= 100 then return end
+
+  -- Fully broken (0 condition) installed parts follow the same rule as loose inventory parts
+  if part:getCondition() <= 0 and _brokenRepairBlocked(broken) then return end
 
   -- Keys we can match against recipe 'require':
   local ft = broken and broken.getFullType and broken:getFullType() or nil

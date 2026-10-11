@@ -5,5 +5,11 @@
 	"Sandbox_VRO_EnableEngineRebuild_tooltip": "Schaltet um, ob die Aktion „Motor überholen“ im Spiel verfügbar ist. (Ist Project Summer Car oder ein anderes Motorreparatur-Mod aktiv, bewirkt diese Einstellung nichts.)",
 
 	"Sandbox_VRO_UseVanillaFixingRecipes": "Altes Reparatursystem",
-	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Verwendet das ursprüngliche Reparatursystem: Reparieren im Stehen, ohne Schweißmaske, ohne Geräusche und Animationen."
+	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Verwendet das ursprüngliche Reparatursystem: Reparieren im Stehen, ohne Schweißmaske, ohne Geräusche und Animationen.",
+
+	"Sandbox_VRO_DisableDiminishingRepairs": "Drehende Reparaturen deaktivieren",
+	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "Wenn aktiviert, wird der Reparaturzähler einer Teile nicht mehr erhöht, sodass Reparaturen nie schwieriger oder weniger effektiv werden. (Wenn das alte Reparatursystem aktiviert ist, hat diese Einstellung keinen Effekt)",
+
+	"Sandbox_VRO_RepairFullyBrokenParts": "Vollständig beschädigte Teile reparieren",
+	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "Wenn aktiviert, können Teile mit 0 zustand repariert werden, egal ob sie in Ihrem Inventar oder in einem Fahrzeug installiert sind. Fenster und Reifen sind ausgeschlossen und können auch nicht repariert werden, wenn sie vollständig beschädigt sind. (Wenn das alte Reparatursystem aktiviert ist, hat diese Einstellung keinen Effekt)"
 }

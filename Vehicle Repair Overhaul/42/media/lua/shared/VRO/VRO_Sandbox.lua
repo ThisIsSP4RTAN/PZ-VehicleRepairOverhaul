@@ -86,3 +86,19 @@ function VRO.IsDiminishingRepairsDisabled()
     end
     return false
 end
+
+-- Allow repairing fully broken (0 condition) parts, whether loose or installed 
+-- on a vehicle. Default OFF. (Windows/tires/fix-a-flat parts are excluded from 
+-- this in the fixing UI regardless of this setting.)
+function VRO.CanRepairFullyBrokenParts()
+    if not SandboxVars then return false end
+    -- normal (top-level) sandbox var
+    if SandboxVars.VRO_RepairFullyBrokenParts ~= nil then
+        return SandboxVars.VRO_RepairFullyBrokenParts == true
+    end
+    -- backward-compat if someone shipped a nested "VRO" table
+    if SandboxVars.VRO and SandboxVars.VRO.RepairFullyBrokenParts ~= nil then
+        return SandboxVars.VRO.RepairFullyBrokenParts == true
+    end
+    return false
+end

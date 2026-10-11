@@ -1,65 +1,65 @@
 {
-	"Sandbox_VRO": "Vehicle Repair Overhaul",
+	"Sandbox_VSO": "Vehicle Salvage Overhaul",
 
-	"Sandbox_VRO_EnableFullVehicleSalvaging": "Full Vehicle Salvaging",
+	"Sandbox_VSO_EnableFullVehicleSalvaging": "Full Vehicle Salvaging",
 
-	"Sandbox_VRO_SalvageTime_Doors": "Salvage Time: Doors",
-	"Sandbox_VRO_SalvageTime_Doors_tooltip": "How long it takes to salvage doors. Higher is slower. Default 600.",
+	"Sandbox_VSO_SalvageTime_Doors": "Salvage Time: Doors",
+	"Sandbox_VSO_SalvageTime_Doors_tooltip": "How long it takes to salvage doors. Higher is slower. Default 600.",
 
-	"Sandbox_VRO_SalvageTime_DoorsMilitary": "Salvage Time: Military / Large Doors",
-	"Sandbox_VRO_SalvageTime_DoorsMilitary_tooltip": "How long it takes to salvage military / large doors. Higher is slower. Default 700.",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary": "Salvage Time: Military / Large Doors",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary_tooltip": "How long it takes to salvage military / large doors. Higher is slower. Default 700.",
 
-	"Sandbox_VRO_SalvageTime_TrunkDoors": "Salvage Time: Trunk Doors",
-	"Sandbox_VRO_SalvageTime_TrunkDoors_tooltip": "How long it takes to salvage trunk doors. Higher is slower. Default 500.",
+	"Sandbox_VSO_SalvageTime_TrunkDoors": "Salvage Time: Trunk Doors",
+	"Sandbox_VSO_SalvageTime_TrunkDoors_tooltip": "How long it takes to salvage trunk doors. Higher is slower. Default 500.",
 
-	"Sandbox_VRO_SalvageTime_Hoods": "Salvage Time: Hoods / Metal Covers",
-	"Sandbox_VRO_SalvageTime_Hoods_tooltip": "How long it takes to salvage hoods / metal covers. Higher is slower. Default 600.",
+	"Sandbox_VSO_SalvageTime_Hoods": "Salvage Time: Hoods / Metal Covers",
+	"Sandbox_VSO_SalvageTime_Hoods_tooltip": "How long it takes to salvage hoods / metal covers. Higher is slower. Default 600.",
 
-	"Sandbox_VRO_SalvageTime_HoodsMilitary": "Salvage Time: Military Hoods / Armor",
-	"Sandbox_VRO_SalvageTime_HoodsMilitary_tooltip": "How long it takes to salvage military hoods / armor. Higher is slower. Default 800.",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary": "Salvage Time: Military Hoods / Armor",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary_tooltip": "How long it takes to salvage military hoods / armor. Higher is slower. Default 800.",
 
-	"Sandbox_VRO_SalvageTime_Wooden": "Salvage Time: Wooden Parts",
-	"Sandbox_VRO_SalvageTime_Wooden_tooltip": "How long it takes to salvage wooden parts. Higher is slower. Default 700.",
+	"Sandbox_VSO_SalvageTime_Wooden": "Salvage Time: Wooden Parts",
+	"Sandbox_VSO_SalvageTime_Wooden_tooltip": "How long it takes to salvage wooden parts. Higher is slower. Default 700.",
 
-	"Sandbox_VRO_SalvageTime_GasTanks": "Salvage Time: Gas Tanks",
-	"Sandbox_VRO_SalvageTime_GasTanks_tooltip": "How long it takes to salvage gas tanks. Higher is slower. Default 700.",
+	"Sandbox_VSO_SalvageTime_GasTanks": "Salvage Time: Gas Tanks",
+	"Sandbox_VSO_SalvageTime_GasTanks_tooltip": "How long it takes to salvage gas tanks. Higher is slower. Default 700.",
 
-	"Sandbox_VRO_SalvageTime_GasTanksSmall": "Salvage Time: Small Gas Tanks",
-	"Sandbox_VRO_SalvageTime_GasTanksSmall_tooltip": "How long it takes to salvage small gas tanks. Higher is slower. Default 500.",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall": "Salvage Time: Small Gas Tanks",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall_tooltip": "How long it takes to salvage small gas tanks. Higher is slower. Default 500.",
 
-	"Sandbox_VRO_SalvageTime_Mufflers": "Salvage Time: Mufflers",
-	"Sandbox_VRO_SalvageTime_Mufflers_tooltip": "How long it takes to salvage mufflers. Higher is slower. Default 500.",
+	"Sandbox_VSO_SalvageTime_Mufflers": "Salvage Time: Mufflers",
+	"Sandbox_VSO_SalvageTime_Mufflers_tooltip": "How long it takes to salvage mufflers. Higher is slower. Default 500.",
 
-	"Sandbox_VRO_SalvageTime_Suspension": "Salvage Time: Suspension",
-	"Sandbox_VRO_SalvageTime_Suspension_tooltip": "How long it takes to salvage suspension. Higher is slower. Default 500.",
+	"Sandbox_VSO_SalvageTime_Suspension": "Salvage Time: Suspension",
+	"Sandbox_VSO_SalvageTime_Suspension_tooltip": "How long it takes to salvage suspension. Higher is slower. Default 500.",
 
-	"Sandbox_VRO_SalvageTime_Brakes": "Salvage Time: Brakes",
-	"Sandbox_VRO_SalvageTime_Brakes_tooltip": "How long it takes to salvage brakes. Higher is slower. Default 600.",
+	"Sandbox_VSO_SalvageTime_Brakes": "Salvage Time: Brakes",
+	"Sandbox_VSO_SalvageTime_Brakes_tooltip": "How long it takes to salvage brakes. Higher is slower. Default 600.",
 
-	"Sandbox_VRO_SalvageTime_Seats": "Salvage Time: Seats",
-	"Sandbox_VRO_SalvageTime_Seats_tooltip": "How long it takes to salvage seats. Higher is slower. Default 600.",
+	"Sandbox_VSO_SalvageTime_Seats": "Salvage Time: Seats",
+	"Sandbox_VSO_SalvageTime_Seats_tooltip": "How long it takes to salvage seats. Higher is slower. Default 600.",
 
-	"Sandbox_VRO_SalvageTime_Tires": "Salvage Time: Tires",
-	"Sandbox_VRO_SalvageTime_Tires_tooltip": "How long it takes to salvage tires. Higher is slower. Default 600.",
+	"Sandbox_VSO_SalvageTime_Tires": "Salvage Time: Tires",
+	"Sandbox_VSO_SalvageTime_Tires_tooltip": "How long it takes to salvage tires. Higher is slower. Default 600.",
 
-	"Sandbox_VRO_SalvageTime_Bars": "Salvage Time: Bars (Bullbars / Roofracks)",
-	"Sandbox_VRO_SalvageTime_Bars_tooltip": "How long it takes to salvage bars (bullbars / roofracks). Higher is slower. Default 600.",
+	"Sandbox_VSO_SalvageTime_Bars": "Salvage Time: Bars (Bullbars / Roofracks)",
+	"Sandbox_VSO_SalvageTime_Bars_tooltip": "How long it takes to salvage bars (bullbars / roofracks). Higher is slower. Default 600.",
 
-	"Sandbox_VRO_SalvageTime_SaddlebagsFabric": "Salvage Time: Saddlebags / Misc Fabrics",
-	"Sandbox_VRO_SalvageTime_SaddlebagsFabric_tooltip": "How long it takes to salvage saddlebags / misc fabrics. Higher is slower. Default 600.",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric": "Salvage Time: Saddlebags / Misc Fabrics",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric_tooltip": "How long it takes to salvage saddlebags / misc fabrics. Higher is slower. Default 600.",
 
-	"Sandbox_VRO_SalvageTime_SaddlebagsHard": "Salvage Time: Hard Saddlebags",
-	"Sandbox_VRO_SalvageTime_SaddlebagsHard_tooltip": "How long it takes to salvage hard saddlebags. Higher is slower. Default 600.",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard": "Salvage Time: Hard Saddlebags",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard_tooltip": "How long it takes to salvage hard saddlebags. Higher is slower. Default 600.",
 
-	"Sandbox_VRO_SalvageTime_SoftTops": "Salvage Time: Soft-tops",
-	"Sandbox_VRO_SalvageTime_SoftTops_tooltip": "How long it takes to salvage soft-tops. Higher is slower. Default 300.",
+	"Sandbox_VSO_SalvageTime_SoftTops": "Salvage Time: Soft-tops",
+	"Sandbox_VSO_SalvageTime_SoftTops_tooltip": "How long it takes to salvage soft-tops. Higher is slower. Default 300.",
 
-	"Sandbox_VRO_SalvageTime_Panels": "Salvage Time: Small Misc Panels",
-	"Sandbox_VRO_SalvageTime_Panels_tooltip": "How long it takes to salvage small misc panels. Higher is slower. Default 600.",
+	"Sandbox_VSO_SalvageTime_Panels": "Salvage Time: Small Misc Panels",
+	"Sandbox_VSO_SalvageTime_Panels_tooltip": "How long it takes to salvage small misc panels. Higher is slower. Default 600.",
 
-	"Sandbox_VRO_SalvageTime_ContainerTanks": "Salvage Time: Large Container Tanks",
-	"Sandbox_VRO_SalvageTime_ContainerTanks_tooltip": "How long it takes to salvage large container tanks. Higher is slower. Default 500.",
+	"Sandbox_VSO_SalvageTime_ContainerTanks": "Salvage Time: Large Container Tanks",
+	"Sandbox_VSO_SalvageTime_ContainerTanks_tooltip": "How long it takes to salvage large container tanks. Higher is slower. Default 500.",
 
-	"Sandbox_VRO_SalvageTime_Electronics": "Salvage Time: Electronics",
-	"Sandbox_VRO_SalvageTime_Electronics_tooltip": "How long it takes to salvage electronics. Higher is slower. Default 500."
+	"Sandbox_VSO_SalvageTime_Electronics": "Salvage Time: Electronics",
+	"Sandbox_VSO_SalvageTime_Electronics_tooltip": "How long it takes to salvage electronics. Higher is slower. Default 500."
 }

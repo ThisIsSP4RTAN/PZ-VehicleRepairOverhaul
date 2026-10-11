@@ -1,5 +1,65 @@
 {
-	"Sandbox_VRO": "Vehicle Repair Overhaul",
+	"Sandbox_VSO": "Vehicle Salvage Overhaul",
 
-	"Sandbox_VRO_EnableFullVehicleSalvaging": "การกู้ยานพาหนะเต็มรูปแบบ"
+	"Sandbox_VSO_EnableFullVehicleSalvaging": "การกู้ยานพาหนะเต็มรูปแบบ",
+
+	"Sandbox_VSO_SalvageTime_Doors": "เวลากู้คืน: ประตู",
+	"Sandbox_VSO_SalvageTime_Doors_tooltip": "เวลาที่ใช้ในการกู้คืนประตู ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 600",
+
+	"Sandbox_VSO_SalvageTime_DoorsMilitary": "เวลากู้คืน: ประตูแบบทหาร / ประตูขนาดใหญ่",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary_tooltip": "เวลาที่ใช้ในการกู้คืนประตูทหารหรือประตูขนาดใหญ่ ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 700",
+
+	"Sandbox_VSO_SalvageTime_TrunkDoors": "เวลากู้คืน: Trunk Doors",
+	"Sandbox_VSO_SalvageTime_TrunkDoors_tooltip": "เวลาที่ใช้ในการกู้คืนประตูตัวรถ ยิ่งตั้งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 500",
+
+	"Sandbox_VSO_SalvageTime_Hoods": "เวลากู้คืน: ฝาครอบ / ฝาครอบโลหะ",
+	"Sandbox_VSO_SalvageTime_Hoods_tooltip": "เวลาที่ใช้ในการกู้คืนฮูด / ฝาครอบโลหะ ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 600",
+
+	"Sandbox_VSO_SalvageTime_HoodsMilitary": "เวลากู้คืน: หมวกทหาร / ชุดเกราะ",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary_tooltip": "เวลาที่ใช้ในการกู้คืนหมวกกันน็อก / ชุดเกราะทหาร ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 800",
+
+	"Sandbox_VSO_SalvageTime_Wooden": "เวลากู้คืน: ชิ้นส่วนไม้",
+	"Sandbox_VSO_SalvageTime_Wooden_tooltip": "เวลาที่ใช้ในการกู้คืนชิ้นส่วนไม้ ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 700",
+
+	"Sandbox_VSO_SalvageTime_GasTanks": "เวลากู้คืน: Gas Tanks",
+	"Sandbox_VSO_SalvageTime_GasTanks_tooltip": "เวลาที่ใช้ในการกู้คืนถังน้ำมัน ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 700",
+
+	"Sandbox_VSO_SalvageTime_GasTanksSmall": "เวลากู้คืน: ถังก๊าซขนาดเล็ก",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall_tooltip": "เวลาที่ใช้ในการกู้คืนถังก๊าซขนาดเล็ก ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 500.",
+
+	"Sandbox_VSO_SalvageTime_Mufflers": "เวลากู้คืน: ท่อเก็บเสียง",
+	"Sandbox_VSO_SalvageTime_Mufflers_tooltip": "เวลาที่ใช้ในการกู้คืนท่อไอเสีย ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 500",
+
+	"Sandbox_VSO_SalvageTime_Suspension": "เวลากู้คืน: ระบบกันสะเทือน",
+	"Sandbox_VSO_SalvageTime_Suspension_tooltip": "เวลาที่ใช้ในการกู้คืนระบบกันสะเทือน ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 500.",
+
+	"Sandbox_VSO_SalvageTime_Brakes": "เวลากู้คืน: ระบบเบรก",
+	"Sandbox_VSO_SalvageTime_Brakes_tooltip": "เวลาที่จำเป็นในการกู้คืนระบบเบรก ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 600",
+
+	"Sandbox_VSO_SalvageTime_Seats": "เวลากู้คืน: ที่นั่ง",
+	"Sandbox_VSO_SalvageTime_Seats_tooltip": "เวลาที่ใช้ในการกู้คืนที่นั่ง ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 600",
+
+	"Sandbox_VSO_SalvageTime_Tires": "เวลากู้คืน: ยาง",
+	"Sandbox_VSO_SalvageTime_Tires_tooltip": "เวลาที่ใช้ในการกู้คืนยาง ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 600",
+
+	"Sandbox_VSO_SalvageTime_Bars": "เวลากู้ภัย: บาร์ (บาร์กันชน / ราวหลังคา)",
+	"Sandbox_VSO_SalvageTime_Bars_tooltip": "เวลาที่ใช้ในการกู้คืนบาร์ (bullbars / roofracks) ยิ่งตั้งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 600",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric": "เวลากู้คืน: กระเป๋าข้าง / ผ้าต่างๆ",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric_tooltip": "เวลาที่ใช้ในการกู้คืนถุงข้าง / ผ้าต่างๆ ยิ่งตั้งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 600",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard": "เวลากู้คืน: กระเป๋าข้างแบบแข็ง",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard_tooltip": "เวลาที่ใช้ในการกู้คืนกระเป๋าข้างแบบแข็ง ยิ่งตั้งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 600",
+
+	"Sandbox_VSO_SalvageTime_SoftTops": "เวลากู้คืน: หลังคาแบบผ้า",
+	"Sandbox_VSO_SalvageTime_SoftTops_tooltip": "เวลาที่ใช้ในการกู้คืนส่วนหลังคาแบบผ้า ใช้ค่าที่สูงขึ้นจะทำให้กระบวนการช้าลง ค่าเริ่มต้นคือ 300",
+
+	"Sandbox_VSO_SalvageTime_Panels": "เวลากู้คืน: แผงอุปกรณ์เสริมขนาดเล็ก",
+	"Sandbox_VSO_SalvageTime_Panels_tooltip": "เวลาที่ใช้ในการกู้คืนแผงขนาดเล็กประเภทต่างๆ ยิ่งตั้งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 600",
+
+	"Sandbox_VSO_SalvageTime_ContainerTanks": "เวลากู้คืน: ถังเก็บขนาดใหญ่",
+	"Sandbox_VSO_SalvageTime_ContainerTanks_tooltip": "เวลาที่ใช้ในการกู้คืนถังคอนเทนเนอร์ขนาดใหญ่ ยิ่งสูง ยิ่งช้า ค่าเริ่มต้นคือ 500.",
+
+	"Sandbox_VSO_SalvageTime_Electronics": "เวลากู้คืน: อุปกรณ์อิเล็กทรอนิกส์",
+	"Sandbox_VSO_SalvageTime_Electronics_tooltip": "เวลาที่ใช้ในการกู้ข้อมูลจากอุปกรณ์อิเล็กทรอนิกส์ ยิ่งค่าสูง ยิ่งช้า ค่าเริ่มต้นคือ 500"
 }

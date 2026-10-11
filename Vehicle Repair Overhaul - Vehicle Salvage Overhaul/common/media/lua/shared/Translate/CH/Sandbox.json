@@ -1,5 +1,66 @@
 {
-	"Sandbox_VRO": "Vehicle Repair Overhaul",
+	"Sandbox_VSO": "Vehicle Salvage Overhaul",
 
-	"Sandbox_VRO_EnableFullVehicleSalvaging": "整车回收"
+	"Sandbox_VSO_EnableFullVehicleSalvaging": "整车回收",
+
+	"Sandbox_VSO_SalvageTime_Doors": "搶救時刻: 門",
+	"Sandbox_VSO_SalvageTime_Doors_tooltip": "回收門需要多長時間。數值越高，速度越慢。預設值 500.",
+
+	"Sandbox_VSO_SalvageTime_DoorsMilitary": "搶救時刻: 軍事／大型門",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary_tooltip": "回收軍用／大型門需要多長時間。數值越高，速度越慢。預設值為 700.",
+
+	"Sandbox_VSO_SalvageTime_TrunkDoors": "搶救時刻: 後車廂門",
+	"Sandbox_VSO_SalvageTime_TrunkDoors_tooltip": "修復後車廂門所需的時間。數值越高，速度越慢。預設值為 500。",
+
+	"Sandbox_VSO_SalvageTime_Hoods": "搶救時刻: 抽油煙機／金屬罩",
+	"Sandbox_VSO_SalvageTime_Hoods_tooltip": "回收引擎蓋／金屬蓋所需的時間。數值越高，速度越慢。預設值為 600。",
+
+	"Sandbox_VSO_SalvageTime_HoodsMilitary": "搶救時刻: 軍用頭罩／防彈衣",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary_tooltip": "回收軍用頭盔／護甲所需的時間。數值越高，速度越慢。預設值為 800。",
+
+	"Sandbox_VSO_SalvageTime_Wooden": "搶救時刻: 木製零件",
+	"Sandbox_VSO_SalvageTime_Wooden_tooltip": "回收木製零件所需的時間。數值越高，速度越慢。預設值為 700。",
+
+	"Sandbox_VSO_SalvageTime_GasTanks": "搶救時刻: 氣罐",
+	"Sandbox_VSO_SalvageTime_GasTanks_tooltip": "回收氣罐所需的時間。數值越高，速度越慢。預設值為 700。",
+
+	"Sandbox_VSO_SalvageTime_GasTanksSmall": "搶救時刻: 小型瓦斯罐",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall_tooltip": "回收小型氣罐所需的時間。數值越高，速度越慢。預設值為 500。",
+
+	"Sandbox_VSO_SalvageTime_Mufflers": "搶救時刻: 消音器",
+	"Sandbox_VSO_SalvageTime_Mufflers_tooltip": "修復消音器所需的時間。數值越高，速度越慢。預設值為 500。",
+
+	"Sandbox_VSO_SalvageTime_Suspension": "搶救時刻: 懸吊系統",
+	"Sandbox_VSO_SalvageTime_Suspension_tooltip": "恢復懸吊系統所需的時間。數值越高，速度越慢。預設值為 500。",
+
+	"Sandbox_VSO_SalvageTime_Brakes": "搶救時刻: 煞車",
+	"Sandbox_VSO_SalvageTime_Brakes_tooltip": "恢復煞車所需的時間。數值越高，速度越慢。預設值為 600。",
+
+	"Sandbox_VSO_SalvageTime_Seats": "搶救時刻: 座位",
+	"Sandbox_VSO_SalvageTime_Seats_tooltip": "拯救座位所需的時間。數值越高，速度越慢。預設值為 600。",
+
+	"Sandbox_VSO_SalvageTime_Tires": "搶救時刻: 輪胎",
+	"Sandbox_VSO_SalvageTime_Tires_tooltip": "回收輪胎所需的時間。數值越高，速度越慢。預設值為 600。",
+
+	"Sandbox_VSO_SalvageTime_Bars": "搶救時刻: 橫桿（防撞桿／車頂行李架）",
+	"Sandbox_VSO_SalvageTime_Bars_tooltip": "回收橫桿（防撞桿／車頂架）所需的時間。高度越高，速度越慢。預設值為 600。",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric": "搶救時刻: 馬鞍袋／各類布料",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric_tooltip": "回收馬鞍袋／各類布料的所需時間。數值越高，速度越慢。預設值為 600。",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard": "搶救時刻: 硬質馬鞍袋",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard_tooltip": "回收硬質側包所需的時間。數值越高，速度越慢。預設值為 600。",
+
+	"Sandbox_VSO_SalvageTime_SoftTops": "搶救時刻: 軟頂",
+	"Sandbox_VSO_SalvageTime_SoftTops_tooltip": "回收軟頂所需的時間。數值越高，速度越慢。預設值為 300。",
+
+	"Sandbox_VSO_SalvageTime_Panels": "搶救時刻: 小型雜項面板",
+	"Sandbox_VSO_SalvageTime_Panels_tooltip": "回收小型雜項面板所需的時間。數值越高，速度越慢。預設值為 600。",
+
+	"Sandbox_VSO_SalvageTime_ContainerTanks": "搶救時刻: 大型儲罐",
+	"Sandbox_VSO_SalvageTime_ContainerTanks_tooltip": "打撈大型貨櫃船的油罐需要多長時間。數值越高，速度越慢。預設值為 500。",
+
+	"Sandbox_VSO_SalvageTime_Electronics": "搶救時刻: 電子產品",
+	"Sandbox_VSO_SalvageTime_Electronics_tooltip": "回收電子產品所需的時間。數值越高，速度越慢。預設值為 500。"
+
 }

@@ -5,5 +5,11 @@
 	"Sandbox_VRO_EnableEngineRebuild_tooltip": "Oyunda Motor Yenileme eyleminin kullanılabilirliğini değiştirir. (Project Summer Car veya başka bir motor tamir modu etkinse bu ayar hiçbir şey yapmaz.)",
 
 	"Sandbox_VRO_UseVanillaFixingRecipes": "Eski onarım sistemi",
-	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Yerinde onarıma izin veren, kaynak maskesi/ses/animasyon kullanmayan orijinal sistemi kullan."
+	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "Yerinde onarıma izin veren, kaynak maskesi/ses/animasyon kullanmayan orijinal sistemi kullan.",
+
+	"Sandbox_VRO_DisableDiminishingRepairs": "Disable Diminishing Repairs",
+	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "When enabled, repairing a part no longer increases its repair counter, so repairs never get progressively harder or less effective. (If the Old Repair System is enabled, this setting does nothing)",
+
+	"Sandbox_VRO_RepairFullyBrokenParts": "Tamamen Kırılmış Parçaları Onarın",
+	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "Bu ayar etkinleştirildiğinde, durum seviyesi 0 olan parçalar, ister envanterinizde serbest olarak bulunsun ister bir araca takılı olsun, onarılabilir. Camlar ve lastik parçaları bu kuralın dışında tutulur ve tamamen kırıldıklarında yine de onarılamazlar. (Eski Onarım Sistemi etkinleştirilmişse, bu ayarın herhangi bir etkisi olmaz)"
 }

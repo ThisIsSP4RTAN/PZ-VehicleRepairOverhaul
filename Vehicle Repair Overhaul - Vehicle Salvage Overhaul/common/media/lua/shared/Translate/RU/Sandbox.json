@@ -1,5 +1,65 @@
 {
-	"Sandbox_VRO": "Vehicle Repair Overhaul",
+	"Sandbox_VSO": "Vehicle Salvage Overhaul",
 
-	"Sandbox_VRO_EnableFullVehicleSalvaging": "Полное спасение автомобиля"
+	"Sandbox_VSO_EnableFullVehicleSalvaging": "Полное спасение автомобиля",
+
+	"Sandbox_VSO_SalvageTime_Doors": "Время спасения: Двери",
+	"Sandbox_VSO_SalvageTime_Doors_tooltip": "Сколько времени занимает спасение дверей. Чем выше значение, тем медленнее. По умолчанию 600.",
+
+	"Sandbox_VSO_SalvageTime_DoorsMilitary": "Время спасения: Военные / Крупные Двери",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary_tooltip": "Сколько времени занимает спасение военных / крупных дверей. Чем выше значение, тем медленнее. По умолчанию 700.",
+
+	"Sandbox_VSO_SalvageTime_TrunkDoors": "Время спасения: Двери Багажника",
+	"Sandbox_VSO_SalvageTime_TrunkDoors_tooltip": "Сколько времени занимает спасение дверей багажника. Чем выше значение, тем медленнее. По умолчанию 500.",
+
+	"Sandbox_VSO_SalvageTime_Hoods": "Время спасения: Крышки / Металлические покрытия",
+	"Sandbox_VSO_SalvageTime_Hoods_tooltip": "Сколько времени занимает спасение крышек / металлических покрытий. Чем выше значение, тем медленнее. По умолчанию 600.",
+
+	"Sandbox_VSO_SalvageTime_HoodsMilitary": "Время спасения: Военные крышки / Броня",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary_tooltip": "Сколько времени занимает спасение военных крышек / брони. Чем выше значение, тем медленнее. По умолчанию 800.",
+
+	"Sandbox_VSO_SalvageTime_Wooden": "Время спасения: Деревянные Части",
+	"Sandbox_VSO_SalvageTime_Wooden_tooltip": "Сколько времени занимает спасение деревянных частей. Чем выше значение, тем медленнее. По умолчанию 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanks": "Время спасения: Бензобаки",
+	"Sandbox_VSO_SalvageTime_GasTanks_tooltip": "Сколько времени занимает спасение бензобаков. Чем выше значение, тем медленнее. По умолчанию 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanksSmall": "Время спасения: Маленькие Бензобаки",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall_tooltip": "Сколько времени занимает спасение маленьких бензобаков. Чем выше значение, тем медленнее. По умолчанию 500.",
+
+	"Sandbox_VSO_SalvageTime_Mufflers": "Время спасения: Глушители",
+	"Sandbox_VSO_SalvageTime_Mufflers_tooltip": "Сколько времени занимает спасение глушители. Чем выше значение, тем медленнее. По умолчанию 500.",
+
+	"Sandbox_VSO_SalvageTime_Suspension": "Время спасения: Подвеска",
+	"Sandbox_VSO_SalvageTime_Suspension_tooltip": "Сколько времени занимает спасение подвеска. Чем выше значение, тем медленнее. По умолчанию 500.",
+
+	"Sandbox_VSO_SalvageTime_Brakes": "Время спасения: Тормоза",
+	"Sandbox_VSO_SalvageTime_Brakes_tooltip": "Сколько времени занимает спасение тормозов. Чем выше значение, тем медленнее. По умолчанию 600.",
+
+	"Sandbox_VSO_SalvageTime_Seats": "Время спасения: Сиденья",
+	"Sandbox_VSO_SalvageTime_Seats_tooltip": "Сколько времени занимает спасение сидений. Чем выше значение, тем медленнее. По умолчанию 600.",
+
+	"Sandbox_VSO_SalvageTime_Tires": "Время спасения: Шины",
+	"Sandbox_VSO_SalvageTime_Tires_tooltip": "Сколько времени занимает спасение шин. Чем выше значение, тем медленнее. По умолчанию 600.",
+
+	"Sandbox_VSO_SalvageTime_Bars": "Время спасения: Barras (бамперы / багажники на крышу)",
+	"Sandbox_VSO_SalvageTime_Bars_tooltip": "Сколько времени занимает спасение barras (бамперы / багажники на крышу). Чем выше значение, тем медленнее. По умолчанию 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric": "Время спасения: Saddlebags / Разные ткани",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric_tooltip": "Сколько времени занимает спасение saddlebags / разные ткани. Чем выше значение, тем медленнее. По умолчанию 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard": "Время спасения: Жесткие седельные сумки",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard_tooltip": "Сколько времени занимает спасение жесткие седельные сумки. Чем выше значение, тем медленнее. По умолчанию 600.",
+
+	"Sandbox_VSO_SalvageTime_SoftTops": "Время спасения: Мягкие верхи",
+	"Sandbox_VSO_SalvageTime_SoftTops_tooltip": "Сколько времени занимает спасение мягкие верхи. Чем выше значение, тем медленнее. По умолчанию 300.",
+
+	"Sandbox_VSO_SalvageTime_Panels": "Время спасения: Небольшие панели различного назначения",
+	"Sandbox_VSO_SalvageTime_Panels_tooltip": "Сколько времени занимает спасение небольшие панели различного назначения. Чем выше значение, тем медленнее. По умолчанию 600.",
+
+	"Sandbox_VSO_SalvageTime_ContainerTanks": "Время спасения: Крупные резервуары-контейнеры",
+	"Sandbox_VSO_SalvageTime_ContainerTanks_tooltip": "Сколько времени занимает спасение большие резервуары-контейнеры. Чем выше значение, тем медленнее. По умолчанию 500.",
+
+	"Sandbox_VSO_SalvageTime_Electronics": "Время спасения: Электроника",
+	"Sandbox_VSO_SalvageTime_Electronics_tooltip": "Сколько времени занимает спасение электроника. Чем выше значение, тем медленнее. По умолчанию 500."
 }

@@ -5,5 +5,11 @@
 	"Sandbox_VRO_EnableEngineRebuild_tooltip": "遊戲中引擎重新建造操作是否可用.",
 
 	"Sandbox_VRO_UseVanillaFixingRecipes": "舊修理係統。",
-	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "使用原始的修理係統，允許修復到位，不使用焊接麵具，任何聲音或動畫。"
+	"Sandbox_VRO_UseVanillaFixingRecipes_tooltip": "使用原始的修理係統，允許修復到位，不使用焊接麵具，任何聲音或動畫。",
+
+	"Sandbox_VRO_DisableDiminishingRepairs": "禁用递减修理",
+	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "启用后，修理一个部件不再增加其修理计数器，因此修理永远不会变得越来越困难或效果越来越差。(如果启用了旧修理系统，此设置无效)",
+
+	"Sandbox_VRO_RepairFullyBrokenParts": "修理完全损坏的部件",
+	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "启用后，0状态的部件可以被修理，无论是在你的库存中还是安装在车辆上。窗户和轮胎部件被排除在外，即使完全损坏也无法修理。(如果启用了旧修理系统，此设置无效)"
 }

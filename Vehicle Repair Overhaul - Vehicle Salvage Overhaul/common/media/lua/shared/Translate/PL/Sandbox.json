@@ -1,5 +1,65 @@
 {
-	"Sandbox_VRO": "Vehicle Repair Overhaul",
+	"Sandbox_VSO": "Vehicle Salvage Overhaul",
 
-	"Sandbox_VRO_EnableFullVehicleSalvaging": "Pełny Odbiór Pojazdów"
+	"Sandbox_VSO_EnableFullVehicleSalvaging": "Pełny Odbiór Pojazdów",
+
+	"Sandbox_VSO_SalvageTime_Doors": "Czas Odbioru: Drzwi",
+	"Sandbox_VSO_SalvageTime_Doors_tooltip": "Jak długo trwa odbiór drzwi. Im wyższy, tym wolniej. Domyślnie 600.",
+
+	"Sandbox_VSO_SalvageTime_DoorsMilitary": "Czas Odbioru: Drzwi Wojskowe / Duże Drzwi",
+	"Sandbox_VSO_SalvageTime_DoorsMilitary_tooltip": "Jak długo trwa odbiór drzwi wojskowych / dużych drzwi. Im wyższy, tym wolniej. Domyślnie 700.",
+
+	"Sandbox_VSO_SalvageTime_TrunkDoors": "Czas Odbioru: Drzwi Bagażnika",
+	"Sandbox_VSO_SalvageTime_TrunkDoors_tooltip": "Jak długo trwa odbiór drzwi bagażnika. Im wyższy, tym wolniej. Domyślnie 500.",
+
+	"Sandbox_VSO_SalvageTime_Hoods": "Czas Odbioru: Klapki / Pokrywy Metalowe",
+	"Sandbox_VSO_SalvageTime_Hoods_tooltip": "Jak długo trwa odbiór klapki / pokryw metalowych. Im wyższy, tym wolniej. Domyślnie 600.",
+
+	"Sandbox_VSO_SalvageTime_HoodsMilitary": "Czas Odbioru: Klapki Wojskowe / Pancerz",
+	"Sandbox_VSO_SalvageTime_HoodsMilitary_tooltip": "Jak długo trwa odbiór klapki wojskowych / pancerza. Im wyższy, tym wolniej. Domyślnie 800.",
+
+	"Sandbox_VSO_SalvageTime_Wooden": "Czas Odbioru: Części Drewniane",
+	"Sandbox_VSO_SalvageTime_Wooden_tooltip": "Jak długo trwa odbiór części drewnianych. Im wyższy, tym wolniej. Domyślnie 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanks": "Czas Odbioru: Zbiorniki Paliwa",
+	"Sandbox_VSO_SalvageTime_GasTanks_tooltip": "Jak długo trwa odbiór zbiorników paliwa. Im wyższy, tym wolniej. Domyślnie 700.",
+
+	"Sandbox_VSO_SalvageTime_GasTanksSmall": "Czas Odbioru: Małe Zbiorniki Paliwa",
+	"Sandbox_VSO_SalvageTime_GasTanksSmall_tooltip": "Jak długo trwa odbiór małych zbiorników paliwa. Im wyższy, tym wolniej. Domyślnie 500.",
+
+	"Sandbox_VSO_SalvageTime_Mufflers": "Czas Odbioru: Mufflers",
+	"Sandbox_VSO_SalvageTime_Mufflers_tooltip": "Jak długo trwa odbiór mufflerów. Im wyższy, tym wolniej. Domyślnie 500.",
+
+	"Sandbox_VSO_SalvageTime_Suspension": "Czas Odbioru: Zawieszenie",
+	"Sandbox_VSO_SalvageTime_Suspension_tooltip": "Jak długo trwa odbiór zawieszenia. Im wyższy, tym wolniej. Domyślnie 500.",
+
+	"Sandbox_VSO_SalvageTime_Brakes": "Czas Odbioru: Hamulce",
+	"Sandbox_VSO_SalvageTime_Brakes_tooltip": "Jak długo trwa odbiór hamulców. Im wyższy, tym wolniej. Domyślnie 600.",
+
+	"Sandbox_VSO_SalvageTime_Seats": "Czas Odbioru: Siedzenia",
+	"Sandbox_VSO_SalvageTime_Seats_tooltip": "Jak długo trwa odbiór siedzeń. Im wyższy, tym wolniej. Domyślnie 600.",
+
+	"Sandbox_VSO_SalvageTime_Tires": "Czas Odbioru: Opony",
+	"Sandbox_VSO_SalvageTime_Tires_tooltip": "Jak długo trwa odbiór opon. Im wyższy, tym wolniej. Domyślnie 600.",
+
+	"Sandbox_VSO_SalvageTime_Bars": "Czas Odbioru: Kierownice (Bullbars / Dachówki)",
+	"Sandbox_VSO_SalvageTime_Bars_tooltip": "Jak długo trwa odbiór kierownic (bullbars / dachówki). Im wyższy, tym wolniej. Domyślnie 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric": "Czas Odbioru: Torby na siodełko / Różne Tkaniny",
+	"Sandbox_VSO_SalvageTime_SaddlebagsFabric_tooltip": "Jak długo trwa odbiór torby na siodełko / różnych tkanin. Im wyższy, tym wolniej. Domyślnie 600.",
+
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard": "Czas Odbioru: Twarde sakwy",
+	"Sandbox_VSO_SalvageTime_SaddlebagsHard_tooltip": "Jak długo trwa odbiór twardych torby na siodełko. Im wyższy, tym wolniej. Domyślnie 600.",
+
+	"Sandbox_VSO_SalvageTime_SoftTops": "Czas Odbioru: Miękkie Dachy",
+	"Sandbox_VSO_SalvageTime_SoftTops_tooltip": "Jak długo trwa odbiór miękkich dachów. Im wyższy, tym wolniej. Domyślnie 300.",
+
+	"Sandbox_VSO_SalvageTime_Panels": "Czas Odbioru: Małe Różne Panele",
+	"Sandbox_VSO_SalvageTime_Panels_tooltip": "Jak długo trwa odbiór małych różnych paneli. Im wyższy, tym wolniej. Domyślnie 600.",
+
+	"Sandbox_VSO_SalvageTime_ContainerTanks": "Czas Odbioru: Duże Zbiorniki Kontenerowe",
+	"Sandbox_VSO_SalvageTime_ContainerTanks_tooltip": "Jak długo trwa odbiór dużych zbiorników kontenerowych. Im wyższy, tym wolniej. Domyślnie 500.",
+
+	"Sandbox_VSO_SalvageTime_Electronics": "Czas Odbioru: Elektronika",
+	"Sandbox_VSO_SalvageTime_Electronics_tooltip": "Jak długo trwa odbiór elektroniki. Im wyższy, tym wolniej. Domyślnie 500."
 }
