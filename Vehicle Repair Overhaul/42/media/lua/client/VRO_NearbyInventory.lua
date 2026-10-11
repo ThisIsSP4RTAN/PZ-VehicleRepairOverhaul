@@ -2,7 +2,7 @@
 require "TimedActions/ISBaseTimedAction"
 require "TimedActions/ISInventoryTransferAction"
 -- Nearby materials are only exposed through the virtual inventory used while
--- building repair options.  Consumption remains VRO's normal player-inventory
+-- building repair options. Consumption remains VRO's normal player-inventory
 -- timed action/server-command path after the selected items are staged.
 local VRO = require "VRO/Core"
 
@@ -43,7 +43,7 @@ local function _addContainerItems(container, add)
     end
 end
 
--- Build a short-lived, de-duplicated snapshot.  It intentionally has no cache:
+-- Build a short-lived, de-duplicated snapshot. It intentionally has no cache:
 -- world containers can change between context-menu opens in multiplayer.
 local function _collect(playerObj)
     local items, seen = {}, {}
@@ -172,7 +172,6 @@ end
 
 -- Equipment must reach the main inventory before normal PZ equip actions run.
 -- Consumable bundles below separately leave items in carried bags alone.
-NearbyInventory._queued = NearbyInventory._queued or setmetatable({}, { __mode = "k" })
 
 local function _playerInventory(playerObj)
     if not playerObj then return nil end
@@ -190,22 +189,6 @@ local function _itemContainer(item)
     return ok, container
 end
 
-if Events and Events.OnTick and not NearbyInventory._clearQueuedOnTick then
-    NearbyInventory._clearQueuedOnTick = true
-    Events.OnTick.Add(function()
-        -- Keep an item marked while its transfer is still queued.  Clearing the
-        -- whole table every tick permits a staging retry to queue the same
-        -- transfer again before the first action has run.
-        for item, playerObj in pairs(NearbyInventory._queued) do
-            local playerInv = _playerInventory(playerObj)
-            local itemValid, container = _itemContainer(item)
-            if not playerInv or not itemValid or container == playerInv then
-                NearbyInventory._queued[item] = nil
-            end
-        end
-    end)
-end
-
 local function _containerSquare(container)
     if not container then return nil end
     local ok, parent = pcall(function() return container.getParent and container:getParent() end)
@@ -218,18 +201,8 @@ local function _containerSquare(container)
     return nil
 end
 
--- Walk the character once to a world square, ending on an adjacent free tile. Never clears the queue.
 local function _walkToSquareOnce(playerObj, sq)
     if not sq then return false end
-    if AdjacentFreeTileFinder and AdjacentFreeTileFinder.Find and ISWalkToTimedAction then
-        local ok, adj = pcall(AdjacentFreeTileFinder.Find, sq, playerObj)
-        if ok and adj then
-            local added = pcall(function()
-                ISTimedActionQueue.add(ISWalkToTimedAction:new(playerObj, adj))
-            end)
-            if added then return true end
-        end
-    end
     if luautils and luautils.walkAdj then
         local ok, reached = pcall(luautils.walkAdj, playerObj, sq, true)
         return (ok and reached) and true or false
@@ -263,7 +236,7 @@ end
 
 -- Grouping key + walk square for an item: a loose item groups by its own world
 -- square; a container item groups by its container (walking to that container's
--- owning object).  Items sharing a key share one walk.
+-- owning object). Items sharing a key share one walk.
 local function _takeKey(item)
     local wi = item.getWorldItem and item:getWorldItem() or nil
     if wi then
@@ -279,17 +252,21 @@ end
 
 -- Walk to each distinct pickup location once, then queue every take for that
 -- location consecutively so same-type items merge into one continuous pickup.
--- Items with no resolvable location fall back to a plain take.  Returns true
+-- Items with no resolvable location fall back to a plain take. Returns true
 -- only if every take was queued.
 local function _queueTakeItems(playerObj, items)
     local playerInv = _playerInventory(playerObj)
     if not playerInv then return false end
 
-    local order, groups, loose = {}, {}, {}
+    local order, groups, loose, seen = {}, {}, {}, {}
     for i = 1, #items do
         local item = items[i]
         local itemValid, source = _itemContainer(item)
-        if item and itemValid and source ~= playerInv and not NearbyInventory._queued[item] then
+        -- Local dedup only: skip items already in the main inventory and any the
+        -- same pass already listed. Nothing persists between passes, so an
+        -- interrupted repair never blocks the next attempt from re-staging.
+        if item and itemValid and source ~= playerInv and not seen[item] then
+            seen[item] = true
             local key, walkSq = _takeKey(item)
             if key == nil then
                 loose[#loose + 1] = item
@@ -307,9 +284,7 @@ local function _queueTakeItems(playerObj, items)
 
     local allOk = true
     local function take(it)
-        NearbyInventory._queued[it] = playerObj
         if not _queueTake(playerObj, it, playerInv) then
-            NearbyInventory._queued[it] = nil
             allOk = false
         end
     end
@@ -327,12 +302,7 @@ function NearbyInventory.queueItemToPlayer(playerObj, item)
     local playerInv = _playerInventory(playerObj)
     local itemValid, source = _itemContainer(item)
     if not (playerInv and itemValid) then return false end
-    if source == playerInv then
-        NearbyInventory._queued[item] = nil
-        return true
-    end
-    local queuedFor = NearbyInventory._queued[item]
-    if queuedFor then return queuedFor == playerObj end
+    if source == playerInv then return true end
     if not (ISTimedActionQueue and ISTimedActionQueue.add) then return false end
     return _queueTakeItems(playerObj, { item })
 end
@@ -343,7 +313,7 @@ function NearbyInventory.queueBundleToPlayer(playerObj, bundle)
     for i = 1, #bundle do
         local entry = bundle[i]
         -- VRO's normal recursive player inventory logic already consumes items
-        -- from carried bags.  Only external selections need staging.
+        -- from carried bags. Only external selections need staging.
         if entry and entry.item and not _containsPlayerItem(playerObj, entry.item) then
             items[#items + 1] = entry.item
         end
