@@ -277,23 +277,29 @@ local function _expandRequireEntry(entry, out_set, seenLists)
 end
 
 -- Returns a set { fullType=true, ... } for recipe's require/requireLists
+-- Which part IDs a recipe applies to. This is static (recipe definitions and
+-- part lists never change at runtime), so memoize per recipe: it was being
+-- rebuilt for every recipe on every right-click.
+local _requireSetCache = setmetatable({}, { __mode = "k" })
 local function resolveRequireSet(fixing)
+  if not fixing then return {} end
+  local cached = _requireSetCache[fixing]
+  if cached then return cached end
   local set = {}
-  if fixing then
-    if fixing.require ~= nil then
-      _expandRequireEntry(fixing.require, set)
-    end
-    if fixing.requireLists ~= nil then
-      if type(fixing.requireLists) == "string" then
-        _expandRequireEntry("@"..fixing.requireLists, set)
-      elseif type(fixing.requireLists) == "table" then
-        local rl = fixing.requireLists
-        for i = 1, #rl do
-          _expandRequireEntry("@"..tostring(rl[i]), set)
-        end
+  if fixing.require ~= nil then
+    _expandRequireEntry(fixing.require, set)
+  end
+  if fixing.requireLists ~= nil then
+    if type(fixing.requireLists) == "string" then
+      _expandRequireEntry("@"..fixing.requireLists, set)
+    elseif type(fixing.requireLists) == "table" then
+      local rl = fixing.requireLists
+      for i = 1, #rl do
+        _expandRequireEntry("@"..tostring(rl[i]), set)
       end
     end
   end
+  _requireSetCache[fixing] = set
   return set
 end
 
@@ -892,18 +898,30 @@ local function condRepairedPercent(brokenItem, chr, fixing, fixer, hbr, fixerInd
   return base
 end
 
+-- Tag -> matching ScriptItems. Item scripts never change at runtime, so memoize
+-- per tag: the first lookup each session scans ScriptManager, the rest are O(1).
+-- Tooltips on parts with many tag-based options were re-scanning per option.
+local _tagScriptsCache = {}
 local function _getScriptsForTag(tag)
+  local key = tostring(tag)
+  local cached = _tagScriptsCache[key]
+  if cached ~= nil then
+    if cached == false then return nil end
+    return cached
+  end
   local sm = ScriptManager and ScriptManager.instance
-  if not sm then return nil end
-  local T = _tag(tag)  -- <-- convert "Thread" / "WeldingMask" -> ItemTag
+  if not sm then return nil end  -- ScriptManager not ready yet; don't cache
+  local T = _tag(tag)  -- convert "Thread" / "WeldingMask" -> ItemTag
 
   -- PZ exposes one of these depending on build; try both
+  local res
   if sm.getItemsTag then
-    return sm:getItemsTag(T)              -- ArrayList<ScriptItem>
+    res = sm:getItemsTag(T)               -- ArrayList<ScriptItem>
   elseif sm.getAllItemsWithTag then
-    return sm:getAllItemsWithTag(T)       -- ArrayList<ScriptItem>
+    res = sm:getAllItemsWithTag(T)        -- ArrayList<ScriptItem>
   end
-  return nil
+  _tagScriptsCache[key] = res or false
+  return res
 end
 
 local function _scriptFullType(si)
@@ -1140,7 +1158,7 @@ local function resolveInvAnim(fixer, fixing)
       or resolveAnim(fixer, fixing)
 end
 
-local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, brokenItem)
+local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, brokenItem, invOverride)
   tip:initialise(); tip:setVisible(false)
   setTooltipIconFromFullType(tip, fixer.item)
   tip:setName(displayNameFromFullType(fixer.item))
@@ -1189,7 +1207,9 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
   local function markSeenItemFT(ft) if ft then seenFull[ft] = true end end
   local function wasSeenFT(ft) return ft and seenFull[ft] == true end
 
-  local inv = NearbyInventory.getEffectiveInventory(player)
+  -- Reuse the caller's snapshot when given; building one here per tooltip meant
+  -- another full nearby scan for every option.
+  local inv = invOverride or NearbyInventory.getEffectiveInventory(player)
 
   -- count total "uses" for a fullType (cap at need)
   local function invHaveForFullType(fullType, capTo)
@@ -1949,6 +1969,11 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   end
 
   local rendered = false
+  -- Effective inventory (player + reachable nearby) is a point-in-time snapshot
+  -- valid for the whole menu build, so compute it ONCE here rather than rebuild
+  -- the nearby scan for every fixer. That per-option rescan was the hang on
+  -- parts with many options (e.g. seats with every animal leather).
+  local inv = NearbyInventory.getEffectiveInventory(playerObj)
   for __ri = 1, #VRO.Recipes do
     local fixing = VRO.Recipes[__ri]
     local requireSet = resolveRequireSet(fixing)
@@ -1957,7 +1982,6 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
       local fixers = fixing.fixers or {}
       for idx = 1, #fixers do
         local fixer = fixers[idx]
-        local inv = NearbyInventory.getEffectiveInventory(playerObj)
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
         local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle, glKeep = true, nil, nil
@@ -2101,7 +2125,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
         end
 
         local tip = ISToolTip:new()
-        addFixerTooltip(tip, playerObj, part, fixing, fixer, idx, broken)
+        addFixerTooltip(tip, playerObj, part, fixing, fixer, idx, broken, inv)
         option.toolTip = tip
       end
     end
@@ -2299,6 +2323,9 @@ local function addInventoryFixOptions(playerObj, context, broken)
   end
 
   local rendered = false
+  -- Compute the effective inventory once for the whole menu build (see the
+  -- vehicle-part handler above) instead of rescanning nearby per fixer.
+  local inv = NearbyInventory.getEffectiveInventory(playerObj)
   for __ri = 1, #VRO.Recipes do
     local fixing = VRO.Recipes[__ri]
     local applies = resolveRequireSet(fixing)[ft] == true
@@ -2306,7 +2333,6 @@ local function addInventoryFixOptions(playerObj, context, broken)
       local fixers = fixing.fixers or {}
       for idx = 1, #fixers do
         local fixer = fixers[idx]
-        local inv = NearbyInventory.getEffectiveInventory(playerObj)
         local fxBundle = gatherRequiredItems(inv, fixer.item, fixer.uses or 1)
         local multiList = _normalizeGlobals(fixer, fixing)
         local glOK, glBundle, glKeep = true, nil, nil
@@ -2442,7 +2468,7 @@ local function addInventoryFixOptions(playerObj, context, broken)
         end
 
         local tip = ISToolTip:new()
-        addFixerTooltip(tip, playerObj, nil, fixing, fixer, idx, broken)
+        addFixerTooltip(tip, playerObj, nil, fixing, fixer, idx, broken, inv)
         option.toolTip = tip
       end
     end
