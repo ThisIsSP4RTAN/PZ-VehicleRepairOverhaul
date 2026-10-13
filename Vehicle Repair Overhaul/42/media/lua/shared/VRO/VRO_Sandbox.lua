@@ -141,14 +141,7 @@ function VRO.UseNearbyContainers()
     return value == nil or value == true
 end
 
--- Search radius in tiles for nearby materials. Default 2, clamped to [1, 10].
-function VRO.GetNearbySearchRadius()
-    local value = _getNearbySandboxValue("VRO_NearbySearchRadius", "NearbySearchRadius")
-    value = tonumber(value) or 2
-    return math.max(1, math.min(10, math.floor(value)))
-end
-
--- Also draw from items lying on the ground within the search radius. Default ON.
+-- Also draw from items lying on the ground within reach. Default ON.
 function VRO.SearchNearbyGroundItems()
     local value = _getNearbySandboxValue("VRO_SearchNearbyGroundItems", "SearchNearbyGroundItems")
     return value == nil or value == true

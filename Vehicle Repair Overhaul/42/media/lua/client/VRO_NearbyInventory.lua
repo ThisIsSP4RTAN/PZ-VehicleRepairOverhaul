@@ -13,10 +13,6 @@ local function _enabled()
     return VRO.UseNearbyContainers and VRO.UseNearbyContainers() or false
 end
 
-local function _radius()
-    return VRO.GetNearbySearchRadius and VRO.GetNearbySearchRadius() or 2
-end
-
 local function _searchGround()
     return VRO.SearchNearbyGroundItems and VRO.SearchNearbyGroundItems() or false
 end
@@ -43,6 +39,13 @@ local function _addContainerItems(container, add)
     end
 end
 
+local function _canReach(fromSq, toSq)
+    if fromSq == toSq then return true end
+    if not (fromSq and toSq and fromSq.canReachTo) then return false end
+    local ok, reach = pcall(function() return fromSq:canReachTo(toSq) end)
+    return (ok and reach) and true or false
+end
+
 -- Build a short-lived, de-duplicated snapshot. It intentionally has no cache:
 -- world containers can change between context-menu opens in multiplayer.
 local function _collect(playerObj)
@@ -67,11 +70,11 @@ local function _collect(playerObj)
     local cell = getCell()
     if not cell then return items end
 
-    local radius = _radius()
-    for x = px - radius, px + radius do
-        for y = py - radius, py + radius do
+    local groundOk = _searchGround()
+    for x = px - 1, px + 1 do
+        for y = py - 1, py + 1 do
             local nearbySquare = cell:getGridSquare(x, y, pz)
-            if nearbySquare then
+            if nearbySquare and _canReach(square, nearbySquare) then
                 -- World-object containers (crates, cupboards, vehicle storage, etc.).
                 local objects = nearbySquare:getObjects()
                 if objects and objects.size then
@@ -84,7 +87,7 @@ local function _collect(playerObj)
                     end
                 end
 
-                if _searchGround() then
+                if groundOk then
                     local worldItems = nearbySquare:getWorldObjects()
                     if worldItems and worldItems.size then
                         for wi = 0, worldItems:size() - 1 do

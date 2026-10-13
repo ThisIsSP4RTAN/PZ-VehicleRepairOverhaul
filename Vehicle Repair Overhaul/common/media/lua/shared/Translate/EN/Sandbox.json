@@ -14,9 +14,7 @@
 	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "When enabled, parts at 0 condition can be repaired, whether loose in your inventory or installed on a vehicle. Windows and tire parts are excluded and still can't be repaired once fully broken. (If the Old Repair System is enabled, this setting does nothing)",
 
 	"Sandbox_VRO_UseNearbyContainers": "Search nearby containers",
-	"Sandbox_VRO_UseNearbyContainers_tooltip": "Allow repair materials and tools stored in nearby containers to be used without moving them into your inventory first.",
-	"Sandbox_VRO_NearbySearchRadius": "Nearby search radius",
-	"Sandbox_VRO_NearbySearchRadius_tooltip": "Maximum distance in tiles used when searching nearby containers and the ground for repair materials and tools.",
+	"Sandbox_VRO_UseNearbyContainers_tooltip": "Allow repair materials and tools stored in adjacent containers you can reach to be used without moving them into your inventory first.",
 	"Sandbox_VRO_SearchNearbyGroundItems": "Search items on the ground",
-	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Allow repair materials and tools lying on the ground within the search radius to be used."
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Allow repair materials and tools lying on the ground within reach to be used."
 }
