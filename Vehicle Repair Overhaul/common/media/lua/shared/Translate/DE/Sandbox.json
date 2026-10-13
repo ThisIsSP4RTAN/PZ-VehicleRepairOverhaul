@@ -11,5 +11,11 @@
 	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "Wenn aktiviert, wird der Reparaturzähler einer Teile nicht mehr erhöht, sodass Reparaturen nie schwieriger oder weniger effektiv werden. (Wenn das alte Reparatursystem aktiviert ist, hat diese Einstellung keinen Effekt)",
 
 	"Sandbox_VRO_RepairFullyBrokenParts": "Vollständig beschädigte Teile reparieren",
-	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "Wenn aktiviert, können Teile mit 0 zustand repariert werden, egal ob sie in Ihrem Inventar oder in einem Fahrzeug installiert sind. Fenster und Reifen sind ausgeschlossen und können auch nicht repariert werden, wenn sie vollständig beschädigt sind. (Wenn das alte Reparatursystem aktiviert ist, hat diese Einstellung keinen Effekt)"
+	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "Wenn aktiviert, können Teile mit 0 zustand repariert werden, egal ob sie in Ihrem Inventar oder in einem Fahrzeug installiert sind. Fenster und Reifen sind ausgeschlossen und können auch nicht repariert werden, wenn sie vollständig beschädigt sind. (Wenn das alte Reparatursystem aktiviert ist, hat diese Einstellung keinen Effekt)",
+
+	"Sandbox_VRO_UseNearbyContainers": "Suche in benachbarten Containern",
+	"Sandbox_VRO_UseNearbyContainers_tooltip": "Ermöglicht die Verwendung von Reparaturmaterialien und Werkzeugen, die sich in benachbarten Containern befinden, ohne sie zunächst in Ihr Inventar zu verschieben.",
+
+	"Sandbox_VRO_SearchNearbyGroundItems": "Suche nach Gegenständen auf dem Boden",
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Ermöglicht die Verwendung von Reparaturmaterialien und Werkzeugen, die sich auf dem Boden innerhalb der Reichweite befinden."
 }

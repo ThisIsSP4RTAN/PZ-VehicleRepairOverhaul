@@ -11,5 +11,11 @@
 	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "Quando ativado, reparar uma peça não aumenta mais seu contador de reparo, então os reparos nunca ficam progressivamente mais difíceis ou menos eficazes. (Se o Sistema de Reparo Antigo estiver ativado, esta configuração não faz nada)",
 
 	"Sandbox_VRO_RepairFullyBrokenParts": "Reparar Peças Totalmente Quebradas",
-	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "Quando ativado, peças com condição 0 podem ser reparadas, seja soltas no seu inventário ou instaladas em um veículo. Janelas e peças de pneus são excluídas e ainda não podem ser reparadas uma vez completamente quebradas. (Se o Sistema de Reparo Antigo estiver ativado, esta configuração não faz nada)"
+	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "Quando ativado, peças com condição 0 podem ser reparadas, seja soltas no seu inventário ou instaladas em um veículo. Janelas e peças de pneus são excluídas e ainda não podem ser reparadas uma vez completamente quebradas. (Se o Sistema de Reparo Antigo estiver ativado, esta configuração não faz nada)",
+
+	"Sandbox_VRO_UseNearbyContainers": "Procurar contêineres próximos",
+	"Sandbox_VRO_UseNearbyContainers_tooltip": "Permite usar materiais e ferramentas de reparo armazenadas em contêineres adjacentes que você pode alcançar, sem precisar movê-las para o seu inventário primeiro.",
+
+	"Sandbox_VRO_SearchNearbyGroundItems": "Procurar itens no chão",
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Permite usar materiais e ferramentas de reparo que estão jogados no chão dentro do alcance, sem precisar movê-las para o seu inventário primeiro."
 }

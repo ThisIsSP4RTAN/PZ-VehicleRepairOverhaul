@@ -15,6 +15,7 @@
 
 	"Sandbox_VRO_UseNearbyContainers": "Search nearby containers",
 	"Sandbox_VRO_UseNearbyContainers_tooltip": "Allow repair materials and tools stored in adjacent containers you can reach to be used without moving them into your inventory first.",
+
 	"Sandbox_VRO_SearchNearbyGroundItems": "Search items on the ground",
 	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Allow repair materials and tools lying on the ground within reach to be used."
 }

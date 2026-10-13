@@ -11,5 +11,11 @@
 	"Sandbox_VRO_DisableDiminishingRepairs_tooltip": "启用后，修理一个部件不再增加其修理计数器，因此修理永远不会变得越来越困难或效果越来越差。(如果启用了旧修理系统，此设置无效)",
 
 	"Sandbox_VRO_RepairFullyBrokenParts": "修理完全损坏的部件",
-	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "启用后，0状态的部件可以被修理，无论是在你的库存中还是安装在车辆上。窗户和轮胎部件被排除在外，即使完全损坏也无法修理。(如果启用了旧修理系统，此设置无效)"
+	"Sandbox_VRO_RepairFullyBrokenParts_tooltip": "启用后，0状态的部件可以被修理，无论是在你的库存中还是安装在车辆上。窗户和轮胎部件被排除在外，即使完全损坏也无法修理。(如果启用了旧修理系统，此设置无效)",
+
+	"Sandbox_VRO_UseNearbyContainers": "搜索附近的容器",
+	"Sandbox_VRO_UseNearbyContainers_tooltip": "允许使用存储在可到达的相邻容器中的修理材料和工具，而无需先将它们移入你的库存。",
+
+	"Sandbox_VRO_SearchNearbyGroundItems": "搜索地面上的物品",
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "允许使用存储在可到达的相邻容器中的修理材料和工具，而无需先将它们移入你的库存。"
 }
