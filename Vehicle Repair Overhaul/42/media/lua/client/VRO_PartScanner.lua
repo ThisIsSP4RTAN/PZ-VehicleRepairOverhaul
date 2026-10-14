@@ -122,6 +122,16 @@ VROPartScanner.EXCLUDE_KEYWORDS = {
   "e150trunkdoorfur",
   "69minimrbchair1",
   "ecto1equipment1",
+  "SignEmpty",
+  "SignFW",
+  "SignLW",
+  "SignRW",
+  "SignTripodEmpty",
+  "SignTripodFW",
+  "SignTripodLW",
+  "SignTripodRW",
+  "SignTripodXW",
+  "SignXW"
 }
 
 -- If true, also match DisplayName (if available). FullType matching is always on.
