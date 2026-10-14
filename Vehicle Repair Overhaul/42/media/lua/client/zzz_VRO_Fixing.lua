@@ -1158,6 +1158,20 @@ local function resolveInvAnim(fixer, fixing)
       or resolveAnim(fixer, fixing)
 end
 
+-- Vanilla makes you uninstall the tire before you can uninstall the brakes or suspension. Mirror that for repairs.
+local function _uninstallBlockerId(part)
+  if not (part and part.getTable and part.getVehicle) then return nil end
+  local ok, ut = pcall(function() return part:getTable("uninstall") end)
+  if not (ok and type(ut) == "table") then return nil end
+  local reqId = ut.requireUninstalled
+  if not reqId or reqId == "" then return nil end
+  local veh = part:getVehicle()
+  if not veh then return nil end
+  local reqPart = veh:getPartById(reqId)
+  if reqPart and reqPart:getInventoryItem() then return reqId end
+  return nil
+end
+
 local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, brokenItem, invOverride)
   tip:initialise(); tip:setVisible(false)
   setTooltipIconFromFullType(tip, fixer.item)
@@ -1498,6 +1512,12 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
         for i = 1, #oneOfBlocks do
           desc = desc .. " " .. oneOfBlocks[i]
         end
+      end
+
+      local _blockerId = _uninstallBlockerId(part)
+      if _blockerId then
+        local _blockerName = getText("IGUI_VehiclePart" .. _blockerId)
+        desc = desc .. " <RGB:1,0,0> " .. getText("Tooltip_vehicle_requireUnistalled", _blockerName) .. " <LINE> "
       end
 
       desc = desc .. table.concat(skillLines)
@@ -1974,6 +1994,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   -- the nearby scan for every fixer. That per-option rescan was the hang on
   -- parts with many options (e.g. seats with every animal leather).
   local inv = NearbyInventory.getEffectiveInventory(playerObj)
+  local tireOK = (_uninstallBlockerId(part) == nil)
   for __ri = 1, #VRO.Recipes do
     local fixing = VRO.Recipes[__ri]
     local requireSet = resolveRequireSet(fixing)
@@ -2082,7 +2103,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           end
         end
 
-        local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK and torchOK
+        local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK and torchOK and tireOK
         local raw   = displayNameFromFullType(fixer.item)
         local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
 
