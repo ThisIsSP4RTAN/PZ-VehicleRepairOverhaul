@@ -17,5 +17,8 @@
 	"Sandbox_VRO_UseNearbyContainers_tooltip": "Permette di utilizzare i materiali e gli strumenti di riparazione memorizzati nei contenitori adiacenti accessibili, senza spostarli prima nell'inventario.",
 
 	"Sandbox_VRO_SearchNearbyGroundItems": "Cerca oggetti a terra",
-	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Permette di utilizzare i materiali e gli strumenti di riparazione giacenti a terra entro portata, senza spostarli prima nell'inventario."
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Permette di utilizzare i materiali e gli strumenti di riparazione giacenti a terra entro portata, senza spostarli prima nell'inventario.",
+
+	"Sandbox_VRO_DisableUninstallRequirement": "Disabilita il requisito di rimozione delle parti",
+	"Sandbox_VRO_DisableUninstallRequirement_tooltip": "Quando è abilitato, le parti che normalmente richiedono la rimozione di un'altra parte — come i freni o le sospensioni sotto uno pneumatico, o un finestrino con blindatura — possono essere riparate senza prima rimuovere quella parte. (Se il Vecchio Sistema di Riparazione è abilitato, questa impostazione non fa nulla)"
 }

@@ -17,5 +17,8 @@
 	"Sandbox_VRO_UseNearbyContainers_tooltip": "Ermöglicht die Verwendung von Reparaturmaterialien und Werkzeugen, die sich in benachbarten Containern befinden, ohne sie zunächst in Ihr Inventar zu verschieben.",
 
 	"Sandbox_VRO_SearchNearbyGroundItems": "Suche nach Gegenständen auf dem Boden",
-	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Ermöglicht die Verwendung von Reparaturmaterialien und Werkzeugen, die sich auf dem Boden innerhalb der Reichweite befinden."
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Ermöglicht die Verwendung von Reparaturmaterialien und Werkzeugen, die sich auf dem Boden innerhalb der Reichweite befinden.",
+
+	"Sandbox_VRO_DisableUninstallRequirement": "Teil-Ausbau-Pflicht deaktivieren",
+	"Sandbox_VRO_DisableUninstallRequirement_tooltip": "Wenn aktiviert, können Teile, die normalerweise den Ausbau eines anderen Teils erfordern – etwa Bremsen oder Federung unter einem Reifen oder ein Fenster mit Panzerung – repariert werden, ohne dieses Teil zuerst zu entfernen. (Wenn das alte Reparatursystem aktiviert ist, hat diese Einstellung keinen Effekt)"
 }

@@ -36,6 +36,15 @@ option VRO_RepairFullyBrokenParts
     translation = VRO_RepairFullyBrokenParts,
 }
 
+option VRO_DisableUninstallRequirement
+{
+    type = boolean,
+    default = false,
+
+    page = VRO,
+    translation = VRO_DisableUninstallRequirement,
+}
+
 option VRO_UseNearbyContainers
 {
     type = boolean,

@@ -17,5 +17,8 @@
 	"Sandbox_VRO_UseNearbyContainers_tooltip": "Umożliwienie korzystania z materiałów naprawczych i narzędzi przechowywanych w sąsiednich pojemnikach, do których masz dostęp, bez konieczności przenoszenia ich najpierw do ekwipunku.",
 
 	"Sandbox_VRO_SearchNearbyGroundItems": "Wyszukiwanie przedmiotów na ziemi",
-	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Należy zezwolić na korzystanie z materiałów naprawczych i narzędzi leżących na ziemi w zasięgu ręki."
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Należy zezwolić na korzystanie z materiałów naprawczych i narzędzi leżących na ziemi w zasięgu ręki.",
+
+	"Sandbox_VRO_DisableUninstallRequirement": "Wyłącz wymóg demontażu części",
+	"Sandbox_VRO_DisableUninstallRequirement_tooltip": "Po włączeniu, części, które zwykle wymagają wcześniejszego demontażu innej części — jak hamulce lub zawieszenie pod oponą albo okno z pancerzem — można naprawiać bez zdejmowania tej części. (Jeśli włączony jest Stary System Napraw, to ustawienie nic nie robi)"
 }

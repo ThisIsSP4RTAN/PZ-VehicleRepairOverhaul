@@ -17,5 +17,8 @@
 	"Sandbox_VRO_UseNearbyContainers_tooltip": "允许使用存储在可到达的相邻容器中的修理材料和工具，而无需先将它们移入你的库存。",
 
 	"Sandbox_VRO_SearchNearbyGroundItems": "搜索地面上的物品",
-	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "允许使用存储在可到达的相邻容器中的修理材料和工具，而无需先将它们移入你的库存。"
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "允许使用存储在可到达的相邻容器中的修理材料和工具，而无需先将它们移入你的库存。",
+
+	"Sandbox_VRO_DisableUninstallRequirement": "停用部件拆卸要求",
+	"Sandbox_VRO_DisableUninstallRequirement_tooltip": "启用后，通常需要先拆下另一个部件才能处理的部件——例如轮胎下的刹车或悬挂、装有装甲的车窗——无需先拆下该部件即可修理。(如果启用了旧修理系统，此设置无效)"
 }

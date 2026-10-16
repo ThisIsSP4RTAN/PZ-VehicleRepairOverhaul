@@ -1158,8 +1158,10 @@ local function resolveInvAnim(fixer, fixing)
       or resolveAnim(fixer, fixing)
 end
 
--- Vanilla makes you uninstall the tire before you can uninstall the brakes or suspension. Mirror that for repairs.
+-- Vanilla requires some parts to have another part uninstalled first. Mirror that for repairs.
 local function _uninstallBlockerId(part)
+  -- Sandbox option can turn this requirement off entirely (default: on).
+  if VRO and VRO.IsUninstallRequirementDisabled and VRO.IsUninstallRequirementDisabled() then return nil end
   if not (part and part.getTable and part.getVehicle) then return nil end
   local ok, ut = pcall(function() return part:getTable("uninstall") end)
   if not (ok and type(ut) == "table") then return nil end
@@ -1994,7 +1996,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
   -- the nearby scan for every fixer. That per-option rescan was the hang on
   -- parts with many options (e.g. seats with every animal leather).
   local inv = NearbyInventory.getEffectiveInventory(playerObj)
-  local tireOK = (_uninstallBlockerId(part) == nil)
+  local uninstallOK = (_uninstallBlockerId(part) == nil)
   for __ri = 1, #VRO.Recipes do
     local fixing = VRO.Recipes[__ri]
     local requireSet = resolveRequireSet(fixing)
@@ -2103,7 +2105,7 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
           end
         end
 
-        local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK and torchOK and tireOK
+        local haveAll = fxBundle and glOK and skillsOK and wearOK and equipOK and torchOK and uninstallOK
         local raw   = displayNameFromFullType(fixer.item)
         local label = tostring(fixer.uses or 1) .. " " .. humanizeForMenuLabel(raw)
 

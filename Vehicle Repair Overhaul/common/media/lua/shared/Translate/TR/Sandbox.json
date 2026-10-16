@@ -17,5 +17,8 @@
 	"Sandbox_VRO_UseNearbyContainers_tooltip": "Ulaşabileceğiniz bitişik konteynerlerde saklanan onarım malzemeleri ve aletlerinin envanterinize taşımaya gerek kalmadan kullanılmasına izin verir.",
 
 	"Sandbox_VRO_SearchNearbyGroundItems": "Yakındaki öğeleri ara",
-	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Ulaşılabilir alanlardaki zeminde yatan onarım malzemeleri ve aletlerinin kullanılmasına izin verir."
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Ulaşılabilir alanlardaki zeminde yatan onarım malzemeleri ve aletlerinin kullanılmasına izin verir.",
+
+	"Sandbox_VRO_DisableUninstallRequirement": "Parça sökme zorunluluğunu devre dışı bırak",
+	"Sandbox_VRO_DisableUninstallRequirement_tooltip": "Bu ayar etkinleştirildiğinde, normalde başka bir parçanın önce sökülmesini gerektiren parçalar — lastik altındaki frenler veya süspansiyon ya da zırh takılı bir cam gibi — o parça çıkarılmadan onarılabilir. (Eski Onarım Sistemi etkinleştirilmişse, bu ayarın herhangi bir etkisi olmaz)"
 }

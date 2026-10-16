@@ -17,5 +17,8 @@
 	"Sandbox_VRO_UseNearbyContainers_tooltip": "Permet d'utiliser les matériaux et outils de réparation stockés dans les conteneurs adjacents accessibles, sans les déplacer d'abord dans votre inventaire.",
 
 	"Sandbox_VRO_SearchNearbyGroundItems": "Rechercher les objets au sol",
-	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Permet d'utiliser les matériaux et outils de réparation gisants au sol dans votre rayon d'action."
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Permet d'utiliser les matériaux et outils de réparation gisants au sol dans votre rayon d'action.",
+
+	"Sandbox_VRO_DisableUninstallRequirement": "Désactiver l'obligation de retirer une pièce",
+	"Sandbox_VRO_DisableUninstallRequirement_tooltip": "Lorsqu'il est activé, les pièces qui nécessitent normalement de retirer une autre pièce d'abord — comme les freins ou la suspension sous un pneu, ou une fenêtre blindée — peuvent être réparées sans retirer cette pièce au préalable. (Si le système de réparation ancien est activé, ce paramètre ne fait rien)"
 }

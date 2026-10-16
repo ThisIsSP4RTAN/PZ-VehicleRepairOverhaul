@@ -17,5 +17,8 @@
 	"Sandbox_VRO_UseNearbyContainers_tooltip": "Permite usar materiales y herramientas de reparación almacenadas en contenedores adyacentes a los que puedes llegar, sin necesidad de moverlas primero a tu inventario.",
 
 	"Sandbox_VRO_SearchNearbyGroundItems": "Buscar objetos en el suelo",
-	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Permite usar materiales y herramientas de reparación que yacen en el suelo dentro de tu alcance."
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Permite usar materiales y herramientas de reparación que yacen en el suelo dentro de tu alcance.",
+
+	"Sandbox_VRO_DisableUninstallRequirement": "Desactivar requisito de desinstalar piezas",
+	"Sandbox_VRO_DisableUninstallRequirement_tooltip": "Cuando está habilitado, las piezas que normalmente requieren desinstalar otra primero —como los frenos o la suspensión bajo un neumático, o una ventana con blindaje— pueden repararse sin quitar esa pieza antes. (Si el Sistema de Reparación Antiguo está habilitado, esta configuración no hace nada)"
 }

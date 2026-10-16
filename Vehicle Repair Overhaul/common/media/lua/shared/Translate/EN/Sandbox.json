@@ -17,5 +17,8 @@
 	"Sandbox_VRO_UseNearbyContainers_tooltip": "Allow repair materials and tools stored in adjacent containers you can reach to be used without moving them into your inventory first.",
 
 	"Sandbox_VRO_SearchNearbyGroundItems": "Search items on the ground",
-	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Allow repair materials and tools lying on the ground within reach to be used."
+	"Sandbox_VRO_SearchNearbyGroundItems_tooltip": "Allow repair materials and tools lying on the ground within reach to be used.",
+
+	"Sandbox_VRO_DisableUninstallRequirement": "Disable Part Uninstall Requirement",
+	"Sandbox_VRO_DisableUninstallRequirement_tooltip": "When enabled, parts that normally require another part to be uninstalled first — like brakes or suspension under a tire, or a window with armor on it — can be repaired without removing that part first. (If the Old Repair System is enabled, this setting does nothing)"
 }

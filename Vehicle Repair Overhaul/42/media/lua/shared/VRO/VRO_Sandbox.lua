@@ -103,6 +103,23 @@ function VRO.CanRepairFullyBrokenParts()
     return false
 end
 
+-- Disable the "uninstall another part first" requirement for repairs (a tire over
+-- the brakes/suspension, armor over a window, etc.). When ON, such parts can be
+-- repaired with the blocking part still installed and the tooltip warning is
+-- hidden. Default OFF (the requirement applies, mirroring vanilla's uninstall rules).
+function VRO.IsUninstallRequirementDisabled()
+    if not SandboxVars then return false end
+    -- normal (top-level) sandbox var
+    if SandboxVars.VRO_DisableUninstallRequirement ~= nil then
+        return SandboxVars.VRO_DisableUninstallRequirement == true
+    end
+    -- backward-compat if someone shipped a nested "VRO" table
+    if SandboxVars.VRO and SandboxVars.VRO.DisableUninstallRequirement ~= nil then
+        return SandboxVars.VRO.DisableUninstallRequirement == true
+    end
+    return false
+end
+
 -- Read B42's live option object instead of the SandboxVars table, which is a
 -- startup snapshot.  SandboxVars remains the fallback for older builds and for
 -- the short period before the live options object is available.
