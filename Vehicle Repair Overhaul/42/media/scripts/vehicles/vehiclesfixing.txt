@@ -1,4 +1,4 @@
-module Base 
+module Base
 
 /*******VRO Vehicle Repair Lists B42*******/
 /*******Overwrites the existing vehiclefixings.txt******/
@@ -841,6 +841,13 @@ module Base
         Fixer = Base.FiberglassTape=2;Mechanics=2,
         Fixer = Base.TirePiece=1;Mechanics=2,
     }
+
+	fixing VRO Fix Tire FixAFlat
+	{
+        ConditionModifier = 0.9,
+		
+    	Fixer = VRO.FixAFlat=1,
+	}
 
     fixing VRO Fix Military Tire
     {
