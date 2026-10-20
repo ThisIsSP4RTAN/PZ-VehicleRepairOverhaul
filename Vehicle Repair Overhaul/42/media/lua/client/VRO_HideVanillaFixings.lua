@@ -14,7 +14,21 @@ local HIDE_BY_NAME = {
     "Fix Door Welding",
     "Fix Glove box",
     "Fix Car seat",
-    "Fix DAMN Trunk Welding", -- KI5
+    "Fix DAMN Trunk Welding",    -- KI5
+    "Fix Custom Trunks Welding", -- FR
+    "Fix Trailer Hitch Welding", -- FR
+    "Fix Hard Removable Roofs",  -- FR
+    "Fix Canvas Roof Sewing",    -- FR
+    "Fix Canvas Roof",           -- FR
+    "Fix Hard Roof Welding",     -- FR
+    "Fix Hard Roof",             -- FR
+    "Fix Bumper Bar Welding",    -- FR
+    "Fix Bumper Bar",            -- FR
+    "Fix Fender Skirt Welding",  -- FR
+    "Fix Fender Skirt",          -- FR
+    "Fix Side Step Welding",     -- FR
+    "Fix Side Step",             -- FR
+    "Fix Roll Bars Welding",     -- FR     
 }
 
 -- Optional: also ALWAYS hide by required item fullType(s)
@@ -110,6 +124,7 @@ local OURS_BY_NAME = {
     "VRO Fix Panels Welding",
     "VRO Fix Panels",
     "VRO Fix Panels 1",
+    "VRO Fix Hubcaps Welding",
     "VRO Fix Tank Containers",
     "VRO Fix Vehicle Shovel",
     "VRO Fix Tire FixAFlat",

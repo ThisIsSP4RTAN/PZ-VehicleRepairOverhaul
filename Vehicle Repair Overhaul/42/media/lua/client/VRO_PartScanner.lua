@@ -131,7 +131,11 @@ VROPartScanner.EXCLUDE_KEYWORDS = {
   "signtripodlw",
   "signtripodrw",
   "signtripodxw",
-  "signxw"
+  "signxw",
+  "frtrailerhitch1",
+  "frtrailerhitch2",
+  "frtrailerhitch3",
+  "frfifthwheelhitch"
 }
 
 -- If true, also match DisplayName (if available). FullType matching is always on.

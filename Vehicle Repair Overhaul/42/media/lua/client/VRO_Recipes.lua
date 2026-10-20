@@ -1840,7 +1840,7 @@ return {
 
     {
       name = "Fix Roof Rack Welding",
-      require = { "@RoofRack_All", "Base.TowBar", "Base.92jeepYJWinch2", "Base.KI5CamperJack" },
+      require = { "@RoofRack_All", "Base.TowBar", "Base.92jeepYJWinch2", "Base.KI5CamperJack", "FRTrailerHitch1", "FRTrailerHitch2", "Base.FRTrailerHitch3", "FRFifthWheelHitch" },
       globalItem = { item = "Base.BlowTorch", uses = 2, consume = true },
       conditionModifier = 1.2,
       equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
@@ -1906,7 +1906,7 @@ return {
 
     {
       name = "Fix Roof Rack 1",
-      require = { "@RoofRack_All", "Base.TowBar", "Base.93fordCF8000Brushes", "Base.92jeepYJWinch2", "Base.KI5CamperJack" },
+      require = { "@RoofRack_All", "Base.TowBar", "Base.93fordCF8000Brushes", "Base.92jeepYJWinch2", "Base.KI5CamperJack", "FRTrailerHitch1", "FRTrailerHitch2", "Base.FRTrailerHitch3", "FRFifthWheelHitch" },
       globalItem = nil,
       conditionModifier = 0.5,
       anim = "VehicleWorkOnMid",
@@ -2190,6 +2190,32 @@ return {
         { item = "Base.FiberglassTape", uses = 1, skills = { Mechanics = 2 }, successSound = "FixWithTape" },
         { item = "Base.Gum",            uses = 4, skills = { Mechanics = 2 } },
         { item = "Base.Zipties",        uses = 4, skills = { Mechanics = 2 } },
+      },
+    },
+
+    {
+      name = "Fix Hubcaps Welding",
+      require = "@Hubcaps_All",
+      globalItem = { item = "Base.BlowTorch", uses = 2, consume = true },
+      conditionModifier = 0.6,
+      equip = { primary = "Base.BlowTorch", showModel = true, wearTag = "WeldingMask" },
+      invAnim = "BlowTorchFloor",
+      anim  = "BlowTorchFloor",
+      sound = "BlowTorch",
+      time = 280,
+
+      fixers = {
+        { item = "Base.SmallSheetMetal",  uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.SmallCopperSheet", uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.GoldSheet",        uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.SilverSheet",      uses = 1, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.AluminumScrap",    uses = 4, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.BrassScrap",       uses = 4, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.CopperScrap",      uses = 4, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.IronScrap",        uses = 4, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.ScrapMetal",       uses = 4, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.SteelScrap",       uses = 4, skills = { MetalWelding = 2, Mechanics = 2 } },
+        { item = "Base.UnusableMetal",    uses = 4, skills = { MetalWelding = 2, Mechanics = 2 } },
       },
     },
 

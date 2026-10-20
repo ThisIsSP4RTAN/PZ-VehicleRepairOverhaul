@@ -1628,6 +1628,24 @@ module Base
         Fixer = Base.Zipties=4;Mechanics=2,
     }
 
+    fixing VRO Fix Hubcaps Welding
+    {
+        GlobalItem = Base.BlowTorch=2,
+        ConditionModifier = 0.6,
+
+        Fixer = Base.SmallSheetMetal=1;MetalWelding=2;Mechanics=2,
+        Fixer = Base.SmallCopperSheet=1;MetalWelding=2;Mechanics=2,
+        Fixer = Base.GoldSheet=1;MetalWelding=2;Mechanics=2,
+        Fixer = Base.SilverSheet=1;MetalWelding=2;Mechanics=2,
+        Fixer = Base.AluminumScrap=4;MetalWelding=2;Mechanics=2,
+        Fixer = Base.BrassScrap=4;MetalWelding=2;Mechanics=2,
+        Fixer = Base.CopperScrap=4;MetalWelding=2;Mechanics=2,
+        Fixer = Base.IronScrap=4;MetalWelding=2;Mechanics=2,
+        Fixer = Base.ScrapMetal=4;MetalWelding=2;Mechanics=2,
+        Fixer = Base.SteelScrap=4;MetalWelding=2;Mechanics=2,
+        Fixer = Base.UnusableMetal=4;MetalWelding=2;Mechanics=2,
+    }
+
 /************************ Containers ************************/
 
     fixing VRO Fix Tank Containers

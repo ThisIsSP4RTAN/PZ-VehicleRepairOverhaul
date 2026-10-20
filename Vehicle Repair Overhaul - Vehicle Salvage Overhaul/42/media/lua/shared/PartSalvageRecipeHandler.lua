@@ -194,9 +194,9 @@ local function injectAllRecipeInputsOnce()
     { "@SoftTops_All", "VRO.recipefiller" }
   )
 
-  -- Contains panels and mudflaps
+  -- Contains panels, mudflaps and hubcaps
   injectRecipeInputs("Salvage Small Misc Vehicle Panels",
-    { "@Panels_All", "VRO.recipefiller" }
+    { "@Panels_All", "@Hubcaps_All", "VRO.recipefiller" }
   )
 
   -- Contains light and battery parts
