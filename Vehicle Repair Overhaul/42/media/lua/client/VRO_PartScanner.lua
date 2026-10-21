@@ -25,7 +25,7 @@ VROPartScanner.MAX_TAGS = 0
 -- FILTER LISTS
 -- =========================
 
--- Customize these (lowercase; matching is case-insensitive)
+-- Customize these (matching is case-insensitive; any case is fine)
 VROPartScanner.KEYWORDS = {
   "trunk", "door", "hood", "windshield", "window", "seat", "tire", "wheel",
   "muffler", "suspension", "brake", "radiator", "battery", "gastank", "tailgate",
@@ -37,7 +37,7 @@ VROPartScanner.KEYWORDS = {
   "stakes3",
 }
 
--- Exclusions to avoid false positives (lowercase)
+-- Exclusions to avoid false positives (matching is case-insensitive; any case is fine)
 VROPartScanner.EXCLUDE_KEYWORDS = {
   "hoodie",
   "doorway",
@@ -135,7 +135,15 @@ VROPartScanner.EXCLUDE_KEYWORDS = {
   "frtrailerhitch1",
   "frtrailerhitch2",
   "frtrailerhitch3",
-  "frfifthwheelhitch"
+  "frfifthwheelhitch",
+  "SignGunW",
+  "SignHomeW",
+  "SignMechW",
+  "SignMedW",
+  "SignTripodGunW",
+  "SignTripodHomeW",
+  "SignTripodMechW",
+  "SignTripodMedW"
 }
 
 -- If true, also match DisplayName (if available). FullType matching is always on.
@@ -152,7 +160,7 @@ local function _lc(s) return (s and tostring(s):lower()) or "" end
 local function _hasKeyword(hayLower, keywords)
   for i = 1, #keywords do
     local k = keywords[i]
-    if k and k ~= "" and hayLower:find(k, 1, true) then
+    if k and k ~= "" and hayLower:find(_lc(k), 1, true) then
       return k
     end
   end
