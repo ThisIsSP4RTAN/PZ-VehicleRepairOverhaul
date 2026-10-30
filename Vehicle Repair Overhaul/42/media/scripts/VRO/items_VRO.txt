@@ -19,7 +19,7 @@ module VRO
         DisplayCategory = VehicleMaintenance,
         Weight = 0.3,
         ItemType = base:drainable,
-        UseDelta = 0.6,
+        UseDelta = 1.0,
         UseWhileEquipped = FALSE,
         Icon = FixAFlat,
         Tooltip = Tooltip_FixAFlat,
