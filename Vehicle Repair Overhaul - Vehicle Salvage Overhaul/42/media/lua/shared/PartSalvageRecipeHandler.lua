@@ -117,60 +117,60 @@ local function injectAllRecipeInputsOnce()
   if VRO._salvageInputsInjected then return end
   VRO._salvageInputsInjected = true
 
-  injectRecipeInputs("Salvage Vehicle Doors",
+  injectRecipeInputs("SalvageVehicleDoors",
     { "@Door_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Military or Large Vehicle Doors",
+  injectRecipeInputs("SalvageLargeVehicleDoors",
     { "@DoorMilitary_All", "VRO.recipefiller" }
   )
 
   -- Contains normal and military trunk doors
-  injectRecipeInputs("Salvage Vehicle Trunk Doors",
+  injectRecipeInputs("SalvageVehicleTrunkDoors",
     { "@TrunkDoor_All", "@TrunkDoorMilitary_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Vehicle Hoods or Metal Covers",
+  injectRecipeInputs("SalvageVehicleHoods",
     { "@Hood_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Military Vehicle Hoods or Armor",
+  injectRecipeInputs("SalvageVehicleArmor",
     { "@MilitaryHood_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Vehicle Gas Tanks",
+  injectRecipeInputs("SalvageVehicleGasTanks",
     { "@GasTank_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Small Vehicle Gas Tanks",
+  injectRecipeInputs("SalvageVehicleGasTanksSmall",
     { "@GasTankSmall_All", "VRO.recipefiller" }
   )
 
   -- Contains normal and small mufflers
-  injectRecipeInputs("Salvage Vehicle Mufflers",
+  injectRecipeInputs("SalvageVehicleMufflers",
     { "@SmallMuffler_All", "@Muffler_All", "VRO.recipefiller" }
   )
 
   -- Contains small, normal and military suspension
-  injectRecipeInputs("Salvage Vehicle Suspension",
+  injectRecipeInputs("SalvageVehicleSuspension",
     { "@SmallSuspension_All", "@Suspension_All", "@MilitarySuspension_All", "VRO.recipefiller" }
   )
 
   -- Contains small, normal and military brakes
-  injectRecipeInputs("Salvage Vehicle Brakes",
+  injectRecipeInputs("SalvageVehicleBrakes",
     { "@SmallBrake_All", "@Brake_All", "@MilitaryBrake_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Vehicle Seats",
+  injectRecipeInputs("SalvageVehicleSeats",
     { "@CarSeat_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Vehicle Tires",
+  injectRecipeInputs("SalvageVehicleTires",
     { "@Tire_All", "VRO.recipefiller" }
   )
 
   -- Contains bullbars and roofracks (+ some explicit items)
-  injectRecipeInputs("Salvage Vehicle Bars",
+  injectRecipeInputs("SalvageVehicleBars",
     { "@Bullbar_All", "@RoofRack_All",
       "Base.M113FrontWindow1", "Base.M113FrontWindow2", "Base.M113FrontWindow3",
       "Base.M923SpareMount1", "Base.MH_MkII_guntower1", "Base.MH_MkII_guntower2", "Base.MH_MkII_guntower3",
@@ -179,42 +179,39 @@ local function injectAllRecipeInputsOnce()
     }
   )
 
-  injectRecipeInputs("Salvage Vehicle Saddlebags or Misc Fabrics",
+  injectRecipeInputs("SalvageVehicleSaddlebags",
     { "Base.ATAMotoBagBMW1", "Base.ATAMotoBagBMW2", "Base.ATAMotoHarleyBag",
       "Base.ATAMotoHarleyHolster", "Base.SS100topbag3", "Base.90pierceArrowHoses",
       "Base.FireDeptHosesMedium", "VRO.recipefiller"
     }
   )
 
-  injectRecipeInputs("Salvage Hard Vehicle Saddlebags",
+  injectRecipeInputs("SalvageHardVehicleSaddlebags",
     { "@SaddlebagsHard_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Vehicle Soft-tops",
+  injectRecipeInputs("SalvageVehicleSoftTops",
     { "@SoftTops_All", "VRO.recipefiller" }
   )
 
   -- Contains panels, mudflaps and hubcaps
-  injectRecipeInputs("Salvage Small Misc Vehicle Panels",
+  injectRecipeInputs("SalvageVehiclePanelsSmall",
     { "@Panels_All", "@Hubcaps_All", "VRO.recipefiller" }
   )
 
   -- Contains light and battery parts
-  injectRecipeInputs("Salvage Vehicle Electronics",
+  injectRecipeInputs("SalvageVehicleElectronics",
     { "@Battery_All", "@LargeBattery_All", "@MiscElectronics_All", "@Light_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Wooden Vehicle Parts",
+  injectRecipeInputs("SalvageWoodenVehicleParts",
     { "@WoodParts_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("Salvage Large Container Tanks",
+  injectRecipeInputs("SalvageLargeContainerTanks",
     { "@TankContainers_All", "VRO.recipefiller" }
   )
 
-  injectRecipeInputs("",
-    { }
-  )
 end
 
 Events.OnInitWorld.Add(injectAllRecipeInputsOnce)
@@ -223,26 +220,26 @@ if isServer() then
 end
 
 local SALVAGE_TIME_OPTIONS = {
-  { recipe = "Salvage Vehicle Doors"                      , var = "VRO_SalvageTime_Doors", default = 600 },
-  { recipe = "Salvage Military or Large Vehicle Doors"    , var = "VRO_SalvageTime_DoorsMilitary", default = 700 },
-  { recipe = "Salvage Vehicle Trunk Doors"                , var = "VRO_SalvageTime_TrunkDoors", default = 500 },
-  { recipe = "Salvage Vehicle Hoods or Metal Covers"      , var = "VRO_SalvageTime_Hoods", default = 600 },
-  { recipe = "Salvage Military Vehicle Hoods or Armor"    , var = "VRO_SalvageTime_HoodsMilitary", default = 800 },
-  { recipe = "Salvage Wooden Vehicle Parts"               , var = "VRO_SalvageTime_Wooden", default = 700 },
-  { recipe = "Salvage Vehicle Gas Tanks"                  , var = "VRO_SalvageTime_GasTanks", default = 700 },
-  { recipe = "Salvage Small Vehicle Gas Tanks"            , var = "VRO_SalvageTime_GasTanksSmall", default = 500 },
-  { recipe = "Salvage Vehicle Mufflers"                   , var = "VRO_SalvageTime_Mufflers", default = 500 },
-  { recipe = "Salvage Vehicle Suspension"                 , var = "VRO_SalvageTime_Suspension", default = 500 },
-  { recipe = "Salvage Vehicle Brakes"                     , var = "VRO_SalvageTime_Brakes", default = 600 },
-  { recipe = "Salvage Vehicle Seats"                      , var = "VRO_SalvageTime_Seats", default = 600 },
-  { recipe = "Salvage Vehicle Tires"                      , var = "VRO_SalvageTime_Tires", default = 600 },
-  { recipe = "Salvage Vehicle Bars"                       , var = "VRO_SalvageTime_Bars", default = 600 },
-  { recipe = "Salvage Vehicle Saddlebags or Misc Fabrics" , var = "VRO_SalvageTime_SaddlebagsFabric", default = 600 },
-  { recipe = "Salvage Hard Vehicle Saddlebags"            , var = "VRO_SalvageTime_SaddlebagsHard", default = 600 },
-  { recipe = "Salvage Vehicle Soft-tops"                  , var = "VRO_SalvageTime_SoftTops", default = 300 },
-  { recipe = "Salvage Small Misc Vehicle Panels"          , var = "VRO_SalvageTime_Panels", default = 600 },
-  { recipe = "Salvage Large Container Tanks"              , var = "VRO_SalvageTime_ContainerTanks", default = 500 },
-  { recipe = "Salvage Vehicle Electronics"                , var = "VRO_SalvageTime_Electronics", default = 500 },
+  { recipe = "SalvageVehicleDoors"          , var = "VSO_SalvageTime_Doors", default = 600 },
+  { recipe = "SalvageLargeVehicleDoors"     , var = "VSO_SalvageTime_DoorsMilitary", default = 700 },
+  { recipe = "SalvageVehicleTrunkDoors"     , var = "VSO_SalvageTime_TrunkDoors", default = 500 },
+  { recipe = "SalvageVehicleHoods"          , var = "VSO_SalvageTime_Hoods", default = 600 },
+  { recipe = "SalvageVehicleArmor"          , var = "VSO_SalvageTime_HoodsMilitary", default = 800 },
+  { recipe = "SalvageWoodenVehicleParts"    , var = "VSO_SalvageTime_Wooden", default = 700 },
+  { recipe = "SalvageVehicleGasTanks"       , var = "VSO_SalvageTime_GasTanks", default = 700 },
+  { recipe = "SalvageVehicleGasTanksSmall"  , var = "VSO_SalvageTime_GasTanksSmall", default = 500 },
+  { recipe = "SalvageVehicleMufflers"       , var = "VSO_SalvageTime_Mufflers", default = 500 },
+  { recipe = "SalvageVehicleSuspension"     , var = "VSO_SalvageTime_Suspension", default = 500 },
+  { recipe = "SalvageVehicleBrakes"         , var = "VSO_SalvageTime_Brakes", default = 600 },
+  { recipe = "SalvageVehicleSeats"          , var = "VSO_SalvageTime_Seats", default = 600 },
+  { recipe = "SalvageVehicleTires"          , var = "VSO_SalvageTime_Tires", default = 600 },
+  { recipe = "SalvageVehicleBars"           , var = "VSO_SalvageTime_Bars", default = 600 },
+  { recipe = "SalvageVehicleSaddlebags"     , var = "VSO_SalvageTime_SaddlebagsFabric", default = 600 },
+  { recipe = "SalvageHardVehicleSaddlebags" , var = "VSO_SalvageTime_SaddlebagsHard", default = 600 },
+  { recipe = "SalvageVehicleSoftTops"       , var = "VSO_SalvageTime_SoftTops", default = 300 },
+  { recipe = "SalvageVehiclePanelsSmall"    , var = "VSO_SalvageTime_Panels", default = 600 },
+  { recipe = "SalvageLargeContainerTanks"   , var = "VSO_SalvageTime_ContainerTanks", default = 500 },
+  { recipe = "SalvageVehicleElectronics"    , var = "VSO_SalvageTime_Electronics", default = 500 },
 }
 
 local function _salvageTimeFor(opt)
