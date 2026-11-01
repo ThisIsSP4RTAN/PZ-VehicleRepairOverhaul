@@ -4,13 +4,6 @@ if isClient() then return end
 local EER_VehicleCommands = {}
 local EER_Commands = {}
 
-EER_VehicleCommands.wantNoise = getDebug() or false
-local function noise(msg)
-  if EER_VehicleCommands.wantNoise then
---  print('EER_VehicleCommands: '..msg)
-  end
-end
-
 local function _partMaxCondition(part)
   if not part then return 100 end
   if part.getConditionMax then

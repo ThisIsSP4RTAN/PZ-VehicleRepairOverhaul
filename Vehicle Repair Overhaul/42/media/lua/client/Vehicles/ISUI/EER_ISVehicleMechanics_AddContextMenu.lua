@@ -95,7 +95,6 @@ function ISVehicleMechanics:EER_doMenuTooltip(part, option, lua, name)
 	tooltip:setVisible(false);
 	tooltip.description = getText("Tooltip_craft_Needs") .. ": <LINE>";
 	option.toolTip = tooltip;
-	local keyvalues = part:getTable(lua);
 
 	-- Get the Mechanics skill level that is required to perform engine repair actions on this vehicle type
 	local engineRepairLevel = part:getVehicle():getScript():getEngineRepairLevel();
@@ -122,7 +121,6 @@ function ISVehicleMechanics:EER_doMenuTooltip(part, option, lua, name)
 		rgb = " <RGB:0,1,0>";
 		local hasWrenchLike = _getEquippedOrAnyWrenchLike(self.chr) ~= nil
 		local wrenchName   = ScriptManager.instance:getItem("Base.Wrench"):getDisplayName()
-		local ratchetName  = ScriptManager.instance:getItem("Base.Ratchet") and ScriptManager.instance:getItem("Base.Ratchet"):getDisplayName() or "Ratchet"
 		local label = string.format("%s", wrenchName)
 
 		if hasWrenchLike then

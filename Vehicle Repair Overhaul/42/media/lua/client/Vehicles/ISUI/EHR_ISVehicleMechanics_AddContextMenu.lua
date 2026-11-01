@@ -206,7 +206,6 @@ function ISVehicleMechanics:EHR_doMenuTooltip(part, option, lua, requiredParts, 
 	-- Repair heater tooltip
 	if lua == "EHR_repairheater" then
 		local rgb = " <RGB:0,1,0>"
-		local addedTxt = ""
 
 			for neededPart,numberNeeded in pairs(requiredParts) do
 				local scriptItem = ScriptManager.instance:getItem(neededPart)

@@ -310,21 +310,6 @@ function NearbyInventory.queueItemToPlayer(playerObj, item)
     return _queueTakeItems(playerObj, { item })
 end
 
-function NearbyInventory.queueBundleToPlayer(playerObj, bundle)
-    if not bundle then return true end
-    local items = {}
-    for i = 1, #bundle do
-        local entry = bundle[i]
-        -- VRO's normal recursive player inventory logic already consumes items
-        -- from carried bags. Only external selections need staging.
-        if entry and entry.item and not _containsPlayerItem(playerObj, entry.item) then
-            items[#items + 1] = entry.item
-        end
-    end
-    if #items == 0 then return true end
-    return _queueTakeItems(playerObj, items)
-end
-
 function NearbyInventory.stageBundlesThen(playerObj, bundles, onReady)
     if not (playerObj and bundles and onReady) then return false end
     if not ISTimedActionQueue then return false end

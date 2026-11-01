@@ -188,8 +188,6 @@ local function consumeFullTypeCount(player, fullType, needUses)
     if isTorchItem(it) then
       -- do nothing
     elseif isDrainable(it) then
-      -- Capture container BEFORE draining (and fall back safely)
-      local con0 = _getItemContainerSafe(player, it)
       local before = drainableUses(it)
 
       -- Drain uses
