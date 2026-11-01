@@ -422,6 +422,9 @@ VRO_CMDS.doFixInventory = function(player, args)
   local it = _pickInventoryTarget(player, fullType, args.itemId)
   if not it then log("doFixInventory: no item "..tostring(fullType)); return end
 
+  -- PM2 compat: if Preventative Maintenance 2 is active it owns the repair
+  -- outcome (condition + stacks + halo + XP). Otherwise VRO's own math runs.
+  if not (VRO_PM2 and VRO_PM2.applyItemRepair(player, it, condMod, fixerIndex)) then
   -- roll + compute
   local fail    = chanceOfFail(player, skills, hbr)
   local success = ZombRand(100) >= fail
@@ -444,6 +447,7 @@ VRO_CMDS.doFixInventory = function(player, args)
     end
   else
     if cur > 0 and it.setCondition then it:setCondition(cur - 1) end
+  end
   end
 
   if it.syncItemFields then it:syncItemFields() end
@@ -478,7 +482,8 @@ VRO_CMDS.doFixInventory = function(player, args)
     end
   end
 
-  if skills then
+  -- PM2 compat: when PM2 owns the outcome it grants Maintenance XP; skip VRO's.
+  if skills and not (VRO_PM2 and VRO_PM2.active()) then
     for perkName,_ in pairs(skills) do
       local perk = resolvePerk(perkName)
       if perk then
@@ -536,7 +541,13 @@ VRO_CMDS.doFix = function(player, args)
   local targetMax = _partMaxCondition(part)
   local targetCur = math.min(part:getCondition(), targetMax)
 
-  if success then
+  -- PM2 compat: delegate the part's repair outcome to Preventative Maintenance 2,
+  -- which operates on the part's inventory item; then mirror the new condition
+  -- back onto the part and persist/transmit it the usual way.
+  if VRO_PM2 and partItem and VRO_PM2.applyItemRepair(player, partItem, condMod, fixerIndex) then
+    part:setCondition(partItem:getCondition())
+    _persistInstalledPart(vehicle, part)
+  elseif success then
     local missing = math.max(0, targetMax - targetCur)
     local gain = math.floor((missing * (pct / 100.0)) + 0.5)
     if gain < 1 then gain = 1 end
@@ -595,7 +606,8 @@ VRO_CMDS.doFix = function(player, args)
   end
 
 
-  if args.fixerSkills then
+  -- PM2 compat: when PM2 owns the outcome it grants Maintenance XP; skip VRO's.
+  if args.fixerSkills and not (VRO_PM2 and VRO_PM2.active()) then
     for perkName,_ in pairs(args.fixerSkills) do
       local perk = resolvePerk(perkName)
       if perk then

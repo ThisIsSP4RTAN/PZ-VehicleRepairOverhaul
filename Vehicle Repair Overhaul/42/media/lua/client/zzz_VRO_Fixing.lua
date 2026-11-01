@@ -507,6 +507,24 @@ local function setTooltipIconFromFullType(tip, fullType)
   end
 end
 
+local function textureForFullType(fullType)
+  if not fullType then return nil end
+  local si = (getItem and getItem(fullType))
+          or (ScriptManager and ScriptManager.instance and (
+                (ScriptManager.instance.FindItem and ScriptManager.instance:FindItem(fullType)) or
+                (ScriptManager.instance.getItem  and ScriptManager.instance:getItem(fullType))
+             ))
+  if not si then return nil end
+  local tex = si.getNormalTexture and si:getNormalTexture() or nil
+  if tex then return tex end
+  local icon = (si.getIcon and si:getIcon()) or (si.getTextureName and si:getTextureName())
+  if icon and icon ~= "" then
+    if not icon:find("^Item_") then icon = "Item_" .. icon end
+    return getTexture and getTexture(icon) or nil
+  end
+  return nil
+end
+
 local function fallbackNameForTag(tag)
   if tag == "WeldingMask" then return "Welder Mask" end
   return tag
@@ -1270,9 +1288,24 @@ local function addFixerTooltip(tip, player, part, fixing, fixer, fixerIndex, bro
 
   -- Header
   local desc = ""
-  desc = desc .. " " .. c1 .. " " .. getText("Tooltip_potentialRepair") .. " " .. (pot or 0) .. "%"
-  desc = desc .. " <LINE> " .. c2 .. " " .. getText("Tooltip_chanceSuccess") .. " " .. (success or 0) .. "%"
-  desc = desc .. " <LINE> <LINE> <RGB:1,1,1> " .. getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
+  -- PM2 compat: when PM2 owns the repair outcome, hide VRO's own prediction lines.
+  if not (VRO_PM2 and VRO_PM2.active()) then
+    desc = desc .. " " .. c1 .. " " .. getText("Tooltip_potentialRepair") .. " " .. (pot or 0) .. "%"
+    desc = desc .. " <LINE> " .. c2 .. " " .. getText("Tooltip_chanceSuccess") .. " " .. (success or 0) .. "%"
+    desc = desc .. " <LINE> <LINE> <RGB:1,1,1> " .. getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
+  else
+    -- PM2 compat: show PM2's own repair stats in the tooltip, the same way PM2
+    -- does for vanilla fixings, using the recipe_bonus VRO passes to DoRepair.
+    if PMTwoClient and PMTwoClient.MakeSubDescription and PMTwoServer
+       and brokenItem and brokenItem.getCondition and VRO_PM2 and VRO_PM2.recipeBonus then
+      local rb = VRO_PM2.recipeBonus((fixing and fixing.conditionModifier) or 1.0, fixerIndex)
+      local ok, pm2desc = pcall(PMTwoClient.MakeSubDescription, brokenItem, rb, false)
+      if ok and type(pm2desc) == "string" and pm2desc ~= "" then
+        desc = desc .. pm2desc .. " <LINE> "
+      end
+    end
+    desc = desc .. " <RGB:1,1,1> " .. getText("Tooltip_craft_Needs") .. ": <LINE> <LINE>"
+  end
 
   -- 1) Fixer item (consumed)
   do
@@ -2150,6 +2183,8 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
         local tip = ISToolTip:new()
         addFixerTooltip(tip, playerObj, part, fixing, fixer, idx, broken, inv)
         option.toolTip = tip
+        local fixerTex = textureForFullType(fixer.item)
+        if fixerTex then option.iconTexture = fixerTex end
       end
     end
   end
@@ -2493,6 +2528,8 @@ local function addInventoryFixOptions(playerObj, context, broken)
         local tip = ISToolTip:new()
         addFixerTooltip(tip, playerObj, nil, fixing, fixer, idx, broken, inv)
         option.toolTip = tip
+        local fixerTex = textureForFullType(fixer.item)
+        if fixerTex then option.iconTexture = fixerTex end
       end
     end
   end
