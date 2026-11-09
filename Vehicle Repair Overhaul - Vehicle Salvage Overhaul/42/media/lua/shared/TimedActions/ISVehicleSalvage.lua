@@ -160,7 +160,7 @@ function ISVehicleSalvage:perform()
     perk   = "MetalWelding",
     amount = totalXp})
 
-    sendClientCommand(self.character, "vehicle", "remove", { vehicle = self.vehicle:getId() })
+    sendClientCommand(self.character, "vro_salvage", "removeVehicle", { vehicle = self.vehicle:getId() })
     self.item:setJobDelta(0);
     -- needed to remove from queue / start next.
     ISBaseTimedAction.perform(self)

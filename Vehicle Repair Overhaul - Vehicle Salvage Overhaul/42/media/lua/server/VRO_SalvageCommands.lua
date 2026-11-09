@@ -201,6 +201,14 @@ function Commands.dropSalvage(player, args)
   end
 end
 
+-- VRO-owned handler does the removal itself with no admin gate.
+function Commands.removeVehicle(player, args)
+  if not (player and args and args.vehicle) then return end
+  local vehicle = getVehicleById(args.vehicle)
+  if not vehicle then return end
+  vehicle:permanentlyRemove()
+end
+
 function VRO_Salvage_Server_DoReturns(player, recipeKey)
   if not player then return end
   return Commands.doReturns(player, { recipe = recipeKey, playerIndex = player:getPlayerNum() })
