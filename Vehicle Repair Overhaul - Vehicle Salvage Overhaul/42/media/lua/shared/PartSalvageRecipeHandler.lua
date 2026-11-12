@@ -104,7 +104,7 @@ local function injectRecipeInputs(recipeName, itemListOrToken)
   local validItems = _flattenTokens(tokens)
 
   if #validItems > 0 then
-    local inputString = "{ inputs { item 1 [" .. table.concat(validItems, ";") .. "] mode:destroy, } }"
+    local inputString = "{ inputs { item 1 [" .. table.concat(validItems, ";") .. "] mode:destroy flags[AllowDestroyedItem], } }"
     recipe:Load(recipeName, inputString)
     --print("[VRO] Injected craftRecipe input for:", recipeName)
   else
