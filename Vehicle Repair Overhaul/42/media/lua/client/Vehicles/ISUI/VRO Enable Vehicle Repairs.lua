@@ -1,5 +1,16 @@
 require "Vehicles/ISUI/ISVehicleMechanics"
 
+local VRO = require "VRO/Core"
+local function _brokenRepairBlocked(invItem)
+    if VRO and VRO.IsBrokenRepairBlocked then
+        return VRO.IsBrokenRepairBlocked(invItem) == true
+    end
+    if VRO and VRO.CanRepairFullyBrokenParts then
+        return VRO.CanRepairFullyBrokenParts() ~= true
+    end
+    return false
+end
+
 ----------------------------------------------------------------------
 -- 0) One-time normalization: ensure every Fixing has a non-nil RequiredItem list.
 ----------------------------------------------------------------------
@@ -100,7 +111,9 @@ function ISVehicleMechanics:doPartContextMenu(part, x, y)
 
         -- Toggle based on condition & our decision.
         if part:getCondition() < 100 then
-            if hasFixes then
+            if part:getCondition() <= 0 and _brokenRepairBlocked(invItem) then
+                if sp:isRepairMechanic() then sp:setRepairMechanic(false) end
+            elseif hasFixes then
                 sp:setRepairMechanic(true)
             end
         elseif sp:isRepairMechanic() then

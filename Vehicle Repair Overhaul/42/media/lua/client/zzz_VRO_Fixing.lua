@@ -585,6 +585,8 @@ local function _brokenRepairBlocked(it)
   return false
 end
 
+VRO.IsBrokenRepairBlocked = _brokenRepairBlocked
+
 local function isRepairableFromInventory(it)
   if not it then return false end
   if it.isBroken and it:isBroken() then
