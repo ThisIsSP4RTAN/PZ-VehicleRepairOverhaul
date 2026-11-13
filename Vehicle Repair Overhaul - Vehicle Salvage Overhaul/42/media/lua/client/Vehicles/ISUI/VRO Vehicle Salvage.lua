@@ -101,26 +101,21 @@ local function comparatorDrainableUsesInt(item1, item2)
 	return item1:getCurrentUses() - item2:getCurrentUses()
 end
 
-local function valhallaclaimed(vehicle)
-    ---Thanks Udderly for letting me poke around your code for ideas---
-    if not (Valhalla and Valhalla.VehicleClaims) then
-        return false
+-- Another Vehicle Claim System (AVCS and forks such as BD_AVCS): whether this
+-- player may salvage the vehicle, plus the owner's name (when claimed) for the
+-- tooltip. Mirrors the server-side guard in VRO_SalvageCommands.lua so a non-owner
+-- can't start a cut the server would then refuse to finish (torch drained, no
+-- removal). Returns allowed=true when AVCS isn't installed or the vehicle is
+-- unclaimed, so with no AVCS it never blocks. Uses the shared API the original and
+-- the fork both expose, so it behaves the same on either.
+local function avcsCheckSalvage(playerObj, vehicle)
+    if not (AVCS and AVCS.checkPermission and AVCS.getSimpleBooleanPermission) then
+        return true, nil
     end
-
-    local claimed = nil
-
-    if Valhalla:getVehicleModData(vehicle) then
-        claimed = Valhalla:getVehicleModData(vehicle)
-    else
-        return false
-    end
-
-    if claimed then
-        local owner = claimed["owner"]
-        if owner and owner ~= "" then
-            return claimed["owner"]
-        end
-    end
+    local details = AVCS.checkPermission(playerObj, vehicle)
+    local allowed = AVCS.getSimpleBooleanPermission(details)
+    local owner = (type(details) == "table") and details.ownerid or nil
+    return allowed, owner
 end
 
 function ISVehicleMenu.onVehicleSalvage(player, vehicle)
@@ -146,7 +141,7 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
     local MWSkillDisplay = playerObj:getPerkLevel(Perks.MetalWelding)
     local MecSkill = 3
     local MecSkillDisplay = playerObj:getPerkLevel(Perks.Mechanics)
-    local isClaimed = valhallaclaimed(vehicle)
+    local avcsAllowed, avcsOwner = avcsCheckSalvage(playerObj, vehicle)
     --[[
         local subOption = context:addOption("Vehicle")
         local vehicleMenu = ISContextMenu:getNew(context)
@@ -157,8 +152,26 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
 
     local option = nil
     --- remove Salvage Vehicles options ---
-    if SandboxVars.VehicleRepairOverhaul == true or string.match(vehicle:getScript():getName(), "Burnt") or isClaimed then return enableSalvage(player, context, vehicle, test) end;
+    if SandboxVars.VehicleRepairOverhaul == true or string.match(vehicle:getScript():getName(), "Burnt") then return enableSalvage(player, context, vehicle, test) end;
     if VRO and VRO.IsFullVehicleSalvagingEnabled and (VRO.IsFullVehicleSalvagingEnabled() == false) then
+        return enableSalvage(player, context, vehicle, test)
+    end
+
+    --- AVCS-claimed vehicle this player can't salvage: show the option disabled with
+    --- a "no permission / owner" tooltip (AVCS's own keys) instead of hiding it. ---
+    if not avcsAllowed then
+        option = context:addOption(getText("ContextMenu_SalvageVehicle"), playerObj, nil, nil)
+        option.notAvailable = true
+        local toolTip = ISToolTip:new()
+        toolTip:initialise()
+        toolTip:setVisible(false)
+        toolTip:setName(getText("ContextMenu_SalvageVehicle"))
+        local desc = " <RGB:1,0,0> " .. getText("IGUI_AVCS_Vehicle_No_Permission")
+        if avcsOwner and avcsOwner ~= "" then
+            desc = desc .. " <LINE> <RGB:1,1,1> " .. getText("Tooltip_AVCS_Owner") .. ": " .. tostring(avcsOwner)
+        end
+        toolTip.description = desc
+        option.toolTip = toolTip
         return enableSalvage(player, context, vehicle, test)
     end
 

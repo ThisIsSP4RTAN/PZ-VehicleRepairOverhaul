@@ -5,5 +5,5 @@ icon=icon.png
 versionMin=42.12.0
 id=VehicleSalvageOverhaulB42
 require=\VehicleRepairOverhaul
-loadModBefore=\ProjectSummerCar,\Ivmakk_RestoreEngineQuality
+loadModBefore=\ProjectSummerCar,\Ivmakk_RestoreEngineQuality,\AVCSB42,\BD_AVCS
 author=hehehemann, SP4RTAN

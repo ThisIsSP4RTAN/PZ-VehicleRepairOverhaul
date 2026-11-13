@@ -201,11 +201,34 @@ function Commands.dropSalvage(player, args)
   end
 end
 
--- VRO-owned handler does the removal itself with no admin gate.
+-- Server-side validation: never trust the client.
+local function _hasBlowTorch(player)
+  local it = player:getPrimaryHandItem()
+  if not it then return false end
+  if it:getType() == "BlowTorch" then return true end
+  return ItemTag and ItemTag.BLOW_TORCH and it:hasTag(ItemTag.BLOW_TORCH) or false
+end
+
+-- Vehicle claim mods (AVCS): only owner / allowed players / admins may salvage.
+local function _claimAllows(player, vehicle)
+  if not (AVCS and AVCS.checkPermission and AVCS.getSimpleBooleanPermission) then return true end
+  return AVCS.getSimpleBooleanPermission(AVCS.checkPermission(player, vehicle))
+end
+
 function Commands.removeVehicle(player, args)
-  if not (player and args and args.vehicle) then return end
-  local vehicle = getVehicleById(args.vehicle)
-  if not vehicle then return end
+  if not (player and args) then return end
+  local vehicle = getVehicleById(tonumber(args.vehicle) or -1)
+  if not vehicle or vehicle:isRemovedFromWorld() then return end
+  -- player must be next to the vehicle
+  local dx, dy = player:getX() - vehicle:getX(), player:getY() - vehicle:getY()
+  if dx * dx + dy * dy > 100 then return end
+  -- blowtorch in hand
+  if not _hasBlowTorch(player) then return end
+  -- nobody inside
+  for seat = 0, vehicle:getMaxPassengers() - 1 do
+    if vehicle:getCharacter(seat) then return end
+  end
+  if not _claimAllows(player, vehicle) then return end
   vehicle:permanentlyRemove()
 end
 
@@ -232,3 +255,6 @@ SalvageCmds.OnClientCommand = function(module, command, player, args)
 end
 
 Events.OnClientCommand.Add(SalvageCmds.OnClientCommand)
+
+-- Public table so other mods can wrap salvage commands.
+VRO_SalvageCommands = Commands
